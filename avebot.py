@@ -8,8 +8,12 @@ import traceback
 import re
 import os
 import time
+import subprocess
 
 client = discord.Client()
+
+def get_git_revision_short_hash():
+    return str(subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).strip()).replace("b'","").replace("'","")
 
 def avelog( content ):
     try:
@@ -32,7 +36,7 @@ async def on_ready():
     try:
         time.sleep(3)
         await client.change_presence(game=discord.Game(name='run >help'))
-        em = discord.Embed(title='AveBot initialized!', description='Hostname: '+socket.gethostname()+'\nLocal Time: '+st+'\nLogs are attached.', colour=0xDEADBF)
+        em = discord.Embed(title='AveBot initialized!', description='Git hash: `'+get_git_revision_short_hash()+'`\nHostname: '+socket.gethostname()+'\nLocal Time: '+st+'\nLogs are attached.', colour=0xDEADBF)
         em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
         await client.send_message(discord.Object(id='305715263951732737'), embed=em)
         await client.send_file(discord.Object(id='305715263951732737'), "log.txt")
@@ -81,7 +85,7 @@ async def on_message(message):
         elif message.content.startswith('>help'):
             await client.send_typing(message.channel)
             avelog(str(message.author) + " ran " + message.content)
-            em = discord.Embed(title='Hello from AveBot!', description='This bot is owned by ao#4273 and is currently running on `'+socket.gethostname()+'` server.\n**>help:** displays this \n**>get <url>:** gets a link and uploads it to discord\n**>dget <url>:** like get, but doesn\'t try to determine filename, also no caching\n**>invite:** generates an invite for this channel one use and unlimited duration\n**>material <name>:** gets an icon from material.io\'s free icons list.\n**>howmanymessages:** Checks how many messages you have in this channel, out of the last 100 ones.\n**>:regional_indicator_b: :regional_indicator_i: :regional_indicator_g: :regional_indicator_l: :regional_indicator_y::** Makes text as big as the hands of the god-emperor.', colour=0xDEADBF)
+            em = discord.Embed(title='Hello from AveBot!', description='This bot is developed and owned by ao#4273 and is currently running on `'+socket.gethostname()+'` server.\nGit hash: `'+get_git_revision_short_hash()+'`, repo: https://github.com/ardaozkal/AveBot\n**>help:** displays this \n**>get <url>:** gets a link and uploads it to discord\n**>dget <url>:** like get, but doesn\'t try to determine filename, also no caching\n**>invite:** generates an invite for this channel one use and unlimited duration\n**>material <name>:** gets an icon from material.io\'s free icons list.\n**>howmanymessages:** Checks how many messages you have in this channel, out of the last 100 ones.\n**>:regional_indicator_b: :regional_indicator_i: :regional_indicator_g: :regional_indicator_l: :regional_indicator_y::** Makes text as big as the hands of the god-emperor.', colour=0xDEADBF)
             em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
             await client.send_message(message.channel, embed=em)
         elif message.content.startswith('>dget'):
@@ -109,6 +113,7 @@ async def on_message(message):
         avelog(traceback.format_exc())
         exit()
 
+avelog("AveBot started. Git hash: " + get_git_revision_short_hash())
 if not os.path.isdir("files"):
     os.makedirs("files")
 
