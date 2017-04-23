@@ -6,6 +6,7 @@ import socket
 import datetime
 import traceback
 import re
+import os
 
 client = discord.Client()
 
@@ -106,5 +107,11 @@ async def on_message(message):
         avelog(traceback.format_exc())
         exit()
 
-file = open("bottoken", "r") 
-client.run(file.read())
+if not os.path.isdir("files"):
+    os.makedirs("files")
+
+if os.path.exists("bottoken"):
+    file = open("bottoken", "r") 
+    client.run(file.read())
+else:
+    avelog("No bottoken file found! Please create one. Join discord.gg/discord-api and check out #faq for more info.")
