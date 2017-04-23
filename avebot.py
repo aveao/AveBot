@@ -7,6 +7,7 @@ import datetime
 import traceback
 import re
 import os
+import time
 
 client = discord.Client()
 
@@ -29,6 +30,7 @@ async def on_ready():
     avelog(client.user.id)
     avelog('------')
     try:
+        time.sleep(3)
         await client.change_presence(game=discord.Game(name='run >help'))
         em = discord.Embed(title='AveBot initialized!', description='Hostname: '+socket.gethostname()+'\nLocal Time: '+st+'\nLogs are attached.', colour=0xDEADBF)
         em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
