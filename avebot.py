@@ -13,6 +13,8 @@ import socket
 import json
 
 client = discord.Client()
+botowner = "ao#4273"
+botmods = ["ao#4273", "&.#6081"]
 
 def get_git_revision_short_hash():
     return str(subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).strip()).replace("b'","").replace("'","")
@@ -61,12 +63,13 @@ async def on_message(message):
 
             await client.edit_message(tmp, 'You have sent {} messages out of the last 100 in this channel.'.format(counter))
         elif message.content.startswith('>get'):
-            await client.send_typing(message.channel)
-            avelog(str(message.author) + " ran " + message.content)
-            link = message.content.split(' ')[1]
-            filename = "files/" + link.split('/')[-1]
-            urllib.request.urlretrieve(link, filename);
-            await client.send_file(message.channel, filename, content=":thumbsup: Here's the file you requested.")
+            if str(message.author) in botmods:
+                await client.send_typing(message.channel)
+                avelog(str(message.author) + " ran " + message.content)
+                link = message.content.split(' ')[1]
+                filename = "files/" + link.split('/')[-1]
+                urllib.request.urlretrieve(link, filename);
+                await client.send_file(message.channel, filename, content=":thumbsup: Here's the file you requested.")
         elif message.content.startswith('>invite'):
             await client.send_typing(message.channel)
             avelog(str(message.author) + " ran " + message.content)
@@ -85,6 +88,14 @@ async def on_message(message):
             em = discord.Embed(title='Contact sent!', description='Your message has been delivered to the developers.', colour=0xDEADBF)
             em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
             await client.send_message(message.channel, embed=em)
+        elif message.content.startswith('>exit'):
+            if str(message.author) == botowner:
+                await client.send_typing(message.channel)
+                avelog(str(message.author) + " ran " + message.content)
+                em = discord.Embed(title='Exiting AveBot', description='Goodbye!', colour=0xDEADBF)
+                em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
+                await client.send_message(message.channel, embed=em)
+                exit()
         elif message.content.startswith('>bigly'):
             await client.send_typing(message.channel)
             avelog(str(message.author) + " ran " + message.content)
@@ -98,7 +109,8 @@ async def on_message(message):
         elif message.content.startswith('>help'):
             await client.send_typing(message.channel)
             avelog(str(message.author) + " ran " + message.content)
-            em = discord.Embed(title='Hello from AveBot!', description='This bot is developed and owned by ao#4273 and is currently running on `'+socket.gethostname()+'` server.\nGit hash: `'+get_git_revision_short_hash()+'`, repo: https://github.com/ardaozkal/AveBot\n**>help:** displays this \n**>get <url>:** gets a link and uploads it to discord\n**>dget <url>:** like get, but doesn\'t try to determine filename, also no caching\n**>invite:** generates an invite for this channel one use and unlimited duration\n**>material <name>:** gets an icon from material.io\'s free icons list.\n**>howmanymessages:** Checks how many messages you have in this channel, out of the last 100 ones.\n**>:regional_indicator_b: :regional_indicator_i: :regional_indicator_g: :regional_indicator_l: :regional_indicator_y::** Makes text as big as the hands of the god-emperor.\n**>contact <message>:** Send developers a message. Can be an idea or a bug report.\n**>resolve <domain>** / **>dig <domain>:** Resolves a domain to an IP address.\n**>ping:** Checks if bot is running.\n**>epoch** / **>unixtime:** Returns UNIX time since epoch.\n**!<bang> <something>** Resolves a duckduckgo bang. (more info at <https://duckduckgo.com/bang>)', colour=0xDEADBF)
+            helpfile = open("help.md", "r") 
+            em = discord.Embed(title='Hello from AveBot!', description='This bot is developed and owned by ao#4273 and is currently running on `'+socket.gethostname()+'` server.\nGit hash: `'+get_git_revision_short_hash()+'`, repo: https://github.com/ardaozkal/AveBot\n'+helpfile.read(), colour=0xDEADBF)
             em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
             await client.send_message(message.channel, embed=em)
         elif message.content.startswith('>resolve') or message.content.startswith('>dig'):
@@ -122,12 +134,13 @@ async def on_message(message):
             em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
             await client.send_message(message.channel, embed=em)
         elif message.content.startswith('>dget'):
-            await client.send_typing(message.channel)
-            avelog(str(message.author) + " ran " + message.content)
-            link = message.content.split(' ')[1]
-            filename = "files/requestedfile"
-            urllib.request.urlretrieve(link, filename);
-            await client.send_file(message.channel, filename, content=":thumbsup: Here's the file you requested.")
+            if str(message.author) in botmods:
+                await client.send_typing(message.channel)
+                avelog(str(message.author) + " ran " + message.content)
+                link = message.content.split(' ')[1]
+                filename = "files/requestedfile"
+                urllib.request.urlretrieve(link, filename);
+                await client.send_file(message.channel, filename, content=":thumbsup: Here's the file you requested.")
         elif message.content.startswith('!'):
             await client.send_typing(message.channel)
             avelog(str(message.author) + " ran " + message.content)
@@ -136,19 +149,20 @@ async def on_message(message):
             messagecont="Bang resolved to: "+j["Redirect"]
             await client.send_message(message.channel, content=messagecont)
         elif message.content.startswith('>material'):
-            await client.send_typing(message.channel)
-            avelog(str(message.author) + " ran " + message.content)
-            filename = message.content.split(' ')[1]
-            if not filename.startswith('ic_'):
-                filename = "ic_" + filename
-            if not filename.endswith(('.svg', '.png')):
-                filename = filename + "_white_48px.svg"
-            link = "https://storage.googleapis.com/material-icons/external-assets/v4/icons/svg/" + filename
-            filename = "files/" + filename
-            my_file = Path(filename)
-            if not my_file.is_file():
-                urllib.request.urlretrieve(link, filename);
-            await client.send_file(message.channel, filename, content=":thumbsup: Here's the file you requested.")
+            if str(message.author) in botmods:
+                await client.send_typing(message.channel)
+                avelog(str(message.author) + " ran " + message.content)
+                filename = message.content.split(' ')[1]
+                if not filename.startswith('ic_'):
+                    filename = "ic_" + filename
+                if not filename.endswith(('.svg', '.png')):
+                    filename = filename + "_white_48px.svg"
+                link = "https://storage.googleapis.com/material-icons/external-assets/v4/icons/svg/" + filename
+                filename = "files/" + filename
+                my_file = Path(filename)
+                if not my_file.is_file():
+                    urllib.request.urlretrieve(link, filename);
+                await client.send_file(message.channel, filename, content=":thumbsup: Here's the file you requested.")
     except Exception:
         avelog(traceback.format_exc())
 
@@ -156,7 +170,8 @@ avelog("AveBot started. Git hash: " + get_git_revision_short_hash())
 if not os.path.isdir("files"):
     os.makedirs("files")
 
-with open("bottoken", "r") as tokfile:
-    client.run(tokfile.read())
+try:
+    with open("bottoken", "r") as tokfile:
+        client.run(tokfile.read().replace("\n",""))
 except FileNotFoundError:
     avelog("No bottoken file found! Please create one. Join discord.gg/discord-api and check out #faq for more info.")
