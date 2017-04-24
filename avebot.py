@@ -97,7 +97,7 @@ async def on_message(message):
         elif message.content.startswith('>help'):
             await client.send_typing(message.channel)
             avelog(str(message.author) + " ran " + message.content)
-            em = discord.Embed(title='Hello from AveBot!', description='This bot is developed and owned by ao#4273 and is currently running on `'+socket.gethostname()+'` server.\nGit hash: `'+get_git_revision_short_hash()+'`, repo: https://github.com/ardaozkal/AveBot\n**>help:** displays this \n**>get <url>:** gets a link and uploads it to discord\n**>dget <url>:** like get, but doesn\'t try to determine filename, also no caching\n**>invite:** generates an invite for this channel one use and unlimited duration\n**>material <name>:** gets an icon from material.io\'s free icons list.\n**>howmanymessages:** Checks how many messages you have in this channel, out of the last 100 ones.\n**>:regional_indicator_b: :regional_indicator_i: :regional_indicator_g: :regional_indicator_l: :regional_indicator_y::** Makes text as big as the hands of the god-emperor.\n**>contact <message>:** Send developers a message. Can be an idea or a bug report.\n**>resolve <domain>** / **>dig <domain>:** Resolves a domain to an IP address.\n**>ping:** Checks if bot is running.', colour=0xDEADBF)
+            em = discord.Embed(title='Hello from AveBot!', description='This bot is developed and owned by ao#4273 and is currently running on `'+socket.gethostname()+'` server.\nGit hash: `'+get_git_revision_short_hash()+'`, repo: https://github.com/ardaozkal/AveBot\n**>help:** displays this \n**>get <url>:** gets a link and uploads it to discord\n**>dget <url>:** like get, but doesn\'t try to determine filename, also no caching\n**>invite:** generates an invite for this channel one use and unlimited duration\n**>material <name>:** gets an icon from material.io\'s free icons list.\n**>howmanymessages:** Checks how many messages you have in this channel, out of the last 100 ones.\n**>:regional_indicator_b: :regional_indicator_i: :regional_indicator_g: :regional_indicator_l: :regional_indicator_y::** Makes text as big as the hands of the god-emperor.\n**>contact <message>:** Send developers a message. Can be an idea or a bug report.\n**>resolve <domain>** / **>dig <domain>:** Resolves a domain to an IP address.\n**>ping:** Checks if bot is running.\n**>epoch** / **>unixtime:** Returns UNIX time since epoch.', colour=0xDEADBF)
             em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
             await client.send_message(message.channel, embed=em)
         elif message.content.startswith('>resolve') or message.content.startswith('>dig'):
@@ -112,6 +112,12 @@ async def on_message(message):
             await client.send_typing(message.channel)
             avelog(str(message.author) + " ran " + message.content)
             em = discord.Embed(title=':ping_pong: Pong', colour=0xDEADBF)
+            em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
+            await client.send_message(message.channel, embed=em)
+        elif message.content.startswith('>epoch') or message.content.startswith('>unixtime'):
+            await client.send_typing(message.channel)
+            avelog(str(message.author) + " ran " + message.content)
+            em = discord.Embed(title="Current epoch time is: **" + str(int(time.time()))+"**.", colour=0xDEADBF)
             em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
             await client.send_message(message.channel, embed=em)
         elif message.content.startswith('>dget'):
