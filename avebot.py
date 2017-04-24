@@ -143,7 +143,6 @@ async def on_message(message):
             await client.send_file(message.channel, filename, content=":thumbsup: Here's the file you requested.")
     except Exception:
         avelog(traceback.format_exc())
-        exit()
 
 avelog("AveBot started. Git hash: " + get_git_revision_short_hash())
 if not os.path.isdir("files"):
