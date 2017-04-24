@@ -132,7 +132,7 @@ async def on_message(message):
             await client.send_typing(message.channel)
             avelog(str(message.author) + " ran " + message.content)
             output = urllib.request.urlopen("https://api.duckduckgo.com/?q="+message.content.replace(" ","+")+"&format=json&pretty=0&no_redirect=1").read()
-            j = json.loads(output)
+            j = json.loads(str(output))
             messagecont="Bang resolved to: "+j["Redirect"]
             await client.send_message(message.channel, content=messagecont)
         elif message.content.startswith('>material'):
