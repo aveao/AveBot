@@ -96,11 +96,11 @@ async def on_message(message):
                 em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                 await client.send_message(message.channel, embed=em)
                 exit()
-        elif message.content.startswith('>getlog'):
+        elif message.content.startswith('>fetchlog'):
             avelog(str(message.author) + " ran " + message.content)
             if str(message.author) == botowner:
                 await client.send_typing(message.channel)
-                await client.send_file(message.channel, "log.txt", content="Here's the current log files.")
+                await client.send_file(message.channel, "log.txt", content="Here's the current log file:")
         elif message.content.startswith('>bigly'):
             await client.send_typing(message.channel)
             avelog(str(message.author) + " ran " + message.content)
@@ -136,6 +136,12 @@ async def on_message(message):
             await client.send_typing(message.channel)
             avelog(str(message.author) + " ran " + message.content)
             em = discord.Embed(title="Current epoch time is: **" + str(int(time.time()))+"**.", colour=0xDEADBF)
+            em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
+            await client.send_message(message.channel, embed=em)
+        elif message.content.startswith('>erdogan') or message.content.startswith('>trump'):
+            await client.send_typing(message.channel)
+            avelog(str(message.author) + " ran " + message.content)
+            em = discord.Embed(title="DICTATOR DETECTED", colour=0xDEADBF)
             em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
             await client.send_message(message.channel, embed=em)
         elif message.content.startswith('>dget'):
