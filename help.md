@@ -15,3 +15,4 @@
 ---
 **Owner only commands:**
 **>exit:** exits the bot
+**>getlog:** replies with the log file

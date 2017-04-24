@@ -63,9 +63,9 @@ async def on_message(message):
 
             await client.edit_message(tmp, 'You have sent {} messages out of the last 100 in this channel.'.format(counter))
         elif message.content.startswith('>get'):
+            avelog(str(message.author) + " ran " + message.content)
             if str(message.author) in botmods:
                 await client.send_typing(message.channel)
-                avelog(str(message.author) + " ran " + message.content)
                 link = message.content.split(' ')[1]
                 filename = "files/" + link.split('/')[-1]
                 urllib.request.urlretrieve(link, filename);
@@ -89,13 +89,18 @@ async def on_message(message):
             em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
             await client.send_message(message.channel, embed=em)
         elif message.content.startswith('>exit'):
+            avelog(str(message.author) + " ran " + message.content)
             if str(message.author) == botowner:
                 await client.send_typing(message.channel)
-                avelog(str(message.author) + " ran " + message.content)
                 em = discord.Embed(title='Exiting AveBot', description='Goodbye!', colour=0xDEADBF)
                 em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                 await client.send_message(message.channel, embed=em)
                 exit()
+        elif message.content.startswith('>getlog'):
+            avelog(str(message.author) + " ran " + message.content)
+            if str(message.author) == botowner:
+                await client.send_typing(message.channel)
+                await client.send_file(message.channel, "log.txt", content="Here's the current log files.")
         elif message.content.startswith('>bigly'):
             await client.send_typing(message.channel)
             avelog(str(message.author) + " ran " + message.content)
@@ -134,9 +139,9 @@ async def on_message(message):
             em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
             await client.send_message(message.channel, embed=em)
         elif message.content.startswith('>dget'):
+            avelog(str(message.author) + " ran " + message.content)
             if str(message.author) in botmods:
                 await client.send_typing(message.channel)
-                avelog(str(message.author) + " ran " + message.content)
                 link = message.content.split(' ')[1]
                 filename = "files/requestedfile"
                 urllib.request.urlretrieve(link, filename);
@@ -149,9 +154,9 @@ async def on_message(message):
             messagecont="Bang resolved to: "+j["Redirect"]
             await client.send_message(message.channel, content=messagecont)
         elif message.content.startswith('>material'):
+            avelog(str(message.author) + " ran " + message.content)
             if str(message.author) in botmods:
                 await client.send_typing(message.channel)
-                avelog(str(message.author) + " ran " + message.content)
                 filename = message.content.split(' ')[1]
                 if not filename.startswith('ic_'):
                     filename = "ic_" + filename
