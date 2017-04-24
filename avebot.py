@@ -156,8 +156,7 @@ avelog("AveBot started. Git hash: " + get_git_revision_short_hash())
 if not os.path.isdir("files"):
     os.makedirs("files")
 
-if os.path.exists("bottoken"):
-    file = open("bottoken", "r") 
-    client.run(file.read())
-else:
+with open("bottoken", "r") as tokfile:
+    client.run(tokfile.read())
+except FileNotFoundError:
     avelog("No bottoken file found! Please create one. Join discord.gg/discord-api and check out #faq for more info.")
