@@ -10,6 +10,8 @@ The stuff it can do can be seen by running `>help` on a server it's added on or 
 
 ###How can I set it up FAQ:
 - It uses python3.6 (`sudo add-apt-repository ppa:jonathonf/python-3.6`, `sudo apt update`, `sudo apt install python 3.6`). Other versions of python probably work too, but the duckduckgo bang fails on `python3.5`.
+- Change botowner on line 16 from `botowner = "ao#4273"` to `botowner = "your discord ID"`
+- Add yourself as a mod `echo "your discord ID" > modslist`
 - You need `discord.py`: `pip install -r requirements.txt` or `pip install -U discord.py`.
 - You need to set the bot token: `echo -n "bot's token" > bottoken`
 - Wondering what a token is? [Go here](https://discordapp.com/developers/applications/me), authenticate, create a new app, create a bot, click on `click to reveal` under username. Enjoy.
