@@ -87,7 +87,9 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+#avebot stuff
 log.txt
 bottoken
 files/*
-avebot-test.py
+modslist

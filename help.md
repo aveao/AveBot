@@ -19,5 +19,6 @@ You can view this online at <https://raw.githubusercontent.com/ardaozkal/AveBot/
 **>material <name>:** gets an icon from material.io's free icons list.
 **Owner-only commands:**
 **>exit:** exits the bot
+**>addmod <discord tag>:** adds a mod
 **>fetchlog:** replies with the log file
 `EOF`

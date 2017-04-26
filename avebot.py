@@ -14,7 +14,16 @@ import json
 
 client = discord.Client()
 botowner = "ao#4273"
-botmods = ["ao#4273", "&.#6081"]
+botmods = ["ao#4273"]
+
+def load_mods_list():
+    try:
+        with open("modslist", "r") as modfile:
+            botmods = modfile.read().split("\n")
+    except FileNotFoundError:
+        avelog("No modslist file found! Please create one. Place a mod's discord id on every line (ao#4273)")
+
+load_mods_list()
 
 def get_git_revision_short_hash():
     return str(subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).strip()).replace("b'","").replace("'","")
@@ -96,10 +105,26 @@ async def on_message(message):
             avelog(str(message.author) + " ran " + message.content)
             await client.send_typing(message.channel)
             if str(message.author) == botowner:
-                em = discord.Embed(title='Exiting AveBot', description='Goodbye!', colour=0xDEADBF)
+                em = discord.Embed(title='Exiting AveBot', description='Goodbye!', colour=0x64dd17)
                 em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                 await client.send_message(message.channel, embed=em)
                 exit()
+            else
+                em = discord.Embed(title="Insufficient Permissions (Owner status needed)", colour=0xcc0000)
+                em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
+                await client.send_message(message.channel, embed=em)
+        elif message.content.startswith('>addmod'):
+            avelog(str(message.author) + " ran " + message.content)
+            await client.send_typing(message.channel)
+            if str(message.author) == botowner:
+                modtoadd = message.content.replace(">addmod ","")
+                with open("modslist", "a") as modfile:
+                    modfile.write(modtoadd+"\n")
+                return
+                load_mods_list()
+                em = discord.Embed(title='Added ' + modtoadd + ' as mod.', description='Welcome to the team!', colour=0x64dd17)
+                em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
+                await client.send_message(message.channel, embed=em)
             else
                 em = discord.Embed(title="Insufficient Permissions (Owner status needed)", colour=0xcc0000)
                 em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
