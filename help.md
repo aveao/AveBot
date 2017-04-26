@@ -15,13 +15,14 @@ You can view this online at <https://raw.githubusercontent.com/ardaozkal/AveBot/
 **Technical Commands**
 **>resolve <domain>** / **>dig <domain>:** Resolves a domain to an IP address.
 **>epoch** / **>unixtime:** Returns UNIX time since epoch.
-**Mod-only commands:**
+---
+**Mod-only Commands**
 **>say <something>:** makes the bot say something
 **>get <url>:** gets a link and uploads it to discord
 **>dget <url>:** like get, but doesn't try to determine filename, also no caching
 **>material <name>:** gets an icon from material.io's free icons list.
 ---
-**Owner-only commands:**
+**Owner-only Commands**
 **>exit:** exits the bot
 **>addmod <discord tag>:** adds a mod
 **>fetchlog:** replies with the log file
