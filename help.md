@@ -12,6 +12,12 @@ You can view this online at <https://raw.githubusercontent.com/ardaozkal/AveBot/
 **>bigly:** Makes text as :regional_indicator_b: :regional_indicator_i: :regional_indicator_g: as the hands of the god-emperor.
 **!<bang> <something>** Resolves a duckduckgo bang. (more info at <https://duckduckgo.com/bang>)
 ---
+**Linguistic Commands**
+**>similar <word or a word group>:** Finds a similar word
+**>typo <word or a word group>:** Fixes a typo
+**>soundslike <word or a word group>:** Finds a word that sounds like that
+**>rhyme <word or a word group>:** Finds a word that rhymes with it
+---
 **Technical Commands**
 **>resolve <domain>** / **>dig <domain>:** Resolves a domain to an IP address.
 **>epoch** / **>unixtime:** Returns UNIX time since epoch.
