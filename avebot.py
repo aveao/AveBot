@@ -14,16 +14,16 @@ import json
 
 client = discord.Client()
 botowner = "ao#4273"
-botmods = ["ao#4273"]
 
-def load_mods_list():
+def get_mods_list():
     try:
         with open("modslist", "r") as modfile:
-            botmods = modfile.read().split("\n")
+            modfilething = modfile.read().split("\n")
+            return modfilething
     except FileNotFoundError:
         avelog("No modslist file found! Please create one. Place a mod's discord id on every line (ao#4273)")
-
-load_mods_list()
+    except Exception:
+        avelog(traceback.format_exc())
 
 def get_git_revision_short_hash():
     return str(subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).strip()).replace("b'","").replace("'","")
@@ -74,7 +74,7 @@ async def on_message(message):
         elif message.content.startswith('>get'):
             avelog(str(message.author) + " ran " + message.content)
             await client.send_typing(message.channel)
-            if str(message.author) in botmods:
+            if str(message.author) in get_mods_list():
                 link = message.content.split(' ')[1]
                 filename = "files/" + link.split('/')[-1]
                 urllib.request.urlretrieve(link, filename);
@@ -120,8 +120,6 @@ async def on_message(message):
                 modtoadd = message.content.replace(">addmod ","")
                 with open("modslist", "a") as modfile:
                     modfile.write(modtoadd+"\n")
-                return
-                load_mods_list()
                 em = discord.Embed(title='Added ' + modtoadd + ' as mod.', description='Welcome to the team!', colour=0x64dd17)
                 em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                 await client.send_message(message.channel, embed=em)
@@ -184,7 +182,7 @@ async def on_message(message):
         elif message.content.startswith('>dget'):
             avelog(str(message.author) + " ran " + message.content)
             await client.send_typing(message.channel)
-            if str(message.author) in botmods:
+            if str(message.author) in get_mods_list():
                 link = message.content.split(' ')[1]
                 filename = "files/requestedfile"
                 urllib.request.urlretrieve(link, filename);
@@ -196,7 +194,7 @@ async def on_message(message):
         elif message.content.startswith('>say'):
             avelog(str(message.author) + " ran " + message.content)
             await client.send_typing(message.channel)
-            if str(message.author) in botmods:
+            if str(message.author) in get_mods_list():
                 tosay = message.content.replace(">say ", "")
                 await client.send_message(message.channel, content=tosay)
             else:
@@ -213,7 +211,7 @@ async def on_message(message):
         elif message.content.startswith('>material'):
             avelog(str(message.author) + " ran " + message.content)
             await client.send_typing(message.channel)
-            if str(message.author) in botmods:
+            if str(message.author) in get_mods_list():
                 filename = message.content.split(' ')[1]
                 if not filename.startswith('ic_'):
                     filename = "ic_" + filename
