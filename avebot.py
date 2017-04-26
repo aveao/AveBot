@@ -229,6 +229,9 @@ async def on_message(message):
                 await client.send_message(message.channel, embed=em)
     except Exception:
         avelog(traceback.format_exc())
+        em = discord.Embed(title="An error happened", description="It was logged and will be reviewed by developers.", colour=0xcc0000)
+        em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
+        await client.send_message(message.channel, embed=em)
 
 avelog("AveBot started. Git hash: " + get_git_revision_short_hash())
 if not os.path.isdir("files"):
