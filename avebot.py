@@ -115,7 +115,7 @@ async def on_message(message):
             await client.send_typing(message.channel)
             avelog(str(message.author) + " ran " + message.content)
             helpfile = open("help.md", "r") 
-            em = discord.Embed(title='Hello from AveBot!', description='This bot is developed and owned by ao#4273 and is currently running on `'+socket.gethostname()+'` server.\nGit hash: `'+get_git_revision_short_hash()+'`, repo: https://github.com/ardaozkal/AveBot\n'+helpfile.read(), colour=0xDEADBF)
+            em = discord.Embed(title='Hello from AveBot!', description='This bot is developed and owned by ao#4273 and is currently running on `'+socket.gethostname()+'` server.\nGit hash: `'+get_git_revision_short_hash()+'`, repo: https://github.com/ardaozkal/AveBot\nInvite link is on the github repo.\n'+helpfile.read(), colour=0xDEADBF)
             em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
             await client.send_message(message.channel, embed=em)
         elif message.content.startswith('>resolve') or message.content.startswith('>dig'):
@@ -152,6 +152,16 @@ async def on_message(message):
                 filename = "files/requestedfile"
                 urllib.request.urlretrieve(link, filename);
                 await client.send_file(message.channel, filename, content=":thumbsup: Here's the file you requested.")
+        elif message.content.startswith('>say'):
+            avelog(str(message.author) + " ran " + message.content)
+            await client.send_typing(message.channel)
+            if str(message.author) in botmods:
+                tosay = message.content.replace(">say ", "")
+                await client.send_message(message.channel, content=tosay)
+            else
+                em = discord.Embed(title="DICTATOR DETECTED", colour=0xDEADBF)
+                em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
+                await client.send_message(message.channel, embed=em)
         elif message.content.startswith('!'):
             await client.send_typing(message.channel)
             avelog(str(message.author) + " ran " + message.content)
