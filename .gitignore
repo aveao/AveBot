@@ -92,4 +92,4 @@ ENV/
 log.txt
 bottoken
 files/*
-modslist
+*list

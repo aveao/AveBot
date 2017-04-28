@@ -5,7 +5,7 @@ You can view this online at <https://raw.githubusercontent.com/ardaozkal/AveBot/
 **>contact <message>:** Send developers a message. Can be an idea or a bug report.
 ---
 **Server Commands**
-**>invite:** generates an invite for this channel one use and unlimited duration
+**>geninvite:** generates an invite for this channel one use and unlimited duration
 **>howmanymessages:** Checks how many messages you have in this channel, out of the last 100 ones.
 ---
 **Fun Commands**
@@ -22,11 +22,14 @@ You can view this online at <https://raw.githubusercontent.com/ardaozkal/AveBot/
 **>resolve <domain>** / **>dig <domain>:** Resolves a domain to an IP address.
 **>epoch** / **>unixtime:** Returns UNIX time since epoch.
 ---
-**Mod-only Commands**
-**>say <something>:** makes the bot say something
+**Privileged-only Commands**
 **>get <url>:** gets a link and uploads it to discord
 **>dget <url>:** like get, but doesn't try to determine filename, also no caching
 **>material <name>:** gets an icon from material.io's free icons list.
+---
+**Mod-only Commands**
+**>say <something>:** makes the bot say something
+**>addpriv <discord tag>:** adds a privileged user
 ---
 **Owner-only Commands**
 **>exit:** exits the bot

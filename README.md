@@ -9,7 +9,7 @@ The stuff it can do can be seen by running `>help` on a server it's added on or 
 - I don't add anyone as mod. Sorry.
 
 ###How can I set it up FAQ:
-- It uses python3.6 (`sudo add-apt-repository ppa:jonathonf/python-3.6`, `sudo apt update`, `sudo apt install python 3.6`). Other versions of python probably work too, but the duckduckgo bang fails on `python3.5`.
+- It uses python3 (python 3.6 requirement was fixed).
 - Change botowner on line 16 from `botowner = "ao#4273"` to `botowner = "your discord tag"`
 - Add yourself as a mod `echo "your discord tag" > modslist`
 - You need `discord.py`: `pip install -r requirements.txt` or `pip install -U discord.py`.
