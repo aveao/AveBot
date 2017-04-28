@@ -111,7 +111,7 @@ async def on_message(message):
             em = discord.Embed(title='Contact sent!', description='Your message has been delivered to the developers.', colour=0xDEADBF)
             em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
             await client.send_message(message.channel, embed=em)
-        elif message.content.startswith('>exit'):
+        elif message.content.startswith('>exit') or message.content.startswith('>brexit'):
             avelog(str(message.author) + " ran " + message.content)
             await client.send_typing(message.channel)
             if str(message.author) == botowner:
