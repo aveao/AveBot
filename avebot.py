@@ -244,10 +244,11 @@ async def on_message(message):
             resolvedto = j["img"]
             title = j["safe_title"]
             alt = j["alt"]
+            xkcdid = str(j["num"])
             date = j["day"]+"-"+j["month"]+"-"+j["year"]+" (DDMMYYYY)"
             if resolvedto:
                 await client.send_typing(message.channel)
-                messagecont="**XKCD "+toquery+":** `"+title+"`, published on "+date+"\n*Alt text:** `"+alt+"`\n**Image:** " + resolvedto
+                messagecont="**XKCD "+xkcdid+":** `"+title+"`, published on "+date+"\n**Image:** " + resolvedto + "\n**Alt text:** `"+alt+"`\nExplain xkcd: <http://www.explainxkcd.com/wiki/index.php/"+xkcdid+">"
                 await client.send_message(message.channel, content=messagecont)
         elif message.content.startswith('>similar'):
             await client.send_typing(message.channel)
