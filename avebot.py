@@ -13,7 +13,7 @@ import socket
 import json
 
 client = discord.Client()
-botowner = "ao#4273"
+botowner = "ao#5755"
 
 def get_mods_list():
     try:
@@ -21,7 +21,7 @@ def get_mods_list():
             modfilething = modfile.read().split("\n")
             return modfilething
     except FileNotFoundError:
-        avelog("No modslist file found! Please create one. Place a mod's discord tag (ao#4273) on every line")
+        avelog("No modslist file found! Please create one. Place a mod's discord tag (ao#5755) on every line")
     except Exception:
         avelog(traceback.format_exc())
 
@@ -31,7 +31,7 @@ def get_privileged_list():
             privfilething = privfile.read().split("\n")
             return privfilething
     except FileNotFoundError:
-        avelog("No privlist file found! Please create one. Place a mod's discord tag (ao#4273) on every line")
+        avelog("No privlist file found! Please create one. Place a mod's discord tag (ao#5755) on every line")
     except Exception:
         avelog(traceback.format_exc())
 
@@ -174,7 +174,7 @@ async def on_message(message):
             await client.send_typing(message.channel)
             avelog(str(message.author) + " ran " + message.content)
             helpfile = open("help.md", "r") 
-            em = discord.Embed(title='Hello from AveBot!', description='This bot is developed and owned by ao#4273 and is currently running on `'+socket.gethostname()+'` server.\nGit hash: `'+get_git_revision_short_hash()+'`, repo: https://github.com/ardaozkal/AveBot\nInvite link is on the github repo.\n'+helpfile.read(), colour=0xDEADBF)
+            em = discord.Embed(title='Hello from AveBot!', description='This bot is developed and owned by ao#5755 and is currently running on `'+socket.gethostname()+'` server.\nGit hash: `'+get_git_revision_short_hash()+'`, repo: https://github.com/ardaozkal/AveBot\nInvite link is on the github repo.\n'+helpfile.read(), colour=0xDEADBF)
             em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
             await client.send_message(message.channel, embed=em)
         elif message.content.startswith('>resolve') or message.content.startswith('>dig'):
