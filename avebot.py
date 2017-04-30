@@ -244,7 +244,7 @@ async def on_message(message):
             alt = j["alt"]
             if resolvedto:
                 await client.send_typing(message.channel)
-                messagecont="XKCD "+toquery+": "+title+", alt text is: "+alt+", here's the image: " + resolvedto
+                messagecont="XKCD "+toquery+": "+title+"\nAlt text: `"+alt+"`\nImage: " + resolvedto
                 await client.send_message(message.channel, content=messagecont)
         elif message.content.startswith('>similar'):
             await client.send_typing(message.channel)
