@@ -11,7 +11,7 @@ You can view this online at <https://raw.githubusercontent.com/ardaozkal/AveBot/
 **Fun Commands**
 **>bigly:** Makes text as :regional_indicator_b: :regional_indicator_i: :regional_indicator_g: as the hands of the god-emperor.
 **!<bang> <something>** Resolves a duckduckgo bang. (more info at <https://duckduckgo.com/bang>)
-**>xkcd <comic id>** Links the given xkcd comic.
+**>xkcd <comic id/link>** gives details of the given xkcd comic. If no comic id is specified, it'll give the latest one instead.
 ---
 **Linguistic Commands**
 **>similar <word or a word group>:** Finds a similar word
