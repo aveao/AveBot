@@ -226,12 +226,26 @@ async def on_message(message):
                 em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                 await client.send_message(message.channel, embed=em)
         elif message.content.startswith('!'):
-            await client.send_typing(message.channel)
             avelog(str(message.author) + " ran " + message.content)
             output = urllib.request.urlopen("https://api.duckduckgo.com/?q="+message.content.replace(" ","+")+"&format=json&pretty=0&no_redirect=1").read().decode()
             j = json.loads(output)
-            messagecont="Bang resolved to: "+j["Redirect"]
-            await client.send_message(message.channel, content=messagecont)
+            resolvedto = j["Redirect"]
+            if resolvedto:
+                await client.send_typing(message.channel)
+                messagecont="Bang resolved to: "+resolvedto
+                await client.send_message(message.channel, content=messagecont)
+        elif message.content.startswith('>xkcd'):
+            avelog(str(message.author) + " ran " + message.content)
+            toquery = message.content.replace(">xkcd ", "").replace("xkcd.com/", "").replace("https://", "").replace("http://", "").replace("www.", "").replace("m.", "").replace("/", "") #lazy as hell :/
+            output = urllib.request.urlopen("https://xkcd.com/"+toquery+"/info.0.json").read().decode()
+            j = json.loads(output)
+            resolvedto = j["img"]
+            title = j["safe_title"]
+            alt = j["alt"]
+            if resolvedto:
+                await client.send_typing(message.channel)
+                messagecont="XKCD "+toquery+": "+title+", alt text is: "+alt+", here's the image: " + resolvedto
+                await client.send_message(message.channel, content=messagecont)
         elif message.content.startswith('>similar'):
             await client.send_typing(message.channel)
             avelog(str(message.author) + " ran " + message.content)
