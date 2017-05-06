@@ -105,7 +105,7 @@ async def on_message(message):
                     em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                     await client.send_message(message.channel, embed=em)
                 elif message.content.startswith('>addavebot'):
-                    inviteurl = await discord.utils.oauth_url("305708836361207810")
+                    inviteurl = discord.utils.oauth_url("305708836361207810")
                     em = discord.Embed(title='Invite ready!', description='Here you go: ' + str(inviteurl), colour=0xDEADBF)
                     em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                     await client.send_message(message.channel, embed=em)
