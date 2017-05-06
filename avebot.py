@@ -333,7 +333,7 @@ async def on_message(message):
                         em = discord.Embed(title="Insufficient Permissions (Privileged status needed)", colour=0xcc0000)
                         em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                         await client.send_message(message.channel, embed=em)
-            elif:
+            else:
                 avelog(str(message.author) + " (" + message.author.id + ") ran " + message.content + ' on ' + message.channel.name + ' at ' + message.server.name + ', but is banned.')
                 em = discord.Embed(title="*Insert sigh* You are banned from using AveBot.", colour=0xcc0000)
                 em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
