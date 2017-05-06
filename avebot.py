@@ -82,7 +82,7 @@ async def on_message(message):
                 if log.author == message.author:
                     counter += 1    
             await client.edit_message(tmp, 'You have sent {} messages out of the last 100 in this channel.'.format(counter))
-        elif message.content.startswith('>get'):
+        elif message.content.startswith('>get '):
             
             await client.send_typing(message.channel)
             if message.author.id in get_privileged_list():
@@ -102,15 +102,14 @@ async def on_message(message):
             await client.send_message(message.channel, embed=em)
         elif message.content.startswith('>whoami'):
             await client.send_typing(message.channel)
-            inviteurl = await client.create_invite(message.channel,max_uses=1)
-            em = discord.Embed(title='Invite ready!', description='Here you go: ' + inviteurl.url, colour=0xDEADBF)
+            em = discord.Embed(title=':thinking:', description='You are ' + str(message.author) + " (" + message.author.id + ')', colour=0xDEADBF)
             em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
             await client.send_message(message.channel, embed=em)
-        elif message.content.startswith('>contact'):
+        elif message.content.startswith('>contact '):
             await client.send_typing(message.channel)
             await client.send_typing(discord.Object(id='305857608378613761'))
             contactcontent = message.content.replace(">contact ", "")
-            em = discord.Embed(title='Contact received!', description='**Message by:** '+str(message.author) + "(" + message.author.id + ')\n on '+message.channel.name+' at '+message.server.name+'**Message content:** '+contactcontent, colour=0xDEADBF)
+            em = discord.Embed(title='Contact received!', description='**Message by:** '+str(message.author) + " (" + message.author.id + ')\n on '+message.channel.name+' at '+message.server.name+'\n**Message content:** '+contactcontent, colour=0xDEADBF)
             em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
             await client.send_message(discord.Object(id='305857608378613761'), embed=em)
             em = discord.Embed(title='Contact sent!', description='Your message has been delivered to the developers.', colour=0xDEADBF)
@@ -139,7 +138,7 @@ async def on_message(message):
                 em = discord.Embed(title="Insufficient Permissions (Owner status needed)", colour=0xcc0000)
                 em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                 await client.send_message(message.channel, embed=em)
-        elif message.content.startswith('>addmod'):
+        elif message.content.startswith('>addmod '):
             await client.send_typing(message.channel)
             if message.author.id == botowner:
                 modstoadd = message.mentions
@@ -153,7 +152,7 @@ async def on_message(message):
                 em = discord.Embed(title="Insufficient Permissions (Owner status needed)", colour=0xcc0000)
                 em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                 await client.send_message(message.channel, embed=em)
-        elif message.content.startswith('>addpriv'):
+        elif message.content.startswith('>addpriv '):
             await client.send_typing(message.channel)
             if message.author.id in get_mods_list():
                 privstoadd = message.mentions
@@ -167,7 +166,7 @@ async def on_message(message):
                 em = discord.Embed(title="Insufficient Permissions (Mod status needed)", colour=0xcc0000)
                 em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                 await client.send_message(message.channel, embed=em)
-        elif message.content.startswith('>ban'):
+        elif message.content.startswith('>ban '):
             await client.send_typing(message.channel)
             if message.author.id in get_mods_list():
                 banstohand = message.mentions
@@ -189,7 +188,7 @@ async def on_message(message):
                 em = discord.Embed(title="Insufficient Permissions (Owner status needed)", colour=0xcc0000)
                 em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                 await client.send_message(message.channel, embed=em)
-        elif message.content.startswith('>bigly'):
+        elif message.content.startswith('>bigly '):
             await client.send_typing(message.channel)
             letters = re.findall(r'[a-z0-9 ]', message.content.replace(">bigly ", "").lower())
             biglytext = ''
@@ -205,7 +204,7 @@ async def on_message(message):
             em = discord.Embed(title='Hello from AveBot!', description='This bot is developed and owned by ao#5755 and is currently running on `'+socket.gethostname()+'` server.\nGit hash: `'+get_git_revision_short_hash()+'`, repo: https://github.com/ardaozkal/AveBot\nInvite link is on the github repo.\n'+helpfile.read(), colour=0xDEADBF)
             em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
             await client.send_message(message.channel, embed=em)
-        elif message.content.startswith('>resolve') or message.content.startswith('>dig'):
+        elif message.content.startswith('>resolve ') or message.content.startswith('>dig '):
             await client.send_typing(message.channel)
             resolveto = message.content.replace(">resolve ", "").replace(">dig ", "")
             resolved = repr(socket.gethostbyname_ex(resolveto))
@@ -227,7 +226,7 @@ async def on_message(message):
             em = discord.Embed(title="DICTATOR DETECTED", colour=0xDEADBF)
             em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
             await client.send_message(message.channel, embed=em)
-        elif message.content.startswith('>dget'):
+        elif message.content.startswith('>dget '):
             await client.send_typing(message.channel)
             if message.author.id in get_privileged_list():
                 link = message.content.split(' ')[1]
@@ -238,7 +237,7 @@ async def on_message(message):
                 em = discord.Embed(title="Insufficient Permissions (Privileged status needed)", colour=0xcc0000)
                 em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                 await client.send_message(message.channel, embed=em)
-        elif message.content.startswith('>say'):
+        elif message.content.startswith('>say '):
             await client.send_typing(message.channel)
             if message.author.id in get_mods_list():
                 tosay = message.content.replace(">say ", "")
@@ -255,7 +254,7 @@ async def on_message(message):
                 await client.send_typing(message.channel)
                 messagecont="Bang resolved to: "+resolvedto
                 await client.send_message(message.channel, content=messagecont)
-        elif message.content.startswith('>xkcd'):
+        elif message.content.startswith('>xkcd '):
             toquery = message.content.replace(">xkcd", "").replace(" ", "").replace("xkcd.com/", "").replace("https://", "").replace("http://", "").replace("www.", "").replace("m.", "").replace("/", "") #lazy as hell :/
             if toquery:
                 toquery = toquery + "/"
@@ -270,7 +269,7 @@ async def on_message(message):
                 await client.send_typing(message.channel)
                 messagecont="**XKCD "+xkcdid+":** `"+title+"`, published on "+date+"\n**Image:** " + resolvedto + "\n**Alt text:** `"+alt+"`\nExplain xkcd: <http://www.explainxkcd.com/wiki/index.php/"+xkcdid+">"
                 await client.send_message(message.channel, content=messagecont)
-        elif message.content.startswith('>similar'):
+        elif message.content.startswith('>similar '):
             await client.send_typing(message.channel)
             toquery = message.content.replace(">similar ", "")
             output = urllib.request.urlopen("https://api.datamuse.com/words?ml="+toquery.replace(" ","+")).read().decode()
@@ -278,7 +277,7 @@ async def on_message(message):
             em = discord.Embed(title="Similar word: " + j[0]["word"], description="(more on <http://www.onelook.com/thesaurus/?s="+toquery.replace(" ","_")+"&loc=cbsim>)", colour=0xDEADBF)
             em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
             await client.send_message(message.channel, embed=em)
-        elif message.content.startswith('>typo'):
+        elif message.content.startswith('>typo '):
             await client.send_typing(message.channel)
             toquery = message.content.replace(">typo ", "")
             output = urllib.request.urlopen("https://api.datamuse.com/words?sp="+toquery.replace(" ","+")).read().decode()
@@ -286,7 +285,7 @@ async def on_message(message):
             em = discord.Embed(title="Typo fixed: " + j[0]["word"], description="(more on <http://www.onelook.com/?w="+toquery.replace(" ","+")+"&ls=a>)", colour=0xDEADBF)
             em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
             await client.send_message(message.channel, embed=em)
-        elif message.content.startswith('>soundslike'):
+        elif message.content.startswith('>soundslike '):
             await client.send_typing(message.channel)
             toquery = message.content.replace(">soundslike ", "")
             output = urllib.request.urlopen("https://api.datamuse.com/words?sl="+toquery.replace(" ","+")).read().decode()
@@ -294,7 +293,7 @@ async def on_message(message):
             em = discord.Embed(title="Sounds like: " + j[0]["word"], description="(more on <http://www.onelook.com/?w="+toquery.replace(" ","+")+"&ls=a>)", colour=0xDEADBF)
             em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
             await client.send_message(message.channel, embed=em)
-        elif message.content.startswith('>rhyme'):
+        elif message.content.startswith('>rhyme '):
             await client.send_typing(message.channel)
             toquery = message.content.replace(">rhyme ", "")
             output = urllib.request.urlopen("https://api.datamuse.com/words?rel_rhy="+toquery.replace(" ","+")).read().decode()
@@ -302,7 +301,7 @@ async def on_message(message):
             em = discord.Embed(title="Rhymes with: " + j[0]["word"], description="(more on <http://www.rhymezone.com/r/rhyme.cgi?Word="+toquery.replace(" ","+")+"&typeofrhyme=adv&org1=syl&org2=l&org3=y>)", colour=0xDEADBF)
             em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
             await client.send_message(message.channel, embed=em)
-        elif message.content.startswith('>material'):
+        elif message.content.startswith('>material '):
             await client.send_typing(message.channel)
             if message.author.id in get_privileged_list():
                 filename = message.content.split(' ')[1]
