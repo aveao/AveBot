@@ -87,8 +87,11 @@ async def on_message(message):
         if message.content.lower().startswith('ok'):
             await client.add_reaction(message, "🆗")
         if message.content.startswith('>') or message.content.startswith('!'):
-            if not str(message.author.id) in get_ban_list():
-                avelog(message.author.name + " (" + message.author.id + ") ran " + message.content + ' on '+message.channel.name+' at '+message.server.name+'.')
+            if (not str(message.author.id) in get_ban_list()):
+                if (message.channel.is_private):
+                    avelog(message.author.name + " (" + message.author.id + ") ran " + message.content + ' on PMs.')
+                else
+                    avelog(message.author.name + " (" + message.author.id + ") ran " + message.content + ' on '+message.channel.name+' at '+message.server.name+'.')
                 if message.content.startswith('>howmanymessages'):
                     counter = 0
                     tmp = await client.send_message(message.channel, 'Calculating messages...')
