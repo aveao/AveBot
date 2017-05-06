@@ -163,11 +163,12 @@ async def on_message(message):
         elif message.content.startswith('>bigly'):
             await client.send_typing(message.channel)
             avelog(str(message.author) + " ran " + message.content)
-            letters = re.findall(r'[a-z0-9]', message.content.replace(">bigly ", "").lower())
+            letters = re.findall(r'[a-z0-9 ]', message.content.replace(">bigly ", "").lower())
             biglytext = ''
+            ri = 'regional_indicator_'
             for letter in letters:
-                biglytext = biglytext+ ":regional_indicator_"+str(letter).replace("0","zero").replace("1","one").replace("2","two").replace("3","three").replace("4","four").replace("5","five").replace("6","six").replace("7","seven").replace("8","eight").replace("9","nine")+": "
-            em = discord.Embed(title='Biglified', description=biglytext, colour=0xDEADBF)
+                biglytext = biglytext+ ":"+ri+str(letter)+": "
+            em = discord.Embed(title='Biglified', description=biglytextreplace(ri+"0","zero").replace(ri+"1","one").replace(ri+"2","two").replace(ri+"3","three").replace(ri+"4","four").replace(ri+"5","five").replace(ri+"6","six").replace(ri+"7","seven").replace(ri+"8","eight").replace(ri+"9","nine").replace(":"+ri+" :","\n"), colour=0xDEADBF)
             em.set_author(name='AveBot', icon_url='https://s.ave.zone/bigly.png')
             await client.send_message(message.channel, embed=em)
         elif message.content.startswith('>help'):
