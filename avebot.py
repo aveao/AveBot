@@ -72,7 +72,7 @@ async def on_ready():
 async def on_message(message):
     try:
         if message.content.startswith('>') or message.content.startswith('!'):
-            avelog(str(message.author) + "(" + message.author.id + ") ran " + message.content)
+            avelog(str(message.author) + " (" + message.author.id + ") ran " + message.content)
 
         if message.content.startswith('>howmanymessages'):
             client.send_typing(message.channel)
@@ -102,7 +102,7 @@ async def on_message(message):
             await client.send_message(message.channel, embed=em)
         elif message.content.startswith('>whoami'):
             await client.send_typing(message.channel)
-            em = discord.Embed(title=':thinking:', description='You are ' + str(message.author) + " (" + message.author.id + ')', colour=0xDEADBF)
+            em = discord.Embed(title=':thinking:', description='You are `' + str(message.author) + "` (`" + message.author.id + '`)', colour=0xDEADBF)
             em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
             await client.send_message(message.channel, embed=em)
         elif message.content.startswith('>contact '):
@@ -319,6 +319,10 @@ async def on_message(message):
                 em = discord.Embed(title="Insufficient Permissions (Privileged status needed)", colour=0xcc0000)
                 em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                 await client.send_message(message.channel, embed=em)
+        
+        if message.content.lower().startswith('ok'):
+            avelog(str(message.author) + " (" + message.author.id + ") said " + message.content)
+            await client.add_reaction(message, "🆗")
     except Exception:
         avelog(traceback.format_exc())
         em = discord.Embed(title="An error happened", description="It was logged and will be reviewed by developers.", colour=0xcc0000)
