@@ -135,6 +135,8 @@ async def on_message(message):
                     em = discord.Embed(title='Hello from AveBot!', description='This bot is developed and owned by ao#5755 and is currently running on `'+socket.gethostname()+'` server.\nGit hash: `'+get_git_revision_short_hash()+'`, repo: https://github.com/ardaozkal/AveBot\nInvite link is on the github repo.\n'+helpfile.read(), colour=0xDEADBF)
                     em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                     await client.send_message(message.channel, embed=em)
+                elif message.content.startswith('>helplong'):
+                        await client.send_file(message.channel, "helplong.md", content="Here's the long help file:")
                 elif message.content.startswith('>resolve ') or message.content.startswith('>dig '):
                     resolveto = message.content.replace(">resolve ", "").replace(">dig ", "")
                     resolved = repr(socket.gethostbyname_ex(resolveto))
