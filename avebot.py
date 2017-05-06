@@ -166,7 +166,7 @@ async def on_message(message):
             letters = re.findall(r'[a-z0-9]', message.content.replace(">bigly ", "").lower())
             biglytext = ''
             for letter in letters:
-                biglytext = biglytext+ ":regional_indicator_"+str(letter)+": "
+                biglytext = biglytext+ ":regional_indicator_"+str(letter).replace("0","zero").replace("1","one").replace("2","two").replace("3","three").replace("4","four").replace("5","five").replace("6","six").replace("7","seven").replace("8","eight").replace("9","nine")+": "
             em = discord.Embed(title='Biglified', description=biglytext, colour=0xDEADBF)
             em.set_author(name='AveBot', icon_url='https://s.ave.zone/bigly.png')
             await client.send_message(message.channel, embed=em)
