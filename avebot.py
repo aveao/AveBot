@@ -226,10 +226,10 @@ async def on_message(message):
                                 await client.send_message(message.channel, embed=em)
                     elif message.content.startswith('>fetchlog'):
                         await client.send_file(message.channel, "log.txt", content="Here's the current log file:")
-                else:
-                    em = discord.Embed(title="Insufficient Permissions (Owner status needed)", colour=0xcc0000)
-                    em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
-                    await client.send_message(message.channel, embed=em)
+                #else:
+                #    em = discord.Embed(title="Insufficient Permissions (Owner status needed)", colour=0xcc0000)
+                #    em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
+                #    await client.send_message(message.channel, embed=em)
 
                 if message.author.id in get_mods_list():   
                     if message.content.startswith('>addpriv '):
@@ -251,10 +251,10 @@ async def on_message(message):
                     elif message.content.startswith('>say '):
                         tosay = message.content.replace(">say ", "")
                         await client.send_message(message.channel, content=tosay)
-                else:
-                    em = discord.Embed(title="Insufficient Permissions (Mod status needed)", colour=0xcc0000)
-                    em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
-                    await client.send_message(message.channel, embed=em)
+                #else:
+                #    em = discord.Embed(title="Insufficient Permissions (Mod status needed)", colour=0xcc0000)
+                #    em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
+                #    await client.send_message(message.channel, embed=em)
 
                 if message.author.id in get_privileged_list():
                     if message.content.startswith('>material '):                        
@@ -279,10 +279,10 @@ async def on_message(message):
                         filename = "files/" + link.split('/')[-1]
                         urllib.request.urlretrieve(link, filename);
                         await client.send_file(message.channel, filename, content=":thumbsup: Here's the file you requested.")
-                else:
-                    em = discord.Embed(title="Insufficient Permissions (Privileged status needed)", colour=0xcc0000)
-                    em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
-                    await client.send_message(message.channel, embed=em)
+                #else:
+                #    em = discord.Embed(title="Insufficient Permissions (Privileged status needed)", colour=0xcc0000)
+                #    em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
+                #    await client.send_message(message.channel, embed=em)
 
             else:
                 avelog(str(message.author) + " (" + message.author.id + ") ran " + message.content + ' on ' + message.channel.name + ' at ' + message.server.name + ', but is banned.')
