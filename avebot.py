@@ -168,7 +168,7 @@ async def on_message(message):
             ri = 'regional_indicator_'
             for letter in letters:
                 biglytext = biglytext+ ":"+ri+str(letter)+": "
-            em = discord.Embed(title='Biglified', description=biglytextreplace(ri+"0","zero").replace(ri+"1","one").replace(ri+"2","two").replace(ri+"3","three").replace(ri+"4","four").replace(ri+"5","five").replace(ri+"6","six").replace(ri+"7","seven").replace(ri+"8","eight").replace(ri+"9","nine").replace(":"+ri+" :","\n"), colour=0xDEADBF)
+            em = discord.Embed(title='Biglified', description=biglytext.replace(ri+"0","zero").replace(ri+"1","one").replace(ri+"2","two").replace(ri+"3","three").replace(ri+"4","four").replace(ri+"5","five").replace(ri+"6","six").replace(ri+"7","seven").replace(ri+"8","eight").replace(ri+"9","nine").replace(":"+ri+" :","\n"), colour=0xDEADBF)
             em.set_author(name='AveBot', icon_url='https://s.ave.zone/bigly.png')
             await client.send_message(message.channel, embed=em)
         elif message.content.startswith('>help'):
