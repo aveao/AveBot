@@ -13,7 +13,7 @@ import socket
 import json
 
 client = discord.Client()
-botowner = "ao#5755"
+botowner = "137584770145058817"
 
 def get_mods_list():
     try:
