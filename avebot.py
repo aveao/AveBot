@@ -88,7 +88,7 @@ async def on_message(message):
             await client.add_reaction(message, "🆗")
         if message.content.startswith('>') or message.content.startswith('!'):
             if not str(message.author.id) in get_ban_list():
-                avelog(str(message.author) + " (" + message.author.id + ") ran " + message.content + ' on '+message.channel.name+' at '+message.server.name+'.')
+                avelog(message.author.name + " (" + message.author.id + ") ran " + message.content + ' on '+message.channel.name+' at '+message.server.name+'.')
                 if message.content.startswith('>howmanymessages'):
                     counter = 0
                     tmp = await client.send_message(message.channel, 'Calculating messages...')
@@ -107,7 +107,7 @@ async def on_message(message):
                     em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                     await client.send_message(message.channel, embed=em)
                 elif message.content.startswith('>whoami'):
-                    em = discord.Embed(title=':thinking:', description='You are `' + str(message.author) + "` (`" + message.author.id + '`)', colour=0xDEADBF)
+                    em = discord.Embed(title=':thinking:', description='You are `' + message.author.name + "` (`" + message.author.id + '`)', colour=0xDEADBF)
                     em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                     await client.send_message(message.channel, embed=em)
                 elif message.content.startswith('>contact '):
