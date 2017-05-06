@@ -71,20 +71,21 @@ async def on_ready():
 @client.event
 async def on_message(message):
     try:
+        if message.content.startswith('>') or message.content.startswith('!'):
+            avelog(str(message.author) + "(" + message.author.id + ") ran " + message.content)
+
         if message.content.startswith('>howmanymessages'):
             client.send_typing(message.channel)
-            avelog(str(message.author) + " ran " + message.content)
             counter = 0
             tmp = await client.send_message(message.channel, 'Calculating messages...')
             async for log in client.logs_from(message.channel, limit=100):
                 if log.author == message.author:
                     counter += 1    
-
             await client.edit_message(tmp, 'You have sent {} messages out of the last 100 in this channel.'.format(counter))
         elif message.content.startswith('>get'):
-            avelog(str(message.author) + " ran " + message.content)
+            
             await client.send_typing(message.channel)
-            if str(message.author) in get_privileged_list():
+            if message.author.id in get_privileged_list():
                 link = message.content.split(' ')[1]
                 filename = "files/" + link.split('/')[-1]
                 urllib.request.urlretrieve(link, filename);
@@ -95,7 +96,12 @@ async def on_message(message):
                 await client.send_message(message.channel, embed=em)
         elif message.content.startswith('>geninvite'):
             await client.send_typing(message.channel)
-            avelog(str(message.author) + " ran " + message.content)
+            inviteurl = await client.create_invite(message.channel,max_uses=1)
+            em = discord.Embed(title='Invite ready!', description='Here you go: ' + inviteurl.url, colour=0xDEADBF)
+            em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
+            await client.send_message(message.channel, embed=em)
+        elif message.content.startswith('>whoami'):
+            await client.send_typing(message.channel)
             inviteurl = await client.create_invite(message.channel,max_uses=1)
             em = discord.Embed(title='Invite ready!', description='Here you go: ' + inviteurl.url, colour=0xDEADBF)
             em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
@@ -103,18 +109,17 @@ async def on_message(message):
         elif message.content.startswith('>contact'):
             await client.send_typing(message.channel)
             await client.send_typing(discord.Object(id='305857608378613761'))
-            avelog(str(message.author) + " ran " + message.content)
             contactcontent = message.content.replace(">contact ", "")
-            em = discord.Embed(title='Contact received!', description='**Message by:** '+str(message.author)+'\n**Message content:** '+contactcontent, colour=0xDEADBF)
+            em = discord.Embed(title='Contact received!', description='**Message by:** '+str(message.author) + "(" + message.author.id + ')\n on '+message.channel.name+' at '+message.server.name+'**Message content:** '+contactcontent, colour=0xDEADBF)
             em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
             await client.send_message(discord.Object(id='305857608378613761'), embed=em)
             em = discord.Embed(title='Contact sent!', description='Your message has been delivered to the developers.', colour=0xDEADBF)
             em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
             await client.send_message(message.channel, embed=em)
         elif message.content.startswith('>exit') or message.content.startswith('>brexit'):
-            avelog(str(message.author) + " ran " + message.content)
+            
             await client.send_typing(message.channel)
-            if str(message.author) == botowner:
+            if message.author.id == botowner:
                 em = discord.Embed(title='Exiting AveBot', description='Goodbye!', colour=0x64dd17)
                 em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                 await client.send_message(message.channel, embed=em)
@@ -124,9 +129,8 @@ async def on_message(message):
                 em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                 await client.send_message(message.channel, embed=em)
         elif message.content.startswith('>pull'):
-            avelog(str(message.author) + " ran " + message.content)
             await client.send_typing(message.channel)
-            if str(message.author) == botowner:
+            if message.author.id == botowner:
                 em = discord.Embed(title='Pulling and restarting AveBot', description='BBIB!', colour=0x64dd17)
                 em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                 await client.send_message(message.channel, embed=em)
@@ -136,37 +140,50 @@ async def on_message(message):
                 em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                 await client.send_message(message.channel, embed=em)
         elif message.content.startswith('>addmod'):
-            avelog(str(message.author) + " ran " + message.content)
             await client.send_typing(message.channel)
-            if str(message.author) == botowner:
-                modtoadd = message.content.replace(">addmod ","")
+            if message.author.id == botowner:
+                modstoadd = message.mentions
                 with open("modslist", "a") as modfile:
-                    modfile.write(modtoadd+"\n")
-                em = discord.Embed(title='Added ' + modtoadd + ' as mod.', description='Welcome to the team!', colour=0x64dd17)
-                em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
-                await client.send_message(message.channel, embed=em)
+                    for dtag in modstoadd: 
+                        modfile.write(dtag.id+"\n")
+                        em = discord.Embed(title='Added ' + str(dtag) + '(' + dtag.id + ') as mod.', description='Welcome to the team!', colour=0x64dd17)
+                        em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
+                        await client.send_message(message.channel, embed=em)
             else:
                 em = discord.Embed(title="Insufficient Permissions (Owner status needed)", colour=0xcc0000)
                 em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                 await client.send_message(message.channel, embed=em)
         elif message.content.startswith('>addpriv'):
-            avelog(str(message.author) + " ran " + message.content)
             await client.send_typing(message.channel)
-            if str(message.author) in get_mods_list():
-                privtoadd = message.content.replace(">addpriv ","")
+            if message.author.id in get_mods_list():
+                privstoadd = message.mentions
                 with open("privlist", "a") as privfile:
-                    privfile.write(privtoadd+"\n")
-                em = discord.Embed(title='Added ' + privtoadd + ' as privileged user.', description='Welcome to the team!', colour=0x64dd17)
+                    for dtag in privstoadd: 
+                        privfile.write(dtag.id+"\n")
+                        em = discord.Embed(title='Added ' + str(dtag) + '(' + dtag.id + ') as privileged user.', description='Welcome to the team!', colour=0x64dd17)
+                        em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
+                        await client.send_message(message.channel, embed=em)
+            else:
+                em = discord.Embed(title="Insufficient Permissions (Mod status needed)", colour=0xcc0000)
                 em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                 await client.send_message(message.channel, embed=em)
+        elif message.content.startswith('>ban'):
+            await client.send_typing(message.channel)
+            if message.author.id in get_mods_list():
+                banstohand = message.mentions
+                with open("bannedlist", "a") as banfile:
+                    for dtag in banstohand: 
+                        banfile.write(dtag.id+"\n")
+                        em = discord.Embed(title='Banned ' + str(dtag) + '(' + dtag.id + ').', description='(People are idiots)', colour=0x64dd17)
+                        em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
+                        await client.send_message(message.channel, embed=em)
             else:
                 em = discord.Embed(title="Insufficient Permissions (Mod status needed)", colour=0xcc0000)
                 em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                 await client.send_message(message.channel, embed=em)
         elif message.content.startswith('>fetchlog'):
-            avelog(str(message.author) + " ran " + message.content)
             await client.send_typing(message.channel)
-            if str(message.author) == botowner:
+            if message.author.id == botowner:
                 await client.send_file(message.channel, "log.txt", content="Here's the current log file:")
             else:
                 em = discord.Embed(title="Insufficient Permissions (Owner status needed)", colour=0xcc0000)
@@ -174,7 +191,6 @@ async def on_message(message):
                 await client.send_message(message.channel, embed=em)
         elif message.content.startswith('>bigly'):
             await client.send_typing(message.channel)
-            avelog(str(message.author) + " ran " + message.content)
             letters = re.findall(r'[a-z0-9 ]', message.content.replace(">bigly ", "").lower())
             biglytext = ''
             ri = 'regional_indicator_'
@@ -185,14 +201,12 @@ async def on_message(message):
             await client.send_message(message.channel, embed=em)
         elif message.content.startswith('>help'):
             await client.send_typing(message.channel)
-            avelog(str(message.author) + " ran " + message.content)
             helpfile = open("help.md", "r") 
             em = discord.Embed(title='Hello from AveBot!', description='This bot is developed and owned by ao#5755 and is currently running on `'+socket.gethostname()+'` server.\nGit hash: `'+get_git_revision_short_hash()+'`, repo: https://github.com/ardaozkal/AveBot\nInvite link is on the github repo.\n'+helpfile.read(), colour=0xDEADBF)
             em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
             await client.send_message(message.channel, embed=em)
         elif message.content.startswith('>resolve') or message.content.startswith('>dig'):
             await client.send_typing(message.channel)
-            avelog(str(message.author) + " ran " + message.content)
             resolveto = message.content.replace(">resolve ", "").replace(">dig ", "")
             resolved = repr(socket.gethostbyname_ex(resolveto))
             em = discord.Embed(title='Resolved ' + resolveto, description='Successfully resolved `' + resolveto + '` to `'+resolved+'`.', colour=0xDEADBF)
@@ -200,26 +214,22 @@ async def on_message(message):
             await client.send_message(message.channel, embed=em)
         elif message.content.startswith('>ping'):
             await client.send_typing(message.channel)
-            avelog(str(message.author) + " ran " + message.content)
             em = discord.Embed(title=':ping_pong: Pong', colour=0xDEADBF)
             em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
             await client.send_message(message.channel, embed=em)
         elif message.content.startswith('>epoch') or message.content.startswith('>unixtime'):
             await client.send_typing(message.channel)
-            avelog(str(message.author) + " ran " + message.content)
             em = discord.Embed(title="Current epoch time is: **" + str(int(time.time()))+"**.", colour=0xDEADBF)
             em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
             await client.send_message(message.channel, embed=em)
         elif message.content.startswith('>erdogan') or message.content.startswith('>trump'):
             await client.send_typing(message.channel)
-            avelog(str(message.author) + " ran " + message.content)
             em = discord.Embed(title="DICTATOR DETECTED", colour=0xDEADBF)
             em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
             await client.send_message(message.channel, embed=em)
         elif message.content.startswith('>dget'):
-            avelog(str(message.author) + " ran " + message.content)
             await client.send_typing(message.channel)
-            if str(message.author) in get_privileged_list():
+            if message.author.id in get_privileged_list():
                 link = message.content.split(' ')[1]
                 filename = "files/requestedfile"
                 urllib.request.urlretrieve(link, filename);
@@ -229,9 +239,8 @@ async def on_message(message):
                 em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                 await client.send_message(message.channel, embed=em)
         elif message.content.startswith('>say'):
-            avelog(str(message.author) + " ran " + message.content)
             await client.send_typing(message.channel)
-            if str(message.author) in get_mods_list():
+            if message.author.id in get_mods_list():
                 tosay = message.content.replace(">say ", "")
                 await client.send_message(message.channel, content=tosay)
             else:
@@ -239,7 +248,6 @@ async def on_message(message):
                 em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                 await client.send_message(message.channel, embed=em)
         elif message.content.startswith('!'):
-            avelog(str(message.author) + " ran " + message.content)
             output = urllib.request.urlopen("https://api.duckduckgo.com/?q="+message.content.replace(" ","+")+"&format=json&pretty=0&no_redirect=1").read().decode()
             j = json.loads(output)
             resolvedto = j["Redirect"]
@@ -248,7 +256,6 @@ async def on_message(message):
                 messagecont="Bang resolved to: "+resolvedto
                 await client.send_message(message.channel, content=messagecont)
         elif message.content.startswith('>xkcd'):
-            avelog(str(message.author) + " ran " + message.content)
             toquery = message.content.replace(">xkcd", "").replace(" ", "").replace("xkcd.com/", "").replace("https://", "").replace("http://", "").replace("www.", "").replace("m.", "").replace("/", "") #lazy as hell :/
             if toquery:
                 toquery = toquery + "/"
@@ -265,7 +272,6 @@ async def on_message(message):
                 await client.send_message(message.channel, content=messagecont)
         elif message.content.startswith('>similar'):
             await client.send_typing(message.channel)
-            avelog(str(message.author) + " ran " + message.content)
             toquery = message.content.replace(">similar ", "")
             output = urllib.request.urlopen("https://api.datamuse.com/words?ml="+toquery.replace(" ","+")).read().decode()
             j = json.loads(output)
@@ -274,7 +280,6 @@ async def on_message(message):
             await client.send_message(message.channel, embed=em)
         elif message.content.startswith('>typo'):
             await client.send_typing(message.channel)
-            avelog(str(message.author) + " ran " + message.content)
             toquery = message.content.replace(">typo ", "")
             output = urllib.request.urlopen("https://api.datamuse.com/words?sp="+toquery.replace(" ","+")).read().decode()
             j = json.loads(output)
@@ -283,7 +288,6 @@ async def on_message(message):
             await client.send_message(message.channel, embed=em)
         elif message.content.startswith('>soundslike'):
             await client.send_typing(message.channel)
-            avelog(str(message.author) + " ran " + message.content)
             toquery = message.content.replace(">soundslike ", "")
             output = urllib.request.urlopen("https://api.datamuse.com/words?sl="+toquery.replace(" ","+")).read().decode()
             j = json.loads(output)
@@ -292,7 +296,6 @@ async def on_message(message):
             await client.send_message(message.channel, embed=em)
         elif message.content.startswith('>rhyme'):
             await client.send_typing(message.channel)
-            avelog(str(message.author) + " ran " + message.content)
             toquery = message.content.replace(">rhyme ", "")
             output = urllib.request.urlopen("https://api.datamuse.com/words?rel_rhy="+toquery.replace(" ","+")).read().decode()
             j = json.loads(output)
@@ -300,9 +303,8 @@ async def on_message(message):
             em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
             await client.send_message(message.channel, embed=em)
         elif message.content.startswith('>material'):
-            avelog(str(message.author) + " ran " + message.content)
             await client.send_typing(message.channel)
-            if str(message.author) in get_privileged_list():
+            if message.author.id in get_privileged_list():
                 filename = message.content.split(' ')[1]
                 if not filename.startswith('ic_'):
                     filename = "ic_" + filename
