@@ -155,7 +155,6 @@ async def on_message(message):
                     j = json.loads(output)
                     resolvedto = j["Redirect"]
                     if resolvedto:
-                        await 
                         messagecont="Bang resolved to: "+resolvedto
                         await client.send_message(message.channel, content=messagecont)
                 elif message.content.startswith('>xkcd '):
