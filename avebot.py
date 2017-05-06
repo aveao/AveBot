@@ -22,6 +22,7 @@ def get_mods_list():
             return modfilething
     except FileNotFoundError:
         avelog("No modslist file found! Please create one or run >addmod")
+        return []
     except Exception:
         avelog(traceback.format_exc())
 
@@ -32,16 +33,18 @@ def get_privileged_list():
             return privfilething
     except FileNotFoundError:
         avelog("No privlist file found! Please create one or run >addpriv")
+        return []
     except Exception:
         avelog(traceback.format_exc())
 
 def get_ban_list():
     try:
         with open("banlist", "r") as banfile:
-            banfilething = banlist.read().split("\n")
+            banfilething = banfile.read().split("\n")
             return banfilething
     except FileNotFoundError:
         avelog("No banlist file found! Please create one.")
+        return []
     except Exception:
         avelog(traceback.format_exc())
 
@@ -81,8 +84,10 @@ async def on_ready():
 @client.event
 async def on_message(message):
     try:
+        if message.content.lower().startswith('ok'):
+            await client.add_reaction(message, "🆗")
         if message.content.startswith('>') or message.content.startswith('!'):
-            if message.author.id not in get_ban_list():
+            if not str(message.author.id) in get_ban_list():
                 avelog(str(message.author) + " (" + message.author.id + ") ran " + message.content + ' on '+message.channel.name+' at '+message.server.name+'.')
                 if message.content.startswith('>howmanymessages'):
                     client.send_typing(message.channel)
@@ -338,8 +343,6 @@ async def on_message(message):
                 em = discord.Embed(title="*Insert sigh* You are banned from using AveBot.", colour=0xcc0000)
                 em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                 await client.send_message(message.channel, embed=em)
-            if message.content.lower().startswith('ok'):
-                await client.add_reaction(message, "🆗")
     except Exception:
         avelog(traceback.format_exc())
         em = discord.Embed(title="An error happened", description="It was logged and will be reviewed by developers.", colour=0xcc0000)

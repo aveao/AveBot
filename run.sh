@@ -1,4 +1,7 @@
 #!/bin/sh
+echo -n "" >> banlist
+echo -n "" >> modslist
+echo -n "" >> privlist
 while true
 do
 		git pull
