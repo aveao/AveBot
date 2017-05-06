@@ -90,7 +90,7 @@ async def on_message(message):
             if (not str(message.author.id) in get_ban_list()):
                 if (message.channel.is_private):
                     avelog(message.author.name + " (" + message.author.id + ") ran " + message.content + ' on PMs.')
-                else
+                else:
                     avelog(message.author.name + " (" + message.author.id + ") ran " + message.content + ' on '+message.channel.name+' at '+message.server.name+'.')
                 if message.content.startswith('>howmanymessages'):
                     counter = 0
@@ -213,6 +213,7 @@ async def on_message(message):
                         em = discord.Embed(title='Pulling and restarting AveBot', description='BBIB!', colour=0x64dd17)
                         em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                         await client.send_message(message.channel, embed=em)
+                        exit()
                     elif message.content.startswith('>addmod '):
                         modstoadd = message.mentions
                         with open("modslist", "a") as modfile:
