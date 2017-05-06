@@ -81,7 +81,7 @@ async def on_ready():
 @client.event
 async def on_message(message):
     try:
-        if message.content.startswith('>') or message.content.startswith('!')
+        if message.content.startswith('>') or message.content.startswith('!'):
             if message.author.id not in get_ban_list():
                 avelog(str(message.author) + " (" + message.author.id + ") ran " + message.content + ' on '+message.channel.name+' at '+message.server.name+'.')
                 if message.content.startswith('>howmanymessages'):
