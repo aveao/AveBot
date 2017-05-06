@@ -1,19 +1,19 @@
 You can view this online at <https://raw.githubusercontent.com/ardaozkal/AveBot/master/help.md> if you don't see `EOF` at the end of the post.
 **Bot Help Commands**
-**>help:** Displays this.
-**>ping:** Checks if bot is running.
+**>help:** this.
+**>ping:** checks if bot is running.
 **>whoami:** Returns UserID.
-**>contact <message>:** Send developers a message. Can be an idea or a bug report.
+**>contact <message>:** Sends developers a message. 
 
 **Server Commands**
-**>addavebot:** gives the oauth2 link needed to add avebot to this server.
+**>addavebot:** gives the link needed to add avebot
 **>geninvite:** generates an invite **for this channel** one use and unlimited duration
-**>howmanymessages:** Checks how many messages you have in this channel, out of the last 100 ones.
+**>howmanymessages:** Checks how many messages you have in this channel
 
 **Fun Commands**
 **>bigly:** Makes text as :regional_indicator_b: :regional_indicator_i: :regional_indicator_g: as the hands of the god-emperor.
 **!<bang> <something>** Resolves a duckduckgo bang. (more info at <https://duckduckgo.com/bang>)
-**>xkcd <comic id/link>** gives details of the given xkcd comic. If no comic id is specified, it'll give the latest one instead.
+**>xkcd <comic id/link>** gives details of the xkcd comic. If no comic id is specified, it'll give the latest one instead.
 
 **Linguistic Commands**
 **>similar <word or a word group>:** Finds a similar word
@@ -22,8 +22,8 @@ You can view this online at <https://raw.githubusercontent.com/ardaozkal/AveBot/
 **>rhyme <word or a word group>:** Finds a word that rhymes with it
 
 **Technical Commands**
-**>resolve <domain>** / **>dig <domain>:** Resolves a domain to an IP address.
-**>epoch** / **>unixtime:** Returns UNIX time since epoch.
+**>resolve / >dig <domain>** Resolves a domain.
+**>epoch / >unixtime:** Returns UNIX time since epoch.
 
 **Privileged-only Commands**
 **>get <url>:** gets a link and uploads it to discord
