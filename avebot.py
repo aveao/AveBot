@@ -123,6 +123,18 @@ async def on_message(message):
                 em = discord.Embed(title="Insufficient Permissions (Owner status needed)", colour=0xcc0000)
                 em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                 await client.send_message(message.channel, embed=em)
+        elif message.content.startswith('>pull'):
+            avelog(str(message.author) + " ran " + message.content)
+            await client.send_typing(message.channel)
+            if str(message.author) == botowner:
+                em = discord.Embed(title='Pulling and restarting AveBot', description='BBIB!', colour=0x64dd17)
+                em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
+                await client.send_message(message.channel, embed=em)
+                exit()
+            else:
+                em = discord.Embed(title="Insufficient Permissions (Owner status needed)", colour=0xcc0000)
+                em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
+                await client.send_message(message.channel, embed=em)
         elif message.content.startswith('>addmod'):
             avelog(str(message.author) + " ran " + message.content)
             await client.send_typing(message.channel)
