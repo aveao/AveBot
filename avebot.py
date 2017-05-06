@@ -335,7 +335,8 @@ async def on_message(message):
             
             if message.content.lower().startswith('ok'):
                 await client.add_reaction(message, "🆗")
-        else if message.content.startswith('>') or message.content.startswith('!') or message.content.lower().startswith('ok'):
+
+        elif message.content.startswith('>') or message.content.startswith('!') or message.content.lower().startswith('ok'):
             avelog(str(message.author) + " (" + message.author.id + ") ran " + message.content + ' on ' + message.channel.name + ' at ' + message.server.name + ', but is banned.')
             em = discord.Embed(title="*Insert sigh* You are banned from using AveBot.", colour=0xcc0000)
             em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
