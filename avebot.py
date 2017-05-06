@@ -225,7 +225,7 @@ async def on_message(message):
                     em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                     await client.send_message(message.channel, embed=em)
 
-                if message.author.id in get_privileged_list():   
+                if message.author.id in get_mods_list():   
                     if message.content.startswith('>addpriv '):
                         privstoadd = message.mentions
                         with open("privlist", "a") as privfile:
@@ -242,6 +242,9 @@ async def on_message(message):
                                 em = discord.Embed(title='Banned ' + str(dtag) + '(' + dtag.id + ').', description='(People are idiots)', colour=0x64dd17)
                                 em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                                 await client.send_message(message.channel, embed=em)
+                    elif message.content.startswith('>say '):
+                        tosay = message.content.replace(">say ", "")
+                        await client.send_message(message.channel, content=tosay)
                 else:
                     em = discord.Embed(title="Insufficient Permissions (Mod status needed)", colour=0xcc0000)
                     em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
@@ -275,9 +278,6 @@ async def on_message(message):
                     em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                     await client.send_message(message.channel, embed=em)
 
-                    elif message.content.startswith('>say '):
-                        tosay = message.content.replace(">say ", "")
-                        await client.send_message(message.channel, content=tosay)
             else:
                 avelog(str(message.author) + " (" + message.author.id + ") ran " + message.content + ' on ' + message.channel.name + ' at ' + message.server.name + ', but is banned.')
                 em = discord.Embed(title="*Insert sigh* You are banned from using AveBot.", colour=0xcc0000)
