@@ -103,7 +103,7 @@ async def on_message(message):
                     await client.send_message(message.channel, embed=em)
                 elif message.content.startswith('>addavebot'):
                     inviteurl = await discord.utils.oauth_url("305708836361207810")
-                    em = discord.Embed(title='Invite ready!', description='Here you go: ' + inviteurl.url + ' \n(Note: This invite is for THIS server/channel, not any other server. Please contact ao#5755 if you suspect that it is being abused and want to learn the identity of the person who abused this function.)', colour=0xDEADBF)
+                    em = discord.Embed(title='Invite ready!', description='Here you go: ' + str(inviteurl), colour=0xDEADBF)
                     em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                     await client.send_message(message.channel, embed=em)
                 elif message.content.startswith('>whoami'):
