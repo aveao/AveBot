@@ -32,10 +32,11 @@ You can view this online at <https://raw.githubusercontent.com/ardaozkal/AveBot/
 
 **Mod-only Commands**
 **>say <something>:** makes the bot say something
-**>addpriv <discord tag>:** adds a privileged user
+**>addpriv <tag as many people as you like>:** adds a privileged user
+**>ban <tag as many people as you like>:** bans a user from using avebot
 
 **Owner-only Commands**
 **>exit:** exits the bot
-**>addmod <discord tag>:** adds a mod
+**>addmod <tag as many people as you like>:** adds a mod
 **>fetchlog:** replies with the log file
 `EOF`

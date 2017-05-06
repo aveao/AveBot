@@ -21,7 +21,7 @@ def get_mods_list():
             modfilething = modfile.read().split("\n")
             return modfilething
     except FileNotFoundError:
-        avelog("No modslist file found! Please create one. Place a mod's discord tag (ao#5755) on every line")
+        avelog("No modslist file found! Please create one or run >addmod")
     except Exception:
         avelog(traceback.format_exc())
 
@@ -31,7 +31,17 @@ def get_privileged_list():
             privfilething = privfile.read().split("\n")
             return privfilething
     except FileNotFoundError:
-        avelog("No privlist file found! Please create one. Place a mod's discord tag (ao#5755) on every line")
+        avelog("No privlist file found! Please create one or run >addpriv")
+    except Exception:
+        avelog(traceback.format_exc())
+
+def get_banned_list():
+    try:
+        with open("banlist", "r") as banfile:
+            banfilething = banlist.read().split("\n")
+            return banfilething
+    except FileNotFoundError:
+        avelog("No banlist file found! Please create one.")
     except Exception:
         avelog(traceback.format_exc())
 
@@ -71,8 +81,8 @@ async def on_ready():
 @client.event
 async def on_message(message):
     try:
-        if message.content.startswith('>') or message.content.startswith('!'):
-            avelog(str(message.author) + " (" + message.author.id + ") ran " + message.content)
+        if message.content.startswith('>') or message.content.startswith('!') or message.content.lower().startswith('ok'):
+            avelog(str(message.author) + " (" + message.author.id + ") ran " + message.content + ' on '+message.channel.name+' at '+message.server.name+'.')
 
         if message.content.startswith('>howmanymessages'):
             client.send_typing(message.channel)
@@ -83,7 +93,6 @@ async def on_message(message):
                     counter += 1    
             await client.edit_message(tmp, 'You have sent {} messages out of the last 100 in this channel.'.format(counter))
         elif message.content.startswith('>get '):
-            
             await client.send_typing(message.channel)
             if message.author.id in get_privileged_list():
                 link = message.content.split(' ')[1]
@@ -122,7 +131,6 @@ async def on_message(message):
             em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
             await client.send_message(message.channel, embed=em)
         elif message.content.startswith('>exit') or message.content.startswith('>brexit'):
-            
             await client.send_typing(message.channel)
             if message.author.id == botowner:
                 em = discord.Embed(title='Exiting AveBot', description='Goodbye!', colour=0x64dd17)
@@ -176,7 +184,7 @@ async def on_message(message):
             await client.send_typing(message.channel)
             if message.author.id in get_mods_list():
                 banstohand = message.mentions
-                with open("bannedlist", "a") as banfile:
+                with open("banlist", "a") as banfile:
                     for dtag in banstohand: 
                         banfile.write(dtag.id+"\n")
                         em = discord.Embed(title='Banned ' + str(dtag) + '(' + dtag.id + ').', description='(People are idiots)', colour=0x64dd17)
