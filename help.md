@@ -6,7 +6,8 @@ You can view this online at <https://raw.githubusercontent.com/ardaozkal/AveBot/
 **>contact <message>:** Send developers a message. Can be an idea or a bug report.
 
 **Server Commands**
-**>geninvite:** generates an invite for this channel one use and unlimited duration
+**>addavebot:** gives the oauth2 link needed to add avebot to this server.
+**>geninvite:** generates an invite **for this channel** one use and unlimited duration
 **>howmanymessages:** Checks how many messages you have in this channel, out of the last 100 ones.
 
 **Fun Commands**
