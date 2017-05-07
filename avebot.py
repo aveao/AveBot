@@ -155,8 +155,9 @@ async def on_message(message):
                     em = discord.Embed(title="DICTATOR DETECTED", colour=0xDEADBF)
                     em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                     await client.send_message(message.channel, embed=em)
-                elif message.content.startswith('!'):
-                    output = urllib.request.urlopen("https://api.duckduckgo.com/?q="+message.content.replace(" ","+")+"&format=json&pretty=0&no_redirect=1").read().decode()
+                elif message.content.startswith('>!'):
+                    toquery = message.content.replace(">!", "!").replace(" ","+")
+                    output = urllib.request.urlopen("https://api.duckduckgo.com/?q="+toquery+"&format=json&pretty=0&no_redirect=1").read().decode()
                     j = json.loads(output)
                     resolvedto = j["Redirect"]
                     if resolvedto:

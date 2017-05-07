@@ -8,7 +8,7 @@ You can view the full version online at <https://raw.githubusercontent.com/ardao
 **>geninvite**
 **>howmanymessages**
 **>bigly**
-**!<bang> <something>**
+**>!<bang> <something>**
 **>xkcd <comic id/link>**
 **>similar <word or a word group>**
 **>typo <word or a word group>**
