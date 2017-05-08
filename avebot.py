@@ -86,7 +86,11 @@ async def on_message(message):
     try:
         if message.content.lower().startswith('ok'):
             await client.add_reaction(message, "🆗")
-        if message.content.startswith('>') or message.content.startswith('!'):
+        if message.content.lower().startswith('hot'):
+            await client.add_reaction(message, "🔥")
+        if message.content.lower().startswith('cool'):
+            await client.add_reaction(message, "❄")
+        if message.content.startswith('>'):
             if (not str(message.author.id) in get_ban_list()):
                 if (message.channel.is_private):
                     avelog(message.author.name + " (" + message.author.id + ") ran " + message.content + ' on PMs.')
