@@ -86,10 +86,14 @@ async def on_message(message):
     try:
         if message.content.lower().startswith('ok'):
             await client.add_reaction(message, "🆗")
-        if message.content.lower().startswith('hot'):
+        elif message.content.lower().startswith('hot'):
             await client.add_reaction(message, "🔥")
-        if message.content.lower().startswith('cool'):
+        elif message.content.lower().startswith('cool'):
             await client.add_reaction(message, "❄")
+
+        if "🤔" in message.content: # thinking
+            await client.add_reaction(message, "🤔")
+
         if message.content.startswith('>'):
             if (not str(message.author.id) in get_ban_list()):
                 if (message.channel.is_private):
