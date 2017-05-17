@@ -11,6 +11,7 @@ import time
 import subprocess
 import socket
 import json
+import requests
 
 client = discord.Client()
 botowner = "137584770145058817"
@@ -155,6 +156,12 @@ async def on_message(message):
                     em = discord.Embed(title=':ping_pong: Pong', colour=0xDEADBF)
                     em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                     await client.send_message(message.channel, embed=em)
+                elif message.content.startswith('>trumpsim'):
+                    seed = message.content.split(' ')[1]
+                    response = requests.get("127.0.0.1:2001/reply?q={}".format(seed)).content
+                    em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
+                    em = discord.Embed(title="Trump says: '{}'".format(response), colour=0xDEADBF)
+                    await client.send_message(message.channel, embed=em)
                 elif message.content.startswith('>epoch') or message.content.startswith('>unixtime'):
                     em = discord.Embed(title="Current epoch time is: **" + str(int(time.time()))+"**.", colour=0xDEADBF)
                     em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
@@ -288,6 +295,7 @@ async def on_message(message):
                         filename = "files/" + link.split('/')[-1]
                         urllib.request.urlretrieve(link, filename);
                         await client.send_file(message.channel, filename, content=":thumbsup: Here's the file you requested.")
+
                 #else:
                 #    em = discord.Embed(title="Insufficient Permissions (Privileged status needed)", colour=0xcc0000)
                 #    em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
