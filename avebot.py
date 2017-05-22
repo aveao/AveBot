@@ -114,7 +114,7 @@ async def on_message(message):
                     em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                     await client.send_message(message.channel, embed=em)
                 elif message.content.startswith('>servercount'):
-                    em = discord.Embed(title='Server count', description='AveBot is in ' + len(client.servers) + ' servers.', colour=0xDEADBF)
+                    em = discord.Embed(title='Server count', description='AveBot is in ' + str(len(client.servers)) + ' servers.', colour=0xDEADBF)
                     em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                     await client.send_message(message.channel, embed=em)
                 elif message.content.startswith('>addavebot'):
