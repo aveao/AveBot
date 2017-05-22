@@ -71,7 +71,7 @@ async def on_ready():
     avelog(client.user.id)
     avelog('------')
     try:
-        time.sleep(3)
+        asyncio.sleep(3)
         await client.change_presence(game=discord.Game(name='run >help'))
         em = discord.Embed(title='AveBot initialized!', description='Git hash: `'+get_git_revision_short_hash()+'`\nHostname: '+socket.gethostname()+'\nLocal Time: '+st+'\nLogs are attached.', colour=0xDEADBF)
         em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
@@ -87,7 +87,7 @@ async def on_message(message):
     try:
         if message.content.lower().startswith('ok'):
             await client.add_reaction(message, "🆗")
-        elif message.content.lower().startswith('hot'):
+        elif message.content.lower() == ('hot'):
             await client.add_reaction(message, "🔥")
         elif message.content.lower().startswith('cool'):
             await client.add_reaction(message, "❄")
@@ -111,6 +111,10 @@ async def on_message(message):
                 elif message.content.startswith('>geninvite'):
                     inviteurl = await client.create_invite(message.channel,max_uses=1)
                     em = discord.Embed(title='Invite ready!', description='Here you go: ' + inviteurl.url + ' \n(Note: This invite is for THIS server/channel, not any other server. Please contact ao#5755 if you suspect that it is being abused and want to learn the identity of the person who abused this function.)', colour=0xDEADBF)
+                    em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
+                    await client.send_message(message.channel, embed=em)
+                elif message.content.startswith('>servercount'):
+                    em = discord.Embed(title='Server count', description='AveBot is in ' + len(client.servers) + ' servers.', colour=0xDEADBF)
                     em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                     await client.send_message(message.channel, embed=em)
                 elif message.content.startswith('>addavebot'):

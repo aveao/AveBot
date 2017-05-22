@@ -2,6 +2,7 @@
 You can view the full version online at <https://raw.githubusercontent.com/ardaozkal/AveBot/master/helplong.md> or type `>helplong` and it'll be attached.
 **>help**
 **>ping**
+**>servercount**
 **>whoami**
 **>contact <message>**
 **>addavebot**

@@ -2,6 +2,7 @@
 **>help:** Shortened version of this.
 **>helplong:** Links to this.
 **>ping:** checks if bot is running.
+**>servercount:** Returns the amount of servers AveBot is in.
 **>whoami:** Returns UserID.
 **>contact <message>:** Sends developers a message. 
 
