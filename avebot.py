@@ -87,7 +87,7 @@ async def on_message(message):
     try:
         if message.content.lower().startswith('ok'):
             await client.add_reaction(message, "🆗")
-        elif message.content.lower() == ('hot'):
+        elif message.content.lower().startswith('hot'):
             await client.add_reaction(message, "🔥")
         elif message.content.lower().startswith('cool'):
             await client.add_reaction(message, "❄")
