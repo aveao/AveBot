@@ -113,6 +113,10 @@ async def on_message(message):
                     em = discord.Embed(title='Invite ready!', description='Here you go: ' + inviteurl.url + ' \n(Note: This invite is for THIS server/channel, not any other server. Please contact ao#5755 if you suspect that it is being abused and want to learn the identity of the person who abused this function.)', colour=0xDEADBF)
                     em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                     await client.send_message(message.channel, embed=em)
+                elif message.content.startswith('>govegan'):
+                    em = discord.Embed(title='The best way to go vegan.', description='https://zhangyijiang.github.io/puppies-and-chocolate/', colour=0xDEADBF)
+                    em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
+                    await client.send_message(message.channel, embed=em)
                 elif message.content.startswith('>servercount'):
                     em = discord.Embed(title='Server count', description='AveBot is in ' + str(len(client.servers)) + ' servers.', colour=0xDEADBF)
                     em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
@@ -187,7 +191,7 @@ async def on_message(message):
                     output = urllib.request.urlopen("https://finance.google.com/finance/info?client=ig&q="+toquery).read().decode().replace("// ", "")
                     if "Response Code 400" not in output:
                         j = json.loads(output)[0]
-                        em = discord.Embed(title=""+j["t"]+" ("+j["e"]+")'s stocks info as of "+j["elt"], description="Current Price is **"+j["l"]+" USD**.\nChange from yesterday: **"+j["c"]+" USD**, (**"+j["cp"]+"%**)", colour=(0xab000d if j["cp"].startswith("-") else 0x388e3c))
+                        em = discord.Embed(title=""+j["t"]+" ("+j["e"]+")'s stocks info as of "+j["lt"], description="Current Price is **"+j["l"]+" USD**.\nChange from yesterday: **"+j["c"]+" USD**, (**"+j["cp"]+"%**)", colour=(0xab000d if j["cp"].startswith("-") else 0x32cb00))
                         em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png') #down arrow
                         em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png') #up arrow
                         await client.send_message(message.channel, embed=em)
