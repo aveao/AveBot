@@ -185,7 +185,7 @@ async def on_message(message):
                 elif message.content.startswith('>stock'):
                     toquery = message.content.replace(">stock", "")
                     output = urllib.request.urlopen("https://finance.google.com/finance/info?client=ig&q="+toquery).read().decode().replace("// ", "")
-                    if "Response Code 400" is not in output:
+                    if "Response Code 400" not in output:
                         j = json.loads(output)[0]
                         messagecont="`"+toquery+"` is at `"+j["e"]+"`.\nCurrent Price is `"+j["l"]+"USD`.\nChange from yesterday: `"+j["c"]+"`, (`"+j["cp"]+"%`)"
                         em = discord.Embed(title=""+toquery+" ("+j["e"]+")'s stocks info as of "+j["elt"], description="(more on <http://www.onelook.com/thesaurus/?s="+toquery.replace(" ","_")+"&loc=cbsim>)", colour=0xDEADBF)
