@@ -183,7 +183,7 @@ async def on_message(message):
                         messagecont="Bang resolved to: "+resolvedto
                         await client.send_message(message.channel, content=messagecont)
                 elif message.content.startswith('>stock'):
-                    toquery = message.content.replace(">stock", "")
+                    toquery = message.content.replace(">stock ", "")
                     output = urllib.request.urlopen("https://finance.google.com/finance/info?client=ig&q="+toquery).read().decode().replace("// ", "")
                     if "Response Code 400" not in output:
                         j = json.loads(output)[0]
