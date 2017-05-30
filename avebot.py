@@ -187,8 +187,7 @@ async def on_message(message):
                     output = urllib.request.urlopen("https://finance.google.com/finance/info?client=ig&q="+toquery).read().decode().replace("// ", "")
                     if "Response Code 400" not in output:
                         j = json.loads(output)[0]
-                        messagecont="`"+toquery+"` is at `"+j["e"]+"`.\nCurrent Price is `"+j["l"]+"USD`.\nChange from yesterday: `"+j["c"]+"`, (`"+j["cp"]+"%`)"
-                        em = discord.Embed(title=""+toquery+" ("+j["e"]+")'s stocks info as of "+j["elt"], description="(more on <http://www.onelook.com/thesaurus/?s="+toquery.replace(" ","_")+"&loc=cbsim>)", colour=0xDEADBF)
+                        em = discord.Embed(title=""+j["t"]+" ("+j["e"]+")'s stocks info as of "+j["elt"], description="`"+toquery+"` is at `"+j["e"]+"`.\nCurrent Price is `"+j["l"]+"USD`.\nChange from yesterday: `"+j["c"]+"`, (`"+j["cp"]+"%`)", colour=0xDEADBF)
                         em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                         await client.send_message(message.channel, embed=em)
                 elif message.content.startswith('>xkcd '):
