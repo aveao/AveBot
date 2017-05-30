@@ -187,7 +187,7 @@ async def on_message(message):
                     output = urllib.request.urlopen("https://finance.google.com/finance/info?client=ig&q="+toquery).read().decode().replace("// ", "")
                     if "Response Code 400" not in output:
                         j = json.loads(output)[0]
-                        em = discord.Embed(title=""+j["t"]+" ("+j["e"]+")'s stocks info as of "+j["elt"], description="Current Price is **"+j["l"]+" USD**.\nChange from yesterday: **"+j["c"]+" USD**, (**"+j["cp"]+"%**)", colour=(0xab000d if j["cf"].startswith("-") else 0x388e3c))
+                        em = discord.Embed(title=""+j["t"]+" ("+j["e"]+")'s stocks info as of "+j["elt"], description="Current Price is **"+j["l"]+" USD**.\nChange from yesterday: **"+j["c"]+" USD**, (**"+j["cp"]+"%**)", colour=(0xab000d if j["cp"].startswith("-") else 0x388e3c))
                         em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png') #down arrow
                         em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png') #up arrow
                         await client.send_message(message.channel, embed=em)
