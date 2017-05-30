@@ -18,6 +18,7 @@ You can view the full version online at <https://raw.githubusercontent.com/ardao
 **>resolve / >dig <domain>**
 **>epoch / >unixtime**
 **>stock <stock name>**
+**>stockchart <stock name>**
 --PRIV ONLY--
 **>get <url>**
 **>dget <url>**

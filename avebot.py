@@ -192,9 +192,14 @@ async def on_message(message):
                     if "Response Code 400" not in output:
                         j = json.loads(output)[0]
                         em = discord.Embed(title=""+j["t"]+" ("+j["e"]+")'s stocks info as of "+j["lt"], description="Current Price is **"+j["l"]+" USD**.\nChange from yesterday: **"+j["c"]+" USD**, (**"+j["cp"]+"%**)", colour=(0xab000d if j["cp"].startswith("-") else 0x32cb00))
-                        em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png') #down arrow
-                        em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png') #up arrow
+                        em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                         await client.send_message(message.channel, embed=em)
+                elif message.content.startswith('>stockchart'):
+                    toquery = message.content.replace(">stockchart ", "")
+                    link = "http://finviz.com/chart.ashx?t=" + toquery + "&ty=c&ta=1&p=d&s=l"
+                    filename = "files/" + toquery + ".png"
+                    urllib.request.urlretrieve(link, filename);
+                    await client.send_file(message.channel, filename, content="Here's the charts for " + toquery)
                 elif message.content.startswith('>xkcd '):
                     toquery = message.content.replace(">xkcd", "").replace(" ", "").replace("xkcd.com/", "").replace("https://", "").replace("http://", "").replace("www.", "").replace("m.", "").replace("/", "") #lazy as hell :/
                     if toquery:

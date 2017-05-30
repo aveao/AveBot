@@ -26,6 +26,7 @@
 **>resolve / >dig <domain>** Resolves a domain.
 **>epoch / >unixtime:** Returns UNIX time since epoch.
 **>stock <stock name>:** Returns info about said stock.
+**>stockchart <stock name>:** Returns chart about said stock.
 
 **Privileged-only Commands**
 **>get <url>:** gets a link and uploads it to discord
