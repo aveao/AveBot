@@ -187,7 +187,7 @@ async def on_message(message):
                         messagecont="Bang resolved to: "+resolvedto
                         await client.send_message(message.channel, content=messagecont)
                 elif message.content.startswith('>stockchart'):
-                    toquery = message.content.replace(">stockchart ", "")
+                    toquery = message.content.replace(">stockchart ", "").upper()
                     link = "http://finviz.com/chart.ashx?t=" + toquery + "&ty=c&ta=1&p=d&s=l"
                     filename = "files/" + toquery + ".png"
                     urllib.request.urlretrieve(link, filename);
