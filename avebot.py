@@ -191,7 +191,7 @@ async def on_message(message):
                     link = "http://finviz.com/chart.ashx?t=" + toquery + "&ty=c&ta=1&p=d&s=l"
                     filename = "files/" + toquery + ".png"
                     urllib.request.urlretrieve(link, filename);
-                    await client.send_file(message.channel, filename, content="Here's the charts for " + toquery)
+                    await client.send_file(message.channel, filename, content="Here's the charts for " + toquery + ". See <http://finviz.com/quote.ashx?t=" + toquery + "> for more info.")
                 elif message.content.startswith('>stock'):
                     toquery = message.content.replace(">stock ", "")
                     output = urllib.request.urlopen("https://finance.google.com/finance/info?client=ig&q="+toquery).read().decode().replace("// ", "")
