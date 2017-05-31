@@ -121,6 +121,8 @@ async def on_message(message):
                     em = discord.Embed(title='Server count', description='AveBot is in ' + str(len(client.servers)) + ' servers.', colour=0xDEADBF)
                     em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                     await client.send_message(message.channel, embed=em)
+                elif message.content.startswith('!score'):
+                    await client.send_message(message.channel, 'This command can only be ran on the stream: <https://twitch.tv/StockStream>')
                 elif message.content.startswith('>addavebot'):
                     inviteurl = discord.utils.oauth_url("305708836361207810")
                     em = discord.Embed(title='Invite ready!', description='Here you go: ' + str(inviteurl), colour=0xDEADBF)
