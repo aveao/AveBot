@@ -236,7 +236,7 @@ async def on_message(message):
                     await client.send_file(message.channel, filename,
                                            content="Here's the charts for " + toquery + ". See <http://finviz.com/quote.ashx?t=" + toquery + "> for more info.")
                 elif message.content.startswith('>stock'):
-                    toquery = message.content.replace(">stock ", "")
+                    toquery = message.content.replace(">stock ", "").upper()
                     try:
                         symbols = urllib.request.urlopen("https://api.robinhood.com/quotes/?symbols=" + toquery).read().decode()
                         symbolsj = json.loads(symbols)["results"][0]
@@ -257,7 +257,7 @@ async def on_message(message):
                         await client.send_message(message.channel, embed=em)
                     except urllib.error.HTTPError as e:
                         em = discord.Embed(title="HTTP Error",
-                                           description="Error Code: "+e.code+"\nError Reason: "+e.reason,
+                                           description="Error Code: "+str(e.code)+"\nError Reason: "+e.reason,
                                            colour=0xab000d)
                         em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                         await client.send_message(message.channel, embed=em)
