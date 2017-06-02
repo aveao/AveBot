@@ -265,7 +265,8 @@ async def on_message(message):
                                            "Change from yesterday: **" + diff + " USD**, (**" + percentage + "%**)\n"+
                                            "Bid size: **" + str(symbolsj["bid_size"]) + " ("+symbolsj["bid_price"]+" USD)**, Ask size: **" + str(symbolsj["ask_size"]) + " ("+symbolsj["ask_price"]+" USD)**\n"+
                                            "Current Volume: **" + fundamentalsj["volume"] + "**, Average Volume: **" + fundamentalsj["average_volume"] + "** \n"+
-                                           "Tradeable (on robinhood): " + str(tradeability) + ", " + str(countryflag))
+                                           "Tradeable (on robinhood): " + tradeability + 
+                                           ", " + countryflag)
 
                         em = discord.Embed(title=symbolsj["symbol"]+"'s stocks info as of " + symbolsj["updated_at"],
                                            description=description_text,
