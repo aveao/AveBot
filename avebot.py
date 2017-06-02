@@ -250,10 +250,9 @@ async def on_message(message):
                         diff=str(Decimal(current_price)-Decimal(symbolsj["previous_close"]))
                         if not diff.startswith("-"):
                             diff = "+" + diff
-                        percentage = str(100 * Decimal(diff)/Decimal(current_price))
+                        percentage = str(100 * Decimal(diff)/Decimal(current_price))[:6]
                         if not percentage.startswith("-"):
                             percentage = "+" + percentage
-                        # TODO: trim Percentage
 
                         em = discord.Embed(title=symbolsj["symbol"]+"'s stocks info as of " + symbolsj["updated_at"],
                                            description="Name: **"+instrumentj["name"]+"**\n"+
