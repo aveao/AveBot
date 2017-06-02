@@ -124,8 +124,8 @@ async def on_message(message):
                         AllCounter += 1
                         if log.author == message.author:
                             Counter += 1
-                    percentage_of_messages=(100*(Counter/AllCounter))
-                    await client.edit_message(tmp, 'You have sent '+str(Counter)+' messages out of the last '+str(AllCounter)+' in this channel. That accounts for %' + str(percentage_of_messages) + ' of messages.')
+                    percentage_of_messages=str(100*(Counter/AllCounter))[:6]
+                    await client.edit_message(tmp, 'You have sent '+str(Counter)+' messages out of the last '+str(AllCounter)+' in this channel. That accounts for %' + percentage_of_messages + ' of messages.')
                 elif message.content.startswith('>geninvite'):
                     inviteurl = await client.create_invite(message.channel, max_uses=1)
                     em = discord.Embed(title='Invite ready!',
