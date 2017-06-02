@@ -125,7 +125,10 @@ async def on_message(message):
                         if log.author == message.author:
                             Counter += 1
                     percentage_of_messages=str(100*(Counter/AllCounter))[:6]
-                    await client.edit_message(tmp, 'You have sent '+str(Counter)+' messages out of the last '+str(AllCounter)+' in this channel. That accounts for %' + percentage_of_messages + ' of messages.')
+                    await client.edit_message(tmp, 'You have sent '+str(Counter)+' messages out of the last '+str(AllCounter)+' in this channel. That accounts for %' + percentage_of_messages + ' of messages.')              
+                elif message.content.startswith('>futureman '):
+                    ticker = message.content.replace('>futureman ', '')
+                    await client.send_message(message.channel, 'FutureMan BUY FutureMan {} FutureMan FOR FutureMan A FutureMan BRIGHTER FutureMan FUTURE FutureMan'.format(ticker))
                 elif message.content.startswith('>geninvite'):
                     inviteurl = await client.create_invite(message.channel, max_uses=1)
                     em = discord.Embed(title='Invite ready!',
