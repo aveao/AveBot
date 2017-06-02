@@ -258,7 +258,6 @@ async def on_message(message):
                         em = discord.Embed(title=symbolsj["symbol"]+"'s stocks info as of " + symbolsj["updated_at"],
                                            description="Name: **"+instrumentj["name"]+"**\n"+
                                            "Current Price: **" + current_price + " USD**\n"+
-                                           "Yesterday's Price: **" + symbolsj["previous_close"] + " USD**\n"+
                                            "Change from yesterday: **" + diff + " USD**, (**" + percentage + "%**)\n"+
                                            "Bid size: **" + str(symbolsj["bid_size"]) + " ("+symbolsj["bid_price"]+" USD)**, Ask size: **" + str(symbolsj["ask_size"]) + " ("+symbolsj["ask_price"]+" USD)**\n"+
                                            "Current Volume: **" + fundamentalsj["volume"] + "**, Average Volume: **" + fundamentalsj["average_volume"] + "** \n"+
