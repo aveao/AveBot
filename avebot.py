@@ -248,10 +248,14 @@ async def on_message(message):
                         if not diff.startswith("-"):
                             diff = "+"+diff
                         percentage = 0
+                        # TODO: Percentage
+                        # TODO: bid/ask and trade volume
+                        # TODO: tradability (tradable on instruments)
+                        # TODO: flag (:flag_(country in instruments page, undercase):)
 
                         em = discord.Embed(title=symbolsj["symbol"]+" ("+instrumentj["name"]+")'s stocks info as of " + symbolsj["updated_at"],
                                            description="Current Price is **" + symbolsj[
-                                               "last_trade_price"] + " USD**.\nChange from yesterday: **" + diff + " USD**, (**" + percentage + "%**)",
+                                               "last_trade_price"] + " USD**.\nChange from yesterday: **" + diff + " USD**, (**" + str(percentage) + "%**)",
                                            colour=(0xab000d if diff.startswith("-") else 0x32cb00))
                         em.set_author(name='AveBot - Stocks', icon_url='https://s.ave.zone/c7d.png')
                         await client.send_message(message.channel, embed=em)
