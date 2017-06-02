@@ -243,7 +243,7 @@ async def on_message(message):
                         symbolsj = json.loads(symbols)["results"][0]
                         instrument = urllib.request.urlopen(symbolsj["instrument"]).read().decode()
                         instrumentj = json.loads(instrument)
-                        fundamentals = urllib.request.urlopen("https://api.robinhood.com/fundamentals/" + toquery).read().decode()
+                        fundamentals = urllib.request.urlopen("https://api.robinhood.com/fundamentals/" + toquery + "/").read().decode()
                         fundamentalsj = json.loads(fundamentals)[0]
 
                         current_price=symbolsj["last_extended_hours_trade_price"]
@@ -261,7 +261,7 @@ async def on_message(message):
                                            "Change from yesterday: **" + diff + " USD**, (**" + str(percentage) + "%**)\n"+
                                            "Bid size: **" + str(symbolsj["bid_size"]) + " ("+symbolsj["bid_price"]+" USD)**, Ask size: **" + str(symbolsj["ask_size"]) + " ("+symbolsj["ask_price"]+" USD)**)\n"+
                                            "Current Volume: **" + fundamentalsj["volume"] + ", Average Volume: " + fundamentalsj["average_volume"] + " \n"+
-                                           "Tradable (on robinhood): " + (":white_check_mark:" if instrumentj["tradeable"] else ":x:") + ", :flag_" + instrumentj["country"].lower() + ":",
+                                           "Tradeable (on robinhood): " + (":white_check_mark:" if instrumentj["tradeable"] else ":x:") + ", :flag_" + instrumentj["country"].lower() + ":",
                                            colour=(0xab000d if diff.startswith("-") else 0x32cb00))
                         em.set_author(name='AveBot - Stocks', icon_url='https://s.ave.zone/c7d.png')
                         await client.send_message(message.channel, embed=em)
