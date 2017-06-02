@@ -8,6 +8,7 @@ import subprocess
 import time
 import traceback
 import urllib.request
+import urllib.error
 from pathlib import Path
 
 import discord
@@ -227,8 +228,8 @@ async def on_message(message):
                     if resolvedto:
                         messagecont = "Bang resolved to: " + resolvedto
                         await client.send_message(message.channel, content=messagecont)
-                elif message.content.startswith('>stockchart'):
-                    toquery = message.content.replace(">stockchart ", "").upper()
+                elif message.content.startswith('>chart') or message.content.startswith('>stockchart'):
+                    toquery = message.content.replace(">chart ", "").replace(">stockchart ", "").upper()
                     link = "http://finviz.com/chart.ashx?t=" + toquery + "&ty=c&ta=1&p=d&s=l"
                     filename = "files/" + toquery + ".png"
                     urllib.request.urlretrieve(link, filename)
@@ -236,22 +237,33 @@ async def on_message(message):
                                            content="Here's the charts for " + toquery + ". See <http://finviz.com/quote.ashx?t=" + toquery + "> for more info.")
                 elif message.content.startswith('>stock'):
                     toquery = message.content.replace(">stock ", "")
-                    output = urllib.request.urlopen(
-                        "https://finance.google.com/finance/info?client=ig&q=" + toquery).read().decode().replace("// ",
-                                                                                                                  "")
-                    if "Response Code 400" not in output:
-                        j = json.loads(output)[0]
-                        em = discord.Embed(title="" + j["t"] + " (" + j["e"] + ")'s stocks info as of " + j["lt"],
-                                           description="Current Price is **" + j[
-                                               "l"] + " USD**.\nChange from yesterday: **" + j["c"] + " USD**, (**" + j[
-                                                           "cp"] + "%**)",
-                                           colour=(0xab000d if j["cp"].startswith("-") else 0x32cb00))
+                    try:
+                        symbols = urllib.request.urlopen("https://api.robinhood.com/quotes/?symbols=" + toquery).read().decode()
+                        symbolsj = json.loads(symbols)["results"][0]
+                        instrument = urllib.request.urlopen(symbolsj["instrument"]).read().decode()
+                        instrumentj = json.loads(instrument)
+
+                        current_price=symbolsj["last_trade_price"]
+                        diff=str(float(current_price)-float(symbolsj["last_extended_hours_trade_price"]))
+                        if not diff.startswith("-"):
+                            diff = "+"+diff
+                        percentage = 0
+
+                        em = discord.Embed(title=symbolsj["symbol"]+" ("+instrumentj["name"]+")'s stocks info as of " + symbolsj["updated_at"],
+                                           description="Current Price is **" + symbolsj[
+                                               "last_trade_price"] + " USD**.\nChange from yesterday: **" + diff + " USD**, (**" + percentage + "%**)",
+                                           colour=(0xab000d if diff.startswith("-") else 0x32cb00))
+                        em.set_author(name='AveBot - Stocks', icon_url='https://s.ave.zone/c7d.png')
+                        await client.send_message(message.channel, embed=em)
+                    except urllib.error.HTTPError as e:
+                        em = discord.Embed(title="HTTP Error",
+                                           description="Error Code: "+e.code+"\nError Reason: "+e.reason,
+                                           colour=0xab000d)
                         em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                         await client.send_message(message.channel, embed=em)
                 elif message.content.startswith('>xkcd '):
                     toquery = message.content.replace(">xkcd", "").replace(" ", "").replace("xkcd.com/", "").replace(
-                        "https://", "").replace("http://", "").replace("www.", "").replace("m.", "").replace("/",
-                                                                                                             "")  # lazy as hell :/
+                        "https://", "").replace("http://", "").replace("www.", "").replace("m.", "").replace("/", "")  # lazy as hell :/
                     if toquery:
                         toquery = toquery + "/"
                     output = urllib.request.urlopen("https://xkcd.com/" + toquery + "info.0.json").read().decode()
