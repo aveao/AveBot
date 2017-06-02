@@ -246,14 +246,14 @@ async def on_message(message):
                         fundamentals = urllib.request.urlopen("https://api.robinhood.com/fundamentals/" + toquery + "/").read().decode()
                         fundamentalsj = json.loads(fundamentals)
 
-                        current_price=(symbolsj["last_extended_hours_trade_price"] if symbolsj["last_extended_hours_trade_price"] == null else symbolsj["last_trade_price"])
+                        current_price=(symbolsj["last_extended_hours_trade_price"] if symbolsj["last_extended_hours_trade_price"] is None else symbolsj["last_trade_price"])
                         diff=str(Decimal(current_price)-Decimal(symbolsj["previous_close"]))
                         if not diff.startswith("-"):
                             diff = "+" + diff
                         percentage = str(100 * Decimal(diff)/Decimal(current_price))
                         if not percentage.startswith("-"):
                             percentage = "+" + percentage
-                        # TODO: Percentage
+                        # TODO: trim Percentage
 
                         em = discord.Embed(title=symbolsj["symbol"]+"'s stocks info as of " + symbolsj["updated_at"],
                                            description="Name: **"+instrumentj["name"]+"**\n"+
