@@ -11,6 +11,7 @@ import urllib.request
 import urllib.error
 from pathlib import Path
 from decimal import *
+import random
 
 import discord
 import requests
