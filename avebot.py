@@ -10,6 +10,7 @@ import traceback
 import urllib.request
 import urllib.error
 from pathlib import Path
+from decimal import *
 
 import discord
 import requests
@@ -244,7 +245,7 @@ async def on_message(message):
                         instrumentj = json.loads(instrument)
 
                         current_price=symbolsj["last_trade_price"]
-                        diff=str(float(current_price)-float(symbolsj["last_extended_hours_trade_price"]))
+                        diff=str(Decimal(current_price)-Decimal(symbolsj["last_extended_hours_trade_price"]))
                         if not diff.startswith("-"):
                             diff = "+"+diff
                         percentage = 0
@@ -253,15 +254,16 @@ async def on_message(message):
                         # TODO: tradability (tradable on instruments)
                         # TODO: flag (:flag_(country in instruments page, undercase):)
 
-                        em = discord.Embed(title=symbolsj["symbol"]+" ("+instrumentj["name"]+")'s stocks info as of " + symbolsj["updated_at"],
-                                           description="Current Price is **" + symbolsj[
-                                               "last_trade_price"] + " USD**.\nChange from yesterday: **" + diff + " USD**, (**" + str(percentage) + "%**)",
+                        em = discord.Embed(title=symbolsj["symbol"]+"'s stocks info as of " + symbolsj["updated_at"],
+                                           description="Name:"+instrumentj["name"]+
+                                           "\nCurrent Price is **" + symbolsj["last_trade_price"] + " USD**."+
+                                           "\nChange from yesterday: **" + diff + " USD**, (**" + str(percentage) + "%**)",
                                            colour=(0xab000d if diff.startswith("-") else 0x32cb00))
                         em.set_author(name='AveBot - Stocks', icon_url='https://s.ave.zone/c7d.png')
                         await client.send_message(message.channel, embed=em)
                     except urllib.error.HTTPError as e:
                         em = discord.Embed(title="HTTP Error",
-                                           description="Error Code: "+str(e.code)+"\nError Reason: "+e.reason,
+                                           description=("Stock not found (HTTP 400 returned)." if e.code == 400 else "Error Code: " + str(e.code)+"\nError Reason: "+e.reason),
                                            colour=0xab000d)
                         em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                         await client.send_message(message.channel, embed=em)
