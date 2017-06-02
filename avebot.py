@@ -261,7 +261,7 @@ async def on_message(message):
                                            "Change from yesterday: **" + diff + " USD**, (**" + percentage + "%**)\n"+
                                            "Bid size: **" + str(symbolsj["bid_size"]) + " ("+symbolsj["bid_price"]+" USD)**, Ask size: **" + str(symbolsj["ask_size"]) + " ("+symbolsj["ask_price"]+" USD)**\n"+
                                            "Current Volume: **" + fundamentalsj["volume"] + "**, Average Volume: **" + fundamentalsj["average_volume"] + "** \n"+
-                                           "Tradeable (on robinhood): " + (":white_check_mark:" if instrumentj["tradeable"] else ":x:") + ", "+(":question:" if instrumentj["country"] is None else ":flag_" + instrumentj["country"].lower() + ":"),
+                                           "Tradeable (on robinhood): " + (":white_check_mark:" if instrumentj["tradeable"] else ":x:") + ", " + (":question:" if instrumentj["country"] is None else (":flag_" + instrumentj["country"].lower() + ":")),
                                            colour=(0xab000d if diff.startswith("-") else 0x32cb00))
                         em.set_author(name='AveBot - Stocks', icon_url='https://s.ave.zone/c7d.png')
                         await client.send_message(message.channel, embed=em)
