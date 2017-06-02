@@ -126,9 +126,11 @@ async def on_message(message):
                             Counter += 1
                     percentage_of_messages=str(100*(Counter/AllCounter))[:6]
                     await client.edit_message(tmp, 'You have sent '+str(Counter)+' messages out of the last '+str(AllCounter)+' in this channel. That accounts for %' + percentage_of_messages + ' of messages.')              
-                elif message.content.startswith('>futureman '):
-                    ticker = message.content.replace('>futureman ', '').upper()
-                    await client.send_message(message.channel, 'Copypasta ready: `FutureMan BUY FutureMan {} FutureMan FOR FutureMan A FutureMan BRIGHTER FutureMan FUTURE FutureMan`'.format(ticker))
+                elif message.content.startswith('>copypasta '):
+                    ticker = message.content.replace('>copypasta ', '').upper()
+                    copypasta_list=["Kreygasm MUST Kreygasm BUY Kreygasm TICKER Kreygasm THIS Kreygasm ROUND Kreygasm","FutureMan BUY FutureMan TICKER FutureMan FOR FutureMan A FutureMan BRIGHTER FutureMan FUTURE FutureMan"]
+                    copypasta = random.choice(copypasta_list).replace("TICKER",ticker)
+                    await client.send_message(message.channel, 'Copypasta ready: `'+copypasta+'`')
                 elif message.content.startswith('>geninvite'):
                     inviteurl = await client.create_invite(message.channel, max_uses=1)
                     em = discord.Embed(title='Invite ready!',
