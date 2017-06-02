@@ -27,8 +27,8 @@
 **>epoch / >unixtime:** Returns UNIX time since epoch.
 
 **Stocks Commands**
-**>stock <stock name>:** Returns info about said stock.
-**>chart <stock name>:** Returns chart about said stock.
+**>stock <ticker>:** Returns info about said stock.
+**>chart <ticker>:** Returns chart about said stock.
 
 **Privileged-only Commands**
 **>get <url>:** gets a link and uploads it to discord

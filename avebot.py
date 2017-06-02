@@ -243,21 +243,25 @@ async def on_message(message):
                         symbolsj = json.loads(symbols)["results"][0]
                         instrument = urllib.request.urlopen(symbolsj["instrument"]).read().decode()
                         instrumentj = json.loads(instrument)
+                        fundamentals = urllib.request.urlopen("https://api.robinhood.com/fundamentals/" + toquery).read().decode()
+                        fundamentalsj = json.loads(fundamentals)[0]
 
-                        current_price=symbolsj["last_trade_price"]
+                        current_price=symbolsj["last_extended_hours_trade_price"]
                         diff=str(Decimal(current_price)-Decimal(symbolsj["previous_close"]))
                         if not diff.startswith("-"):
                             diff = "+"+diff
                         percentage = 0
                         # TODO: Percentage
-                        # TODO: bid/ask and trade volume
 
                         em = discord.Embed(title=symbolsj["symbol"]+"'s stocks info as of " + symbolsj["updated_at"],
                                            description="Name: **"+instrumentj["name"]+"**\n"+
-                                           "Current Price: **" + symbolsj["last_trade_price"] + " USD**\n"+
-                                           "Yesterday's Price: **" + symbolsj["previous_close"] + "**\n"+
+                                           "Description: **"+fundamentalsj["description"]+"**\n"+
+                                           "Current Price: **" + symbolsj["last_extended_hours_trade_price"] + " USD**\n"+
+                                           "Yesterday's Price: **" + symbolsj["previous_close"] + " USD**\n"+
                                            "Change from yesterday: **" + diff + " USD**, (**" + str(percentage) + "%**)\n"+
-                                           "Tradable: " + (":white_check_mark:" if instrumentj["tradeable"] else ":negative_squared_cross_mark:") + ", :flag_" + instrumentj["country"].lower() + ":",
+                                           "Bid size: **" + str(symbolsj["bid_size"]) + " ("+symbolsj["bid_price"]+" USD)**, Ask size: **" + str(symbolsj["ask_size"]) + " ("+symbolsj["ask_price"]+" USD)**)\n"+
+                                           "Current Volume: **" + fundamentalsj["volume"] + ", Average Volume: " + fundamentalsj["average_volume"] + " \n"+
+                                           "Tradable (on robinhood): " + (":white_check_mark:" if instrumentj["tradeable"] else ":x:") + ", :flag_" + instrumentj["country"].lower() + ":",
                                            colour=(0xab000d if diff.startswith("-") else 0x32cb00))
                         em.set_author(name='AveBot - Stocks', icon_url='https://s.ave.zone/c7d.png')
                         await client.send_message(message.channel, embed=em)
