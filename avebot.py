@@ -254,7 +254,7 @@ async def on_message(message):
                         if not percentage.startswith("-"):
                             percentage = "+" + percentage
 
-                        tradeability=(":white_check_mark:" if (instrumentj["tradeable"] == true) else ":x:")
+                        tradeability=(":white_check_mark:" if (instrumentj["tradeable"] == True) else ":x:")
                         countryname = instrumentj["country"].lower()
                         avelog("tradeability = " + str(tradeability))
                         avelog("countryname = " + str(countryname))
