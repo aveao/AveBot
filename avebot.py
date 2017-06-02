@@ -245,18 +245,20 @@ async def on_message(message):
                         instrumentj = json.loads(instrument)
 
                         current_price=symbolsj["last_trade_price"]
-                        diff=str(Decimal(current_price)-Decimal(symbolsj["last_extended_hours_trade_price"]))
+                        diff=str(Decimal(symbolsj["last_extended_hours_trade_price"])-Decimal(current_price))
                         if not diff.startswith("-"):
                             diff = "+"+diff
                         percentage = 0
                         # TODO: Percentage
+                        # TODO: Yesterday's price.
                         # TODO: bid/ask and trade volume
                         # TODO: tradability (tradable on instruments)
                         # TODO: flag (:flag_(country in instruments page, undercase):)
 
                         em = discord.Embed(title=symbolsj["symbol"]+"'s stocks info as of " + symbolsj["updated_at"],
-                                           description="Name:"+instrumentj["name"]+
-                                           "\nCurrent Price is **" + symbolsj["last_trade_price"] + " USD**."+
+                                           description="Name: **"+instrumentj["name"]+"**\n"+
+                                           "Current Price: **" + symbolsj["last_trade_price"] + " USD**\n"+
+                                           "Yesterday's Price: **" + symbolsj["last_extended_hours_trade_price"] + "**\n"+
                                            "\nChange from yesterday: **" + diff + " USD**, (**" + str(percentage) + "%**)",
                                            colour=(0xab000d if diff.startswith("-") else 0x32cb00))
                         em.set_author(name='AveBot - Stocks', icon_url='https://s.ave.zone/c7d.png')
