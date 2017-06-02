@@ -246,18 +246,20 @@ async def on_message(message):
                         fundamentals = urllib.request.urlopen("https://api.robinhood.com/fundamentals/" + toquery + "/").read().decode()
                         fundamentalsj = json.loads(fundamentals)
 
-                        current_price=symbolsj["last_extended_hours_trade_price"]
+                        current_price=(symbolsj["last_extended_hours_trade_price"] if symbolsj["last_extended_hours_trade_price"] == null else symbolsj["last_trade_price"])
                         diff=str(Decimal(current_price)-Decimal(symbolsj["previous_close"]))
                         if not diff.startswith("-"):
-                            diff = "+"+diff
-                        percentage = (100 * Decimal(diff)/Decimal(current_price))
+                            diff = "+" + diff
+                        percentage = str(100 * Decimal(diff)/Decimal(current_price))
+                        if not percentage.startswith("-"):
+                            percentage = "+" + percentage
                         # TODO: Percentage
 
                         em = discord.Embed(title=symbolsj["symbol"]+"'s stocks info as of " + symbolsj["updated_at"],
                                            description="Name: **"+instrumentj["name"]+"**\n"+
                                            "Current Price: **" + symbolsj["last_extended_hours_trade_price"] + " USD**\n"+
                                            "Yesterday's Price: **" + symbolsj["previous_close"] + " USD**\n"+
-                                           "Change from yesterday: **" + diff + " USD**, (**" + str(percentage) + "%**)\n"+
+                                           "Change from yesterday: **" + diff + " USD**, (**" + percentage + "%**)\n"+
                                            "Bid size: **" + str(symbolsj["bid_size"]) + " ("+symbolsj["bid_price"]+" USD)**, Ask size: **" + str(symbolsj["ask_size"]) + " ("+symbolsj["ask_price"]+" USD)**\n"+
                                            "Current Volume: **" + fundamentalsj["volume"] + "**, Average Volume: **" + fundamentalsj["average_volume"] + "** \n"+
                                            "Tradeable (on robinhood): " + (":white_check_mark:" if instrumentj["tradeable"] else ":x:") + ", :flag_" + instrumentj["country"].lower() + ":",
