@@ -124,7 +124,7 @@ async def on_message(message):
                         AllCounter += 1
                         if log.author == message.author:
                             Counter += 1
-                    await client.edit_message(tmp, 'You have sent '+Counter+' messages out of the last '+AllCounter+' in this channel.')
+                    await client.edit_message(tmp, 'You have sent '+str(Counter)+' messages out of the last '+str(AllCounter)+' in this channel.')
                 elif message.content.startswith('>geninvite'):
                     inviteurl = await client.create_invite(message.channel, max_uses=1)
                     em = discord.Embed(title='Invite ready!',
@@ -254,7 +254,7 @@ async def on_message(message):
                         if not percentage.startswith("-"):
                             percentage = "+" + percentage
 
-                        tradeability=instrumentj["tradeable"]
+                        tradeability=(":white_check_mark:" if (instrumentj["tradeable"] == true) else ":x:")
                         countryname = instrumentj["country"].lower()
                         avelog("tradeability = " + str(tradeability))
                         avelog("countryname = " + str(countryname))
@@ -266,7 +266,7 @@ async def on_message(message):
                                            "Change from yesterday: **" + diff + " USD**, (**" + percentage + "%**)\n"+
                                            "Bid size: **" + str(symbolsj["bid_size"]) + " ("+symbolsj["bid_price"]+" USD)**, Ask size: **" + str(symbolsj["ask_size"]) + " ("+symbolsj["ask_price"]+" USD)**\n"+
                                            "Current Volume: **" + fundamentalsj["volume"] + "**, Average Volume: **" + fundamentalsj["average_volume"] + "** \n"+
-                                           "Tradeable (on robinhood): " + (":white_check_mark:" if tradeability else ":x:") + ", :flag_" + countryname + ":",
+                                           "Tradeable (on robinhood): " + tradeability + ", :flag_" + countryname + ":",
                                            colour=(0xab000d if diff.startswith("-") else 0x32cb00))
                         em.set_author(name='AveBot - Stocks', icon_url='https://s.ave.zone/c7d.png')
                         await client.send_message(message.channel, embed=em)
