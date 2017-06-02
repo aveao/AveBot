@@ -27,7 +27,7 @@
 **>epoch / >unixtime:** Returns UNIX time since epoch.
 
 **Stocks Commands**
-**>stock <ticker>:** Returns info about said stock.
+**>s <ticker>:**/**>stock <ticker>:** Returns info about said stock.
 **>chart <ticker>:** Returns chart about said stock.
 
 **Privileged-only Commands**

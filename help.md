@@ -17,7 +17,7 @@ You can view the full version online at <https://raw.githubusercontent.com/ardao
 **>rhyme <word or a word group>**
 **>resolve / >dig <domain>**
 **>epoch / >unixtime**
-**>stock <ticker>**
+**>s/stock <ticker>**
 **>chart <ticker>**
 --PRIV ONLY--
 **>get <url>**
