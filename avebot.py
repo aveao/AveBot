@@ -245,7 +245,7 @@ async def on_message(message):
                         instrumentj = json.loads(instrument)
 
                         current_price=symbolsj["last_trade_price"]
-                        diff=str(Decimal(symbolsj["last_extended_hours_trade_price"])-Decimal(current_price))
+                        diff=str(Decimal(current_price)-Decimal(symbolsj["previous_close"]))
                         if not diff.startswith("-"):
                             diff = "+"+diff
                         percentage = 0
@@ -255,7 +255,7 @@ async def on_message(message):
                         em = discord.Embed(title=symbolsj["symbol"]+"'s stocks info as of " + symbolsj["updated_at"],
                                            description="Name: **"+instrumentj["name"]+"**\n"+
                                            "Current Price: **" + symbolsj["last_trade_price"] + " USD**\n"+
-                                           "Yesterday's Price: **" + symbolsj["last_extended_hours_trade_price"] + "**\n"+
+                                           "Yesterday's Price: **" + symbolsj["previous_close"] + "**\n"+
                                            "Change from yesterday: **" + diff + " USD**, (**" + str(percentage) + "%**)\n"+
                                            "Tradable: " + (":white_check_mark:" if instrumentj["tradeable"] else ":negative_squared_cross_mark:") + ", :flag_" + instrumentj["country"].lower() + ":",
                                            colour=(0xab000d if diff.startswith("-") else 0x32cb00))
