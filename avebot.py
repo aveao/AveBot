@@ -259,13 +259,7 @@ async def on_message(message):
                         avelog("tradeability = " + str(tradeability))
                         avelog("countryflag = " + str(countryflag))
 
-                        description_text="Name: **"+instrumentj["name"]+"**\n"+
-                                           "Current Price: **" + symbolsj["last_extended_hours_trade_price"] + " USD**\n"+
-                                           "Yesterday's Price: **" + symbolsj["previous_close"] + " USD**\n"+
-                                           "Change from yesterday: **" + diff + " USD**, (**" + percentage + "%**)\n"+
-                                           "Bid size: **" + str(symbolsj["bid_size"]) + " ("+symbolsj["bid_price"]+" USD)**, Ask size: **" + str(symbolsj["ask_size"]) + " ("+symbolsj["ask_price"]+" USD)**\n"+
-                                           "Current Volume: **" + fundamentalsj["volume"] + "**, Average Volume: **" + fundamentalsj["average_volume"] + "** \n"+
-                                           "Tradeable (on robinhood): " + tradeability + ", " + countryflag
+                        description_text=("Name: **"+instrumentj["name"]+"**\nCurrent Price: **" + symbolsj["last_extended_hours_trade_price"] + " USD**\nYesterday's Price: **" + symbolsj["previous_close"] + " USD**\nChange from yesterday: **" + diff + " USD**, (**" + percentage + "%**)\nBid size: **" + str(symbolsj["bid_size"]) + " ("+symbolsj["bid_price"]+" USD)**, Ask size: **" + str(symbolsj["ask_size"]) + " ("+symbolsj["ask_price"]+" USD)**\nCurrent Volume: **" + fundamentalsj["volume"] + "**, Average Volume: **" + fundamentalsj["average_volume"] + "** \nTradeable (on robinhood): " + tradeability + ", " + countryflag)
 
                         em = discord.Embed(title=symbolsj["symbol"]+"'s stocks info as of " + symbolsj["updated_at"],
                                            description=description_text,
