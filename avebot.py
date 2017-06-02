@@ -251,14 +251,13 @@ async def on_message(message):
                         percentage = 0
                         # TODO: Percentage
                         # TODO: bid/ask and trade volume
-                        # TODO: flag (:flag_(country in instruments page, undercase):) 
 
                         em = discord.Embed(title=symbolsj["symbol"]+"'s stocks info as of " + symbolsj["updated_at"],
                                            description="Name: **"+instrumentj["name"]+"**\n"+
                                            "Current Price: **" + symbolsj["last_trade_price"] + " USD**\n"+
                                            "Yesterday's Price: **" + symbolsj["last_extended_hours_trade_price"] + "**\n"+
                                            "Change from yesterday: **" + diff + " USD**, (**" + str(percentage) + "%**)\n"+
-                                           "Tradable: " + (":white_check_mark:" if instrumentj["tradable"] else ":negative_squared_cross_mark:"),
+                                           "Tradable: " + (":white_check_mark:" if instrumentj["tradable"] else ":negative_squared_cross_mark:") + ", :flag_" + instrumentj["country"].lower() + ":",
                                            colour=(0xab000d if diff.startswith("-") else 0x32cb00))
                         em.set_author(name='AveBot - Stocks', icon_url='https://s.ave.zone/c7d.png')
                         await client.send_message(message.channel, embed=em)
