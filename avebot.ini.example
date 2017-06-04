@@ -3,6 +3,7 @@ prefix = >
 token = token_goes_here
 main-channel = main_channel_id_goes_here
 support-channel = support_channel_id_goes_here
+twitch-client-id = remove_this_line_to_disable_functionality
 
 [advanced]
 add-reactions = True
@@ -10,6 +11,17 @@ voting-prefix = Vote:
 voting-emoji-y = 🇾
 voting-emoji-n = 🇳
 unfurl-depth = 5
+
+[twitch]
+StockStream = 319218123150721025
+
+[twitch-last]
+dont = touch this part, you can remove this line, but put your channel name, an equals sign and a zero here. code will handle the rest.
+StockStream = 0
+
+[twitch-text]
+default = $CHANNAME is now live on Twitch! <https://twitch.tv/$CHANNAME>
+StockStream = $CHANNAME is now live! Get trading! <https://twitch.tv/$CHANNAME> <@&320839045846401025>
 
 [permissions]
 your_discord_id_here = 9
