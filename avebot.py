@@ -135,7 +135,7 @@ async def info(contx):
                        .format(get_git_revision_short_hash(), get_git_commit_text(), socket.gethostname(), st),
                        colour=0xDEADBF)
     em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
-    await bot.send_message(discord.Object(id=contx.message.channel), embed=em)
+    await bot.send_message(contx.message.channel, embed=em)
 
 
 @bot.command(hidden=True)
