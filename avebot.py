@@ -37,10 +37,14 @@ def avelog(content):
     except Exception:
         exit()
 
+
 config = configparser.ConfigParser()
+
 if not Path(config_file_name).is_file():
     avelog("No config file ({}) found, please create one from avebot.ini.example file.".format(config_file_name))
     exit()
+
+config.read(config_file_name)
 
 prefix = config['base']['prefix']
 
@@ -60,11 +64,19 @@ bot = commands.Bot(command_prefix=prefix, description=description)
 
 def check_level(discord_id: str):
     #  = banned, 1 = regular user, 2 = privileged, 8 = mod, 9 = owner
-    perm = config['permissions'][discord_id]
-    if config['permissions'][discord_id]:
-        return config['permissions'][discord_id]
-    else:
+    try:
+        perm = config['permissions'][discord_id]
+        if perm:
+            return perm
+        else:
+            return "1"
+    except KeyError:
         return "1"
+
+
+def save_config():
+    with open(config_file_name, 'w') as configfile:
+        config.write(configfile)
 
 
 def download_file(url,
@@ -88,8 +100,8 @@ async def on_ready():
         asyncio.sleep(3)
         await bot.change_presence(game=discord.Game(name='run >help'))
         em = discord.Embed(title='AveBot initialized!',
-                           description='Git hash: `{}`\nHostname: `{}`\nLocal Time: `{}`\nLogs are below.'
-                           .format(get_git_revision_short_hash(), socket.gethostname(), st),
+                           description='Git hash: `{}`\nLast git message: `{}`\nHostname: `{}`\nLocal Time: `{}`\nLogs are below.'
+                           .format(get_git_revision_short_hash(), get_git_commit_text(), socket.gethostname(), st),
                            colour=0xDEADBF)
         em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
         await bot.send_message(discord.Object(id=config['base']['main-channel']), embed=em)
@@ -141,8 +153,9 @@ async def servercount():
 @bot.command(pass_context=True)
 async def whoami(contx):
     """Returns your information."""
-    await bot.say("You are {} (`{}`) and your permission level is {} (0 = banned, 1 = normal, 2 = authenticated, 8 = mod, 9 = owner).".format(
-        contx.message.author.name, contx.message.author.id, check_level(contx.message.author.id)))
+    await bot.say(
+        "You are {} (`{}`) and your permission level is {} (0 = banned, 1 = normal, 2 = authenticated, 8 = mod, 9 = owner).".format(
+            contx.message.author.name, contx.message.author.id, check_level(contx.message.author.id)))
 
 
 @bot.command()
@@ -226,6 +239,93 @@ async def _exit(contx):
 
 
 @bot.command(pass_context=True)
+async def addpriv(contx):
+    """Adds a privileged user (Mod/Owner only)"""
+    if check_level(contx.message.author.id) in ["8", "9"]:
+        privtoadd = contx.message.mentions
+        for dtag in privtoadd:
+            if not (check_level(contx.message.author.id) == "8" and check_level(dtag.id) in ["8", "9"]):
+                config['permissions'][dtag.id] = "2"
+                em = discord.Embed(title='Added {} ({}) as privileged user.'.format(str(dtag), dtag.id),
+                                   description='Welcome to the team!', colour=0x64dd17)
+                em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
+                await bot.send_message(contx.message.channel, embed=em)
+        save_config()
+
+
+@bot.command(pass_context=True)
+async def rmpriv(contx):
+    """Removes a privileged user (Mod/Owner only)"""
+    if check_level(contx.message.author.id) in ["8", "9"]:
+        privtorm = contx.message.mentions
+        for dtag in privtorm:
+            if not (check_level(contx.message.author.id) == "8" and check_level(dtag.id) in ["8", "9"]):
+                config['permissions'][dtag.id] = "1"
+                em = discord.Embed(
+                    title='Removed {} ({}) as privileged user.'.format(str(dtag), dtag.id), colour=0x64dd17)
+                em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
+                await bot.send_message(contx.message.channel, embed=em)
+        save_config()
+
+
+@bot.command(pass_context=True)
+async def addmod(contx):
+    """Adds a mod (Owner only)"""
+    if check_level(contx.message.author.id) in ["9"]:
+        modstoadd = contx.message.mentions
+        for dtag in modstoadd:
+            config['permissions'][dtag.id] = "8"
+            em = discord.Embed(title='Added {} ({}) as mod.'.format(str(dtag), dtag.id),
+                               description='Welcome to the team!', colour=0x64dd17)
+            em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
+            await bot.send_message(contx.message.channel, embed=em)
+        save_config()
+
+
+@bot.command(pass_context=True)
+async def rmmod(contx):
+    """Removes a mod (Owner only)"""
+    if check_level(contx.message.author.id) in ["9"]:
+        modstorm = contx.message.mentions
+        for dtag in modstorm:
+            config['permissions'][dtag.id] = "1"
+            em = discord.Embed(title='Removed {} ({}) as mod.'.format(str(dtag), dtag.id), colour=0x64dd17)
+            em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
+            await bot.send_message(contx.message.channel, embed=em)
+        save_config()
+
+
+@bot.command(pass_context=True)
+async def ban(contx):
+    """Bans a user (Mod/Owner only)"""
+    if check_level(contx.message.author.id) in ["8", "9"]:
+        toban = contx.message.mentions
+        for dtag in toban:
+            if not (check_level(contx.message.author.id) == "8" and check_level(dtag.id) in ["8", "9"]):
+                config['permissions'][dtag.id] = "0"
+                em = discord.Embed(title='Banned {} ({}).'.format(str(dtag), dtag.id),
+                                   description='Welcome to the team!', colour=0x64dd17)
+                em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
+                await bot.send_message(contx.message.channel, embed=em)
+        save_config()
+
+
+@bot.command(pass_context=True)
+async def unban(contx):
+    """Unbans a user (Mod/Owner only)"""
+    if check_level(contx.message.author.id) in ["8", "9"]:
+        tounban = contx.message.mentions
+        for dtag in tounban:
+            if not (check_level(contx.message.author.id) == "8" and check_level(dtag.id) in ["8", "9"]):
+                config['permissions'][dtag.id] = "1"
+                em = discord.Embed(
+                    title='Unbanned {} ({}).'.format(str(dtag), dtag.id), colour=0x64dd17)
+                em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
+                await bot.send_message(contx.message.channel, embed=em)
+        save_config()
+
+
+@bot.command(pass_context=True)
 async def say(contx, *, the_text: str):
     """Says something (Mod/Owner only)."""
     if check_level(contx.message.author.id) in ["8", "9"]:
@@ -255,11 +355,13 @@ async def get(contx, link: str):
         filename = "files/" + link.split('/')[-1]
         download_file(link, filename)
         file_size = Path(filename).stat().st_size
-        if file_size < 1024*1024*7:  # Limit of discord is 7MiB
+        if file_size < 1024 * 1024 * 7:  # Limit of discord is 7MiB
             await bot.send_file(contx.message.channel, filename,
                                 content="{}: Here's the file you requested.".format(contx.message.author.mention))
         else:
-            bot.say("{}: File is too big for discord (Limit is 7MiB, file is {}MiB).".format(contx.message.author.mention, (file_size/(1024*1024))))
+            bot.say(
+                "{}: File is too big for discord (Limit is 7MiB, file is {}MiB).".format(contx.message.author.mention,
+                                                                                         (file_size / (1024 * 1024))))
         os.remove(filename)  # Remove file when we're done with it (kinda risky TBH )
 
 
@@ -270,11 +372,13 @@ async def dget(contx, link: str):
         filename = "files/requestedfile"
         download_file(link, filename)
         file_size = Path(filename).stat().st_size
-        if file_size < 1024*1024*7:  # Limit of discord is 7MiB
+        if file_size < 1024 * 1024 * 7:  # Limit of discord is 7MiB
             await bot.send_file(contx.message.channel, filename,
                                 content="{}: Here's the file you requested.".format(contx.message.author.mention))
         else:
-            bot.say("{}: File is too big for discord (Limit is 7MiB, file is {}MiB).".format(contx.message.author.mention, (file_size/(1024*1024))))
+            bot.say(
+                "{}: File is too big for discord (Limit is 7MiB, file is {}MiB).".format(contx.message.author.mention,
+                                                                                         (file_size / (1024 * 1024))))
         os.remove(filename)  # Remove file when we're done with it (kinda risky TBH )
 
 
@@ -378,6 +482,8 @@ async def stock():
 @bot.command(pass_context=True)
 async def s(contx, ticker: str):
     """Returns stock info about the given ticker."""
+    if not contx.message.content.startswith(prefix + "s "):
+        return
     symbols = requests.get(
         "https://api.robinhood.com/quotes/?symbols={}".format(ticker.upper()))
     if symbols.status_code != 200:
@@ -431,14 +537,15 @@ def unfurl_b(link):
     current_depth = 0
     prev_link = ""
     last_link = link
-    while (prev_link != last_link) and (current_depth < max_depth):
-        prev_link = last_link
-        last_link = requests.head(prev_link, allow_redirects=True).url
-        current_depth += 1
-    return last_link
+    try:
+        while (prev_link != last_link) and (current_depth < max_depth):
+            prev_link = last_link
+            last_link = requests.head(prev_link, allow_redirects=True).url
+            current_depth += 1
+        return last_link
+    except Exception:
+        return last_link
 
-
-# TODO: respect  and voting-prefix
 
 @bot.event
 async def on_message(message):
@@ -456,7 +563,6 @@ async def on_message(message):
         if message.content.lower().startswith(config["advanced"]["voting-prefix"].lower()):
             await bot.add_reaction(message, config["advanced"]["voting-emoji-y"])
             await bot.add_reaction(message, config["advanced"]["voting-emoji-n"])
-
 
         if check_level(str(message.author.id)) != "0":  # Banned users simply do not get a response
             if message.content.startswith('>!'):  # implementing this here because ext.commands handle the bang name ugh
