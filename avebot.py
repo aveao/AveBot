@@ -224,12 +224,12 @@ async def addavebot():
 @bot.command(pass_context=True)
 async def contact(contx, *, contact_text: str):
     """Contacts developers with a message."""
-    em = discord.Embed(title='Contact received!',
-                       description='**Message by:** {} ({})\n on {} at {}\n**Message content:** {}'.format(str(
-                           contx.message.author), contx.message.author.id, contx.message.channel.name,
-                           contx.message.server.name, contact_text),
+    em = discord.Embed(description=contact_text,
                        colour=0xDEADBF)
-    em.set_author(name=str(contx.message.author), icon_url=contx.message.author.avatar_url)
+    em.set_author(name="{} ({}) on \"{}\" at \"{}\"".format(str(contx.message.author), contx.message.author.id,
+                                                            contx.message.channel.name,
+                                                            contx.message.server.name),
+                  icon_url=contx.message.author.avatar_url)
     await bot.send_message(discord.Object(id=config['base']['support-channel']), embed=em)
 
     em = discord.Embed(title='Contact sent!',
