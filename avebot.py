@@ -329,8 +329,9 @@ async def _exit(contx):
 async def pull(contx):
     """Does a git pull (Owner only)."""
     if check_level(contx.message.author.id) == "9":
+        tmp = await bot.send_message(contx.message.channel, 'Pulling...')
         git_pull()
-        await bot.say("Pull complete, exiting!")
+        await bot.edit_message(tmp, "Pull complete, exiting!")
         await bot.logout()
 
 
