@@ -23,8 +23,6 @@ import configparser
 
 config_file_name = "avebot.ini"
 log_file_name = "avebot.log"
-global live_streams
-live_streams = ["test", "kappa"]
 
 
 def avelog(content):
@@ -106,21 +104,21 @@ async def twitch_checker_task():
             client_id = config['base']['twitch-client-id']
             url = "https://api.twitch.tv/kraken/streams/{}?client_id={}"
             for key in config['twitch']:
-                j = requests.get(url.format(key, client_id)).text
-                streamlive = ("\"stream\":null" not in j)
-                # avelog("Checking twitch.tv/{}, it is currently {}".format(key, streamlive))
-                if streamlive and (key not in live_streams):
+                s = requests.get(url.format(key, client_id))
+                streamlive = ("\"stream\":null" not in s.text)
+                j = s.json()
+                if streamlive and (str(j['stream']['_id']) != config['twitch-last'][key]):
                     avelog("twitch.tv/{} went online, posting".format(key))
-                    live_streams.append(key)
+                    config['twitch-last'][key] = str(j['stream']['_id'])
+                    save_config()
                     await bot.send_message(discord.Object(id=config['twitch'][key]),
                                            get_twitch_text(key))
-                elif not streamlive and (key in live_streams):
+                elif not streamlive:
                     avelog("twitch.tv/{} went offline".format(key))
-                    live_streams.remove(key)
         except KeyError:
             avelog("No Client ID found for twitch.")
             return
-        await asyncio.sleep(10)  # task runs every 10 seconds
+        await asyncio.sleep(int(config['advanced']['twitch-check-duration']))
 
 
 @bot.event
