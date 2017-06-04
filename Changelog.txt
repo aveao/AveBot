@@ -4,6 +4,11 @@ Scraped:
 >geninvite -> Was going to be problematic to some servers probably.
 >brexit -> Never used, dead meme.
 
+Changed:
+>chart to >c
+Added link follow to bangs
+Fixed a bug in >bigly
+
 Added:
 >dice <NdN> -> Because it was in sample code, and why not?
 

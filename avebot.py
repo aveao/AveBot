@@ -16,14 +16,33 @@ import requests
 import discord
 from discord.ext import commands
 
-# TODO: add config support
-# TODO: move user permissions to config.
+import configparser
+
 # TODO: COGS https://gist.github.com/leovoel/46cd89ed6a8f41fd09c5
 # TODO: Take over >help (on on_message, handle it before handling command)
-# TODO: replace urlopen code with requests equivalents
+# TODO: >get >dget size and timeouts
 
-botowner = "137584770145058817"  # TODO: Move to config
-prefix = '>'
+config_file_name = "avebot.ini"
+log_file_name = "avebot.log"
+
+
+def avelog(content):
+    try:
+        st = str(datetime.datetime.now()).split('.')[0]
+        text = '[' + st + ']: ' + content
+        print(text)
+        with open(log_file_name, "a") as myfile:
+            myfile.write(text + "\n")
+        return
+    except Exception:
+        exit()
+
+config = configparser.ConfigParser()
+if not Path(config_file_name).is_file():
+    avelog("No config file ({}) found, please create one from avebot.ini.example file.".format(config_file_name))
+    exit()
+
+prefix = config['base']['prefix']
 
 
 def get_git_commit_text():
@@ -39,23 +58,13 @@ description = 'AveBot Rewrite\nGit Hash: {}\nLast Commit: {}' \
 bot = commands.Bot(command_prefix=prefix, description=description)
 
 
-def check_level(discord_id):
-    # TODO: 0 = banned, 1 = regular user, 2 = privileged, 8 = mod, 9 = owner
-    if discord_id == botowner:
-        return "9"
-    return "1"  # TODO: Check in config file and return level
-
-
-def avelog(content):
-    try:
-        st = str(datetime.datetime.now()).split('.')[0]
-        text = '[' + st + ']: ' + content
-        print(text)
-        with open("log.txt", "a") as myfile:
-            myfile.write(text + "\n")
-        return
-    except Exception:
-        exit()
+def check_level(discord_id: str):
+    #  = banned, 1 = regular user, 2 = privileged, 8 = mod, 9 = owner
+    perm = config['permissions'][discord_id]
+    if config['permissions'][discord_id]:
+        return config['permissions'][discord_id]
+    else:
+        return "1"
 
 
 def download_file(url,
@@ -83,9 +92,9 @@ async def on_ready():
                            .format(get_git_revision_short_hash(), socket.gethostname(), st),
                            colour=0xDEADBF)
         em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
-        await bot.send_message(discord.Object(id='305715263951732737'), embed=em)  # TODO: Put this in config too.
-        await bot.send_file(discord.Object(id='305715263951732737'), "log.txt")
-        open('log.txt', 'w').close()  # Clears log
+        await bot.send_message(discord.Object(id=config['base']['main-channel']), embed=em)
+        await bot.send_file(discord.Object(id=config['base']['main-channel']), log_file_name)
+        open(log_file_name, 'w').close()  # Clears log
     except Exception:
         avelog(traceback.format_exc())
         bot.close()
@@ -132,15 +141,21 @@ async def servercount():
 @bot.command(pass_context=True)
 async def whoami(contx):
     """Returns your information."""
-    await bot.say("You are {} (`{}`).".format(
-        contx.message.author.name, contx.message.author.id))  # TODO: Add user's permission level
+    await bot.say("You are {} (`{}`) and your permission level is {} (0 = banned, 1 = normal, 2 = authenticated, 8 = mod, 9 = owner).".format(
+        contx.message.author.name, contx.message.author.id, check_level(contx.message.author.id)))
+
+
+@bot.command()
+async def unfurl(link: str):
+    """Finds where a URL redirects to."""
+    resolved = unfurl_b(link)
+    await bot.say("<{}> Unfurls to <{}>".format(link, resolved))
 
 
 @bot.command()
 async def addavebot():
     """Gives a link that can be used to add AveBot."""
-    inviteurl = discord.utils.oauth_url(
-        "305708836361207810")  # TODO: Move the hardcoded info to config file. Do isset, do not allow command if it isn't set.
+    inviteurl = discord.utils.oauth_url(bot.user.id)
     await bot.say("You can use <{}> to add AveBot to your server.".format(inviteurl))
 
 
@@ -153,7 +168,7 @@ async def contact(contx, *, contact_text: str):
                            contx.message.server.name, contact_text),
                        colour=0xDEADBF)
     em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
-    await bot.send_message(discord.Object(id='305857608378613761'), embed=em) # TODO: Move this ID to config.
+    await bot.send_message(discord.Object(id=config['base']['support-channel']), embed=em)
 
     em = discord.Embed(title='Contact sent!',
                        description='Your message has been delivered to the developers.',
@@ -204,10 +219,63 @@ async def ping(contx):
 
 @bot.command(name='exit', pass_context=True)
 async def _exit(contx):
-    """Quits the bot."""
+    """Quits the bot (Owner only)."""
     if check_level(contx.message.author.id) == "9":
         await bot.say("Exiting AveBot, goodbye!")
         await bot.logout()
+
+
+@bot.command(pass_context=True)
+async def say(contx, *, the_text: str):
+    """Says something (Mod/Owner only)."""
+    if check_level(contx.message.author.id) in ["8", "9"]:
+        await bot.say(the_text)
+
+
+@bot.command(pass_context=True)
+async def material(contx, filename: str):
+    """Gets a file from material.io's icons gallery (Privileged/Mod/Admin only)."""
+    if check_level(contx.message.author.id) in ["2", "8", "9"]:
+        if not filename.startswith('ic_'):
+            filename = "ic_" + filename
+        if not filename.endswith('.svg'):
+            filename = filename + "_white_48px.svg"
+        link = "https://storage.googleapis.com/material-icons/external-assets/v4/icons/svg/" + filename
+        filename = "files/" + filename
+        if not Path(filename).is_file():  # caching
+            download_file(link, filename)
+        await bot.send_file(contx.message.channel, filename,
+                            content="Here's the file you requested.")
+
+
+@bot.command(pass_context=True)
+async def get(contx, link: str):
+    """Gets a file from the internet (Privileged/Mod/Admin only)."""
+    if check_level(contx.message.author.id) in ["2", "8", "9"]:
+        filename = "files/" + link.split('/')[-1]
+        download_file(link, filename)
+        file_size = Path(filename).stat().st_size
+        if file_size < 1024*1024*7:  # Limit of discord is 7MiB
+            await bot.send_file(contx.message.channel, filename,
+                                content="{}: Here's the file you requested.".format(contx.message.author.mention))
+        else:
+            bot.say("{}: File is too big for discord (Limit is 7MiB, file is {}MiB).".format(contx.message.author.mention, (file_size/(1024*1024))))
+        os.remove(filename)  # Remove file when we're done with it (kinda risky TBH )
+
+
+@bot.command(pass_context=True)
+async def dget(contx, link: str):
+    """Directly gets (doesn't care about name) a file from the internet (Privileged/Mod/Admin only)."""
+    if check_level(contx.message.author.id) in ["2", "8", "9"]:
+        filename = "files/requestedfile"
+        download_file(link, filename)
+        file_size = Path(filename).stat().st_size
+        if file_size < 1024*1024*7:  # Limit of discord is 7MiB
+            await bot.send_file(contx.message.channel, filename,
+                                content="{}: Here's the file you requested.".format(contx.message.author.mention))
+        else:
+            bot.say("{}: File is too big for discord (Limit is 7MiB, file is {}MiB).".format(contx.message.author.mention, (file_size/(1024*1024))))
+        os.remove(filename)  # Remove file when we're done with it (kinda risky TBH )
 
 
 @bot.command()
@@ -287,18 +355,18 @@ async def bigly(*, text_to_bigly: str):
 
 
 @bot.command(pass_context=True)
-async def howmanymessages(context):
+async def howmanymessages(contx):
     """Counts how many messages you sent in this channel in last 10000 messages."""
-    tmp = await bot.send_message(context.message.channel, 'Calculating messages...')
+    tmp = await bot.send_message(contx.message.channel, 'Calculating messages...')
     counter = 0
     allcounter = 0
-    async for log in bot.logs_from(context.message.channel, limit=10000):
+    async for log in bot.logs_from(contx.message.channel, limit=10000):
         allcounter += 1
-        if log.author == context.message.author:
+        if log.author == contx.message.author:
             counter += 1
     percentage_of_messages = str(100 * (counter / allcounter))[:6]
     message_text = '{}: You have sent {} messages out of the last {} in this channel (%{}).' \
-        .format(context.message.author.mention, str(counter), str(allcounter), percentage_of_messages)
+        .format(contx.message.author.mention, str(counter), str(allcounter), percentage_of_messages)
     await bot.edit_message(tmp, message_text)
 
 
@@ -358,32 +426,47 @@ async def s(contx, ticker: str):
     await bot.send_message(contx.message.channel, embed=em)
 
 
+def unfurl_b(link):
+    max_depth = int(config["advanced"]["unfurl-depth"])
+    current_depth = 0
+    prev_link = ""
+    last_link = link
+    while (prev_link != last_link) and (current_depth < max_depth):
+        prev_link = last_link
+        last_link = requests.head(prev_link, allow_redirects=True).url
+        current_depth += 1
+    return last_link
+
+
+# TODO: respect  and voting-prefix
+
 @bot.event
 async def on_message(message):
     try:
-        if message.content.lower().startswith('ok'):
-            await bot.add_reaction(message, "🆗")  # OK emoji
-        elif message.content.lower().startswith('hot'):
-            await bot.add_reaction(message, "🔥")  # fire emoji
-        elif message.content.lower().startswith('cool'):
-            await bot.add_reaction(message, "❄")  # snowflake emoji
-        elif message.content.lower().startswith('vote:'):
-            await bot.add_reaction(message, "🇾")  # Y regional indicator emoji
-            await bot.add_reaction(message, "🇳")  # N regional indicator emoji
+        if config["advanced"]["add-reactions"] == True:
+            if message.content.lower().startswith('ok'):
+                await bot.add_reaction(message, "🆗")  # OK emoji
+            elif message.content.lower().startswith('hot'):
+                await bot.add_reaction(message, "🔥")  # fire emoji
+            elif message.content.lower().startswith('cool'):
+                await bot.add_reaction(message, "❄")  # snowflake emoji
+            if "🤔" in message.content:  # thinking emoji
+                await bot.add_reaction(message, "🤔")
 
-        if "🤔" in message.content:  # thinking emoji
-            await bot.add_reaction(message, "🤔")
+        if message.content.lower().startswith(config["advanced"]["voting-prefix"].lower()):
+            await bot.add_reaction(message, config["advanced"]["voting-emoji-y"])
+            await bot.add_reaction(message, config["advanced"]["voting-emoji-n"])
+
 
         if check_level(str(message.author.id)) != "0":  # Banned users simply do not get a response
             if message.content.startswith('>!'):  # implementing this here because ext.commands handle the bang name ugh
                 toduck = message.content.replace(">!", "!").replace(" ", "+")
                 output = requests.get(
-                    "https://api.duckduckgo.com/?q={}&format=json&pretty=0&no_redirect=1".format(toduck),
-                    allow_redirects=True)
+                    "https://api.duckduckgo.com/?q={}&format=json&pretty=0&no_redirect=1".format(toduck))
                 j = output.json()
                 resolvedto = j["Redirect"]
                 if resolvedto:
-                    await bot.send_message(message.channel, "Bang resolved to: {}".format(resolvedto))
+                    await bot.send_message(message.channel, "Bang resolved to: {}".format(unfurl_b(resolvedto)))
 
             if message.channel.is_private:
                 avelog("{} ({}) said \"{}\" on PMs.".format(message.author.name, message.author.id, message.content))
@@ -405,8 +488,4 @@ avelog("AveBot started. Git hash: " + get_git_revision_short_hash())
 if not os.path.isdir("files"):
     os.makedirs("files")
 
-try:
-    with open("bottoken", "r") as tokfile:  # TODO: Read from config instead
-        bot.run(tokfile.read().replace("\n", ""))
-except FileNotFoundError:
-    avelog("No bottoken file found! Please create one. Join discord.gg/discord-api and check out #faq for more info.")
+bot.run(config['base']['token'])

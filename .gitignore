@@ -88,9 +88,10 @@ ENV/
 # Rope project settings
 .ropeproject
 
-#avebot stuff
-log.txt
-bottoken
+# avebot stuff
+# *.log # mentioned above on django.
+*.ini
 files/*
-*list
+
+# pycharm
 .idea

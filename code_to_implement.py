@@ -76,38 +76,3 @@
                                                description='(People are idiots)', colour=0x64dd17)
                             em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                             await client.send_message(message.channel, embed=em)
-                elif message.content.startswith('>say '):
-                    tosay = message.content.replace(">say ", "")
-                    await client.send_message(message.channel, content=tosay)
-            # else:
-            #    em = discord.Embed(title="Insufficient Permissions (Mod status needed)", colour=0xcc0000)
-            #    em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
-            #    await client.send_message(message.channel, embed=em)            if message.author.id in get_privileged_list():
-                if message.content.startswith('>material '):
-                    filename = message.content.split(' ')[1]
-                    if not filename.startswith('ic_'):
-                        filename = "ic_" + filename
-                    if not filename.endswith(('.svg', '.png')):
-                        filename = filename + "_white_48px.svg"
-                    link = "https://storage.googleapis.com/material-icons/external-assets/v4/icons/svg/" + filename
-                    filename = "files/" + filename
-                    my_file = Path(filename)
-                    if not my_file.is_file():
-                        urllib.request.urlretrieve(link, filename)
-                    await client.send_file(message.channel, filename,
-                                           content=":thumbsup: Here's the file you requested.")
-                elif message.content.startswith('>dget '):
-                    link = message.content.split(' ')[1]
-                    filename = "files/requestedfile"
-                    urllib.request.urlretrieve(link, filename)
-                    await client.send_file(message.channel, filename,
-                                           content=":thumbsup: Here's the file you requested.")
-                elif message.content.startswith('>get '):
-                    link = message.content.split(' ')[1]
-                    filename = "files/" + link.split('/')[-1]
-                    urllib.request.urlretrieve(link, filename)
-                    await client.send_file(message.channel, filename,
-                                           content=":thumbsup: Here's the file you requested.")                    # else:
-                    #    em = discord.Embed(title="Insufficient Permissions (Privileged status needed)", colour=0xcc0000)
-                    #    em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
-                    #    await client.send_message(message.channel, embed=em)        else:
