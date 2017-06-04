@@ -256,6 +256,27 @@ async def sinfo(contx):
     await bot.send_message(contx.message.channel, embed=em)
 
 
+@bot.command(pass_context=True)
+async def uinfo(contx):
+    """Shows info about the user."""
+    to_post = contx.message.mentions
+    to_post.append(contx.message.author)
+    no_play_text = "No game is being played."
+    for the_user in to_post:
+        the_member = contx.message.server.get_member_named(str(the_user))
+        played_game_text = no_play_text if the_member.game is None else the_member.game.name
+        if played_game_text != no_play_text and the_member.game.type == 1:
+            played_game_text += "\nStreaming at: **{}**".format(the_member.game.url)
+        em = discord.Embed(title='User info of {} ({})'.format(str(the_user), the_user.id),
+                           description='Registered at: **{}**\nJoined this server at: **{}**\nStatus: **{}**\nGame: **{}**\nIs bot: **{}**'.format(
+                               str(the_user.created_at), str(the_member.joined_at), str(the_member.status),
+                               played_game_text, (":white_check_mark:" if the_user.bot else ":x:")),
+                           colour=0xDEADBF)
+
+        em.set_thumbnail(url=the_user.avatar_url)
+        await bot.send_message(contx.message.channel, embed=em)
+
+
 @bot.command(hidden=True)
 async def dig():
     await bot.say("Please use >resolve")
