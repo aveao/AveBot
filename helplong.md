@@ -6,6 +6,7 @@
 **>servercount:** Returns the amount of servers AveBot is in.<br>
 **>whoami:** Returns your information.<br>
 **>info:** Returns bot's information.<br>
+**>sinfo:** Returns information about the server.<br>
 **>contact <message>:** Contacts developers with a message.<br>
 **>ping:** Calculates the ping between the bot and the discord server.
 

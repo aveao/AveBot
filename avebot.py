@@ -135,7 +135,6 @@ async def on_ready():
                            description='Git hash: `{}`\nLast git message: `{}`\nHostname: `{}`\nLocal Time: `{}`\nLogs are below.'
                            .format(get_git_revision_short_hash(), get_git_commit_text(), socket.gethostname(), st),
                            colour=0xDEADBF)
-        em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
         await bot.send_message(discord.Object(id=config['base']['main-channel']), embed=em)
         await bot.send_file(discord.Object(id=config['base']['main-channel']), log_file_name)
         open(log_file_name, 'w').close()  # Clears log
@@ -166,7 +165,7 @@ async def info(contx):
                        description='You\'re running AveBot Rewrite.\nGit hash: `{}`\nLast git message: `{}`\nHostname: `{}`\nLocal Time: `{}`'
                        .format(get_git_revision_short_hash(), get_git_commit_text(), socket.gethostname(), st),
                        colour=0xDEADBF)
-    em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
+    em.set_author(name='AveBot Rewrite', icon_url='https://s.ave.zone/c7d.png')
     await bot.send_message(contx.message.channel, embed=em)
 
 
@@ -230,13 +229,26 @@ async def contact(contx, *, contact_text: str):
                            contx.message.author), contx.message.author.id, contx.message.channel.name,
                            contx.message.server.name, contact_text),
                        colour=0xDEADBF)
-    em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
+    em.set_author(name=str(contx.message.author), icon_url=contx.message.author.avatar_url)
     await bot.send_message(discord.Object(id=config['base']['support-channel']), embed=em)
 
     em = discord.Embed(title='Contact sent!',
                        description='Your message has been delivered to the developers.',
                        colour=0xDEADBF)
-    em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
+    await bot.send_message(contx.message.channel, embed=em)
+
+
+@bot.command(pass_context=True)
+async def sinfo(contx):
+    """Shows info about the current server."""
+    the_server = contx.message.server
+    em = discord.Embed(title='Server info of {} ({})'.format(the_server.name, the_server.id),
+                       description='Count of users: **{}**\nRegion: **{}**\nOwner: **{}**\nVeritication Level: **{}**\nCreated at: **{}**'.format(
+                           str(the_server.member_count), str(the_server.region), str(the_server.owner),
+                           str(the_server.verification_level), str(the_server.created_at)),
+                       colour=0xDEADBF)
+    # em.set_image(url=the_server.icon_url)
+    em.set_thumbnail(url=the_server.icon_url)
     await bot.send_message(contx.message.channel, embed=em)
 
 
@@ -298,7 +310,6 @@ async def addpriv(contx):
                 config['permissions'][dtag.id] = "2"
                 em = discord.Embed(title='Added {} ({}) as privileged user.'.format(str(dtag), dtag.id),
                                    description='Welcome to the team!', colour=0x64dd17)
-                em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                 await bot.send_message(contx.message.channel, embed=em)
         save_config()
 
@@ -313,7 +324,6 @@ async def rmpriv(contx):
                 config['permissions'][dtag.id] = "1"
                 em = discord.Embed(
                     title='Removed {} ({}) as privileged user.'.format(str(dtag), dtag.id), colour=0x64dd17)
-                em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                 await bot.send_message(contx.message.channel, embed=em)
         save_config()
 
@@ -327,7 +337,6 @@ async def addmod(contx):
             config['permissions'][dtag.id] = "8"
             em = discord.Embed(title='Added {} ({}) as mod.'.format(str(dtag), dtag.id),
                                description='Welcome to the team!', colour=0x64dd17)
-            em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
             await bot.send_message(contx.message.channel, embed=em)
         save_config()
 
@@ -340,7 +349,6 @@ async def rmmod(contx):
         for dtag in modstorm:
             config['permissions'][dtag.id] = "1"
             em = discord.Embed(title='Removed {} ({}) as mod.'.format(str(dtag), dtag.id), colour=0x64dd17)
-            em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
             await bot.send_message(contx.message.channel, embed=em)
         save_config()
 
@@ -362,7 +370,6 @@ async def ban(contx):
                 config['permissions'][dtag.id] = "0"
                 em = discord.Embed(title='Banned {} ({}).'.format(str(dtag), dtag.id),
                                    description='Welcome to the team!', colour=0x64dd17)
-                em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                 await bot.send_message(contx.message.channel, embed=em)
         save_config()
 
@@ -377,7 +384,6 @@ async def unban(contx):
                 config['permissions'][dtag.id] = "1"
                 em = discord.Embed(
                     title='Unbanned {} ({}).'.format(str(dtag), dtag.id), colour=0x64dd17)
-                em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                 await bot.send_message(contx.message.channel, embed=em)
         save_config()
 
@@ -610,7 +616,6 @@ async def s(contx, ticker: str):
         em = discord.Embed(title="HTTP Error",
                            description=error_text,
                            colour=0xab000d)
-        em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
         await bot.send_message(contx.message.channel, embed=em)
         return
     symbolsj = symbols.json()["results"][0]
@@ -645,7 +650,6 @@ async def s(contx, ticker: str):
 
     em = discord.Embed(title="{}'s stocks info as of {}".format(symbolsj["symbol"], symbolsj["updated_at"]),
                        description=reply_text, colour=(0xab000d if diff.startswith("-") else 0x32cb00))
-    em.set_author(name='AveBot - Stocks', icon_url='https://s.ave.zone/c7d.png')
     await bot.send_message(contx.message.channel, embed=em)
 
 
@@ -705,7 +709,6 @@ async def on_message(message):
                 em = discord.Embed(title="Welcome to AveBot Rewrite",
                                    description=help_text,
                                    colour=0xDEADBF)
-                em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
                 await bot.send_message(message.channel, embed=em)
             else:
                 await bot.process_commands(message)
@@ -713,7 +716,6 @@ async def on_message(message):
         avelog(traceback.format_exc())
         em = discord.Embed(title="An error happened", description="It was logged and will be reviewed by developers.",
                            colour=0xcc0000)
-        em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
         await bot.send_message(message.channel, embed=em)
 
 
