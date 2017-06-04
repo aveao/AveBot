@@ -24,6 +24,8 @@ import configparser
 config_file_name = "avebot.ini"
 log_file_name = "avebot.log"
 
+perm_names = {'0': 'Banned', '1': 'Regular User', '2': 'Privileged User', '8': 'Mod', '9': 'Owner'}
+
 
 def avelog(content):
     try:
@@ -104,17 +106,15 @@ async def twitch_checker_task():
             client_id = config['base']['twitch-client-id']
             url = "https://api.twitch.tv/kraken/streams/{}?client_id={}"
             for key in config['twitch']:
-                s = requests.get(url.format(key, client_id))
-                streamlive = ("\"stream\":null" not in s.text)
-                j = s.json()
+                st = requests.get(url.format(key, client_id))
+                streamlive = ("\"stream\":null" not in st.text)
+                j = st.json()
                 if streamlive and (str(j['stream']['_id']) != config['twitch-last'][key]):
                     avelog("twitch.tv/{} went online, posting".format(key))
                     config['twitch-last'][key] = str(j['stream']['_id'])
                     save_config()
                     await bot.send_message(discord.Object(id=config['twitch'][key]),
                                            get_twitch_text(key))
-                elif not streamlive:
-                    avelog("twitch.tv/{} went offline".format(key))
         except KeyError:
             avelog("No Client ID found for twitch.")
             return
@@ -204,8 +204,8 @@ async def servercount():
 async def whoami(contx):
     """Returns your information."""
     await bot.say(
-        "You are {} (`{}`) and your permission level is {} (0 = banned, 1 = normal, 2 = authenticated, 8 = mod, 9 = owner).".format(
-            contx.message.author.name, contx.message.author.id, check_level(contx.message.author.id)))
+        "You are {} (`{}`) and your permission level is {}.".format(
+            contx.message.author.name, contx.message.author.id, perm_names[check_level(contx.message.author.id)]))
 
 
 @bot.command()
@@ -446,7 +446,7 @@ async def xkcd(xkcdcount: int):
     j = output.json()
     resolvedto = j["img"]
     if resolvedto:
-        messagecont = "**XKCD {}:** `{}`, published on {}-{}-{} (DMY)\n**Image:** {}\n**Alt text:** `{}`\n" \
+        messagecont = "**XKCD {0}:** `{1}`, published on {2}-{3}-{4} (DMY)\n**Image:** {5}\n**Alt text:** `{6}`\n" \
                       "Explain xkcd: <http://www.explainxkcd.com/wiki/index.php/{0}>" \
             .format(str(j["num"]), j["safe_title"], j["day"], j["month"], j["year"], resolvedto, j["alt"])
         await bot.say(messagecont)
@@ -459,7 +459,7 @@ async def xkcdlatest():
     j = output.json()
     resolvedto = j["img"]
     if resolvedto:
-        messagecont = "**XKCD {}:** `{}`, published on {}-{}-{} (DMY)\n**Image:** {}\n**Alt text:** `{}`\n" \
+        messagecont = "**XKCD {0}:** `{1}`, published on {2}-{3}-{4} (DMY)\n**Image:** {5}\n**Alt text:** `{6}`\n" \
                       "Explain xkcd: <http://www.explainxkcd.com/wiki/index.php/{0}>" \
             .format(str(j["num"]), j["safe_title"], j["day"], j["month"], j["year"], resolvedto, j["alt"])
         await bot.say(messagecont)
