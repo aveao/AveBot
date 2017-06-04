@@ -313,7 +313,7 @@ async def ping(contx):
     tmp = await bot.send_message(contx.message.channel, 'Calculating...')
     after = time.monotonic()
     ping_ms = (after - before) * 1000
-    message_text = ':ping_pong: Ping is {}ms'.format(ping_ms[:6])
+    message_text = ':ping_pong: Ping is {}ms'.format(str(ping_ms)[:6])
     await bot.edit_message(tmp, message_text)
 
 
