@@ -19,7 +19,6 @@ from discord.ext import commands
 import configparser
 
 # TODO: COGS https://gist.github.com/leovoel/46cd89ed6a8f41fd09c5
-# TODO: Take over >help (on on_message, handle it before handling command)
 # TODO: >get >dget size and timeouts
 
 config_file_name = "avebot.ini"
@@ -652,8 +651,15 @@ async def on_message(message):
                 avelog("{} ({}) said \"{}\" on \"{}\" at \"{}\"."
                        .format(message.author.name, message.author.id, message.content, message.channel.name,
                                message.server.name))
-
-            await bot.process_commands(message)
+            if message.content.lower() == ">help":
+                help_text = open("help.md", "r").read()
+                em = discord.Embed(title="Welcome to AveBot Rewrite",
+                                   description=help_text,
+                                   colour=0xDEADBF)
+                em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
+                await bot.send_message(message.channel, embed=em)
+            else:
+                await bot.process_commands(message)
     except Exception:
         avelog(traceback.format_exc())
         em = discord.Embed(title="An error happened", description="It was logged and will be reviewed by developers.",
