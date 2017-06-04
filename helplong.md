@@ -56,3 +56,4 @@
 **>rmmod <tag as many people as you like>:** Removes a mod (Owner only)<br>
 **>fetchlog:** replies with the log file (Owner only)<br>
 **>exit:** Quits the bot (Owner only).<br>
+**>pull:** Does a `git pull` (Owner only).<br>

@@ -54,6 +54,10 @@ def get_git_commit_text():
     return str(subprocess.check_output(['git', 'log', '-1', '--pretty=%B']).strip())[2:-1]
 
 
+def git_pull():
+    subprocess.call(["git", "pull"])
+
+
 def get_git_revision_short_hash():
     return str(subprocess.check_output(['git', 'log', '-1', '--pretty=%h']).strip())[2:-1]
 
@@ -243,7 +247,7 @@ async def sinfo(contx):
     """Shows info about the current server."""
     the_server = contx.message.server
     em = discord.Embed(title='Server info of {} ({})'.format(the_server.name, the_server.id),
-                       description='Count of users: **{}**\nRegion: **{}**\nOwner: **{}**\nVeritication Level: **{}**\nCreated at: **{}**'.format(
+                       description='Count of users: **{}**\nRegion: **{}**\nOwner: **{}**\nVerification Level: **{}**\nCreated at: **{}**'.format(
                            str(the_server.member_count), str(the_server.region), str(the_server.owner),
                            str(the_server.verification_level), str(the_server.created_at)),
                        colour=0xDEADBF)
@@ -297,6 +301,15 @@ async def _exit(contx):
     """Quits the bot (Owner only)."""
     if check_level(contx.message.author.id) == "9":
         await bot.say("Exiting AveBot, goodbye!")
+        await bot.logout()
+
+
+@bot.command(pass_context=True)
+async def pull(contx):
+    """Does a git pull (Owner only)."""
+    if check_level(contx.message.author.id) == "9":
+        git_pull()
+        await bot.say("Pull complete, exiting!")
         await bot.logout()
 
 
@@ -496,13 +509,12 @@ async def chart():
 @bot.command(pass_context=True)
 async def c(contx, ticker: str):
     """Returns stock chart of the given ticker."""
-    link = "http://finviz.com/chart.ashx?t={}&ty=c&ta=1&p=d&s=l".format(ticker.upper())
-    filename = "files/{}.png".format(ticker.upper())
-    download_file(link, filename)
-    await bot.send_file(contx.message.channel, filename,
-                        content="Here's the charts for {0}. See <http://finviz.com/quote.ashx?t={0}> for more info.".format(
-                            ticker.upper()))
-    os.remove(filename)
+    link = "https://finviz.com/chart.ashx?t={}&ty=c&ta=1&p=d&s=l".format(ticker.upper())
+    em = discord.Embed(title='Chart for {0}'.format(ticker.upper()),
+                       colour=0xDEADBF)
+    em.set_image(url=link)
+    em.set_footer(text='See https://finviz.com/quote.ashx?t={0} for more info.'.format(ticker.upper()))
+    await bot.send_message(contx.message.channel, embed=em)
 
 
 @bot.command()
