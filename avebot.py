@@ -260,7 +260,8 @@ async def sinfo(contx):
 async def uinfo(contx):
     """Shows info about the user."""
     to_post = contx.message.mentions
-    to_post.append(contx.message.author)
+    if len(to_post) == 0: # if no one is mentioned, return current user
+        to_post.append(contx.message.author)
     no_play_text = "No game is being played."
     for the_user in to_post:
         the_member = contx.message.server.get_member_named(str(the_user))
