@@ -23,7 +23,8 @@ import configparser
 
 config_file_name = "avebot.ini"
 log_file_name = "avebot.log"
-startup_extensions = ["members", "rng"]
+global live_streams
+live_streams = ["test", "kappa"]
 
 
 def avelog(content):
@@ -89,6 +90,39 @@ def download_file(url,
                 # f.flush() commented by recommendation from J.F.Sebastian
 
 
+def get_twitch_text(channame):
+    try:
+        text_to_return = config['twitch-text'][channame].replace("$CHANNAME", channame)
+        return text_to_return
+    except KeyError:
+        text_to_return = config['twitch-text']['default'].replace("$CHANNAME", channame)
+        return text_to_return
+
+
+async def twitch_checker_task():
+    await bot.wait_until_ready()
+    while not bot.is_closed:
+        try:
+            client_id = config['base']['twitch-client-id']
+            url = "https://api.twitch.tv/kraken/streams/{}?client_id={}"
+            for key in config['twitch']:
+                j = requests.get(url.format(key, client_id)).text
+                streamlive = ("\"stream\":null" not in j)
+                # avelog("Checking twitch.tv/{}, it is currently {}".format(key, streamlive))
+                if streamlive and (key not in live_streams):
+                    avelog("twitch.tv/{} went online, posting".format(key))
+                    live_streams.append(key)
+                    await bot.send_message(discord.Object(id=config['twitch'][key]),
+                                           get_twitch_text(key))
+                elif not streamlive and (key in live_streams):
+                    avelog("twitch.tv/{} went offline".format(key))
+                    live_streams.remove(key)
+        except KeyError:
+            avelog("No Client ID found for twitch.")
+            return
+        await asyncio.sleep(10)  # task runs every 10 seconds
+
+
 @bot.event
 async def on_ready():
     st = str(datetime.datetime.now()).split('.')[0]
@@ -97,8 +131,8 @@ async def on_ready():
     avelog(bot.user.id)
     avelog('------')
     try:
-        asyncio.sleep(3)
-        await bot.change_presence(game=discord.Game(name='run >help'))
+        await asyncio.sleep(3)
+        await bot.change_presence(game=discord.Game(name='run {}help'.format(prefix)))
         em = discord.Embed(title='AveBot initialized!',
                            description='Git hash: `{}`\nLast git message: `{}`\nHostname: `{}`\nLocal Time: `{}`\nLogs are below.'
                            .format(get_git_revision_short_hash(), get_git_commit_text(), socket.gethostname(), st),
@@ -519,7 +553,7 @@ async def log(contx, count: int):
 @bot.command()
 async def logall():
     """Returns a file with all of all the messages submitted in this channel."""
-    bot.say("Don't be lazy, just do a `>log 100000000`, smh.")
+    bot.say("Don't be lazy, just do a `{}log 100000000`, smh.".format(prefix))
 
 
 @bot.command()
@@ -650,8 +684,9 @@ async def on_message(message):
             await bot.add_reaction(message, config["advanced"]["voting-emoji-n"])
 
         if check_level(str(message.author.id)) != "0":  # Banned users simply do not get a response
-            if message.content.startswith(prefix+'!'):  # implementing this here because ext.commands handle the bang name ugh
-                toduck = message.content.replace(prefix+"!", "!").replace(" ", "+")
+            if message.content.startswith(
+                            prefix + '!'):  # implementing this here because ext.commands handle the bang name ugh
+                toduck = message.content.replace(prefix + "!", "!").replace(" ", "+")
                 output = requests.get(
                     "https://api.duckduckgo.com/?q={}&format=json&pretty=0&no_redirect=1".format(toduck))
                 j = output.json()
@@ -688,4 +723,5 @@ avelog("AveBot started. Git hash: " + get_git_revision_short_hash())
 if not os.path.isdir("files"):
     os.makedirs("files")
 
+bot.loop.create_task(twitch_checker_task())
 bot.run(config['base']['token'])
