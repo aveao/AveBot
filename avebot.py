@@ -126,10 +126,16 @@ async def roll(dice: str):
     await bot.say(result)
 
 
-@bot.command()
+@bot.command(hidden=True)
 async def govegan():
     """Links a resource that'll make you reconsider eating meat."""
     await bot.say("https://zhangyijiang.github.io/puppies-and-chocolate/")
+
+
+@bot.command(hidden=True)
+async def helplong():
+    """Links to a longer, better help file."""
+    await bot.say("https://github.com/ardaozkal/AveBot/blob/rewrite/helplong.md")
 
 
 @bot.command(hidden=True)
@@ -293,6 +299,13 @@ async def rmmod(contx):
             em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
             await bot.send_message(contx.message.channel, embed=em)
         save_config()
+
+
+@bot.command(pass_context=True)
+async def fetchlog(contx):
+    """Returns log"""
+    if check_level(contx.message.author.id) in ["9"]:
+        await bot.send_file(contx.message.channel, "log.txt", content="Here's the current log file:")
 
 
 @bot.command(pass_context=True)
@@ -474,6 +487,67 @@ async def howmanymessages(contx):
     await bot.edit_message(tmp, message_text)
 
 
+@bot.command(pass_context=True)
+async def log(contx, count: int):
+    """Returns a file out of the last N messages submitted in this channel."""
+    log_text = "===start of log, exported by avebot===\n"
+    async for mlog in bot.logs_from(contx.message.channel, limit=count):
+        log_text += "[{}]<{}>{}\n".format(str(mlog.timestamp), str(mlog.author), mlog.clean_content)
+
+    mlog_file_name = "files/{}.log".format(contx.message.channel.id)
+    file = open(mlog_file_name, "w")
+    file.write(log_text)
+    file.write("===end of log, exported by avebot===")
+    file.close()
+    await bot.send_file(contx.message.channel, mlog_file_name,
+                        content="{}: Here's the log file you requested.".format(contx.message.author.mention))
+
+
+@bot.command()
+async def logall():
+    """Returns a file with all of all the messages submitted in this channel."""
+    bot.say("Don't be lazy, just do a `>log 100000000`, smh.")
+
+
+@bot.command()
+async def similar(*, word: str):
+    output = requests.get(
+        "https://api.datamuse.com/words?ml={}".format(word.replace(" ", "+")))
+    j = output.json()
+    await bot.say(
+        "**Similar Word:** `{}`\n(more on <http://www.onelook.com/thesaurus/?s={}&loc=cbsim>)".format(j[0]["word"],
+                                                                                                      word.replace(" ",
+                                                                                                                   "_")))
+
+
+@bot.command()
+async def typo(*, word: str):
+    output = requests.get(
+        "https://api.datamuse.com/words?sp={}".format(word.replace(" ", "+")))
+    j = output.json()
+    await bot.say("**Typo Fixed:** `{}`\n(more on <http://www.onelook.com/?w={}&ls=a>)".format(j[0]["word"],
+                                                                                               word.replace(" ", "_")))
+
+
+@bot.command()
+async def soundslike(*, word: str):
+    output = requests.get(
+        "https://api.datamuse.com/words?sl={}".format(word.replace(" ", "+")))
+    j = output.json()
+    await bot.say("**Sounds like:** `{}`\n(more on <http://www.onelook.com/?w={}&ls=a>)".format(j[0]["word"],
+                                                                                                word.replace(" ", "_")))
+
+
+@bot.command()
+async def rhyme(*, word: str):
+    output = requests.get(
+        "https://api.datamuse.com/words?rel_rhy={}".format(word.replace(" ", "+")))
+    j = output.json()
+    await bot.say(
+        "**Rhymes with:** `{}`\n(more on <http://www.rhymezone.com/r/rhyme.cgi?Word={}&typeofrhyme=adv&org1=syl&org2=l&org3=y>)".format(
+            j[0]["word"], word.replace(" ", "_")))
+
+
 @bot.command(hidden=True)
 async def stock():
     await bot.say("Please use >s")
@@ -482,8 +556,6 @@ async def stock():
 @bot.command(pass_context=True)
 async def s(contx, ticker: str):
     """Returns stock info about the given ticker."""
-    if not contx.message.content.startswith(prefix + "s "):
-        return
     symbols = requests.get(
         "https://api.robinhood.com/quotes/?symbols={}".format(ticker.upper()))
     if symbols.status_code != 200:
@@ -544,7 +616,7 @@ def unfurl_b(link):
             current_depth += 1
         return last_link
     except Exception:
-        return last_link
+        return prev_link
 
 
 @bot.event

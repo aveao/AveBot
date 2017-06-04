@@ -1,0 +1,15 @@
+[base]
+prefix = >
+token = token_goes_here
+main-channel = main_channel_id_goes_here
+support-channel = support_channel_id_goes_here
+
+[advanced]
+add-reactions = True
+voting-prefix = Vote:
+voting-emoji-y = 🇾
+voting-emoji-n = 🇳
+unfurl-depth = 5
+
+[permissions]
+your_discord_id_here = 9

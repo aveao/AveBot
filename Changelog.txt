@@ -8,9 +8,9 @@ Changed:
 >chart to >c
 Added link follow to bangs
 Fixed a bug in >bigly
+Rewrote EVERYTHING.
+Switched to a .ini file and dumped the countless files I had.
 
 Added:
 >dice <NdN> -> Because it was in sample code, and why not?
-
-Proposed:
->chatlog [message-count]
+>log [message-count]
