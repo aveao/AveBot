@@ -23,6 +23,7 @@ import configparser
 
 config_file_name = "avebot.ini"
 log_file_name = "avebot.log"
+startup_extensions = ["members", "rng"]
 
 
 def avelog(content):
@@ -637,8 +638,8 @@ async def on_message(message):
             await bot.add_reaction(message, config["advanced"]["voting-emoji-n"])
 
         if check_level(str(message.author.id)) != "0":  # Banned users simply do not get a response
-            if message.content.startswith('>!'):  # implementing this here because ext.commands handle the bang name ugh
-                toduck = message.content.replace(">!", "!").replace(" ", "+")
+            if message.content.startswith(prefix+'!'):  # implementing this here because ext.commands handle the bang name ugh
+                toduck = message.content.replace(prefix+"!", "!").replace(" ", "+")
                 output = requests.get(
                     "https://api.duckduckgo.com/?q={}&format=json&pretty=0&no_redirect=1".format(toduck))
                 j = output.json()
@@ -646,12 +647,14 @@ async def on_message(message):
                 if resolvedto:
                     await bot.send_message(message.channel, "Bang resolved to: {}".format(unfurl_b(resolvedto)))
 
-            if message.channel.is_private:
-                avelog("{} ({}) said \"{}\" on PMs.".format(message.author.name, message.author.id, message.content))
-            else:
-                avelog("{} ({}) said \"{}\" on \"{}\" at \"{}\"."
-                       .format(message.author.name, message.author.id, message.content, message.channel.name,
-                               message.server.name))
+            if message.content.startswith(prefix):
+                if message.channel.is_private:
+                    avelog(
+                        "{} ({}) said \"{}\" on PMs.".format(message.author.name, message.author.id, message.content))
+                else:
+                    avelog("{} ({}) said \"{}\" on \"{}\" at \"{}\"."
+                           .format(message.author.name, message.author.id, message.content, message.channel.name,
+                                   message.server.name))
             if message.content.lower() == ">help":
                 help_text = open("help.md", "r").read()
                 em = discord.Embed(title="Welcome to AveBot Rewrite",
