@@ -1,15 +1,11 @@
 import asyncio
 import datetime
-import json
 import os
 import re
 import socket
 import subprocess
 import time
 import traceback
-
-import urllib.request
-import urllib.error
 
 from pathlib import Path
 from decimal import *
@@ -24,8 +20,9 @@ from discord.ext import commands
 # TODO: move user permissions to config.
 # TODO: COGS https://gist.github.com/leovoel/46cd89ed6a8f41fd09c5
 # TODO: Take over >help (on on_message, handle it before handling command)
+# TODO: replace urlopen code with requests equivalents
 
-botowner = "137584770145058817" # TODO: Move to config
+botowner = "137584770145058817"  # TODO: Move to config
 prefix = '>'
 
 
@@ -37,13 +34,16 @@ def get_git_revision_short_hash():
     return str(subprocess.check_output(['git', 'log', '-1', '--pretty=%h']).strip())[2:-1]
 
 
-description = 'AveBot Rewrite\nGit Hash: {}\nLast Commit: {}'\
-    .format(get_git_revision_short_hash(),get_git_commit_text())
+description = 'AveBot Rewrite\nGit Hash: {}\nLast Commit: {}' \
+    .format(get_git_revision_short_hash(), get_git_commit_text())
 bot = commands.Bot(command_prefix=prefix, description=description)
 
 
-def get_ban_list():
-    return []
+def check_level(discord_id):
+    # TODO: 0 = banned, 1 = regular user, 2 = privileged, 8 = mod, 9 = owner
+    if discord_id == botowner:
+        return "9"
+    return "1"  # TODO: Check in config file and return level
 
 
 def avelog(content):
@@ -56,6 +56,16 @@ def avelog(content):
         return
     except Exception:
         exit()
+
+
+def download_file(url,
+                  local_filename):  # This function is based on https://stackoverflow.com/a/16696317/3286892 by Poman Podlinov (https://stackoverflow.com/users/427457/roman-podlinov), modified by Avery (https://github.com/ardaozkal), licensed CC-BY-SA 3.0
+    r = requests.get(url, stream=True)
+    with open(local_filename, 'wb') as f:
+        for chunk in r.iter_content(chunk_size=1024):
+            if chunk:  # filter out keep-alive new chunks
+                f.write(chunk)
+                # f.flush() commented by recommendation from J.F.Sebastian
 
 
 @bot.event
@@ -73,11 +83,12 @@ async def on_ready():
                            .format(get_git_revision_short_hash(), socket.gethostname(), st),
                            colour=0xDEADBF)
         em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
-        await bot.send_message(discord.Object(id='305715263951732737'), embed=em) # TODO: Put this in config too.
+        await bot.send_message(discord.Object(id='305715263951732737'), embed=em)  # TODO: Put this in config too.
         await bot.send_file(discord.Object(id='305715263951732737'), "log.txt")
         open('log.txt', 'w').close()  # Clears log
     except Exception:
         avelog(traceback.format_exc())
+        bot.close()
         exit()
 
 
@@ -100,8 +111,14 @@ async def govegan():
     await bot.say("https://zhangyijiang.github.io/puppies-and-chocolate/")
 
 
-@bot.command(alias='erdogan', hidden=True)
+@bot.command(hidden=True)
 async def trump():
+    """Reveals some stuff about my political leaning."""
+    await bot.say("**Did you mean:** `Misogynist`")
+
+
+@bot.command(hidden=True)
+async def erdogan():
     """Reveals some stuff about my political leaning."""
     await bot.say("**Did you mean:** `Dictator`")
 
@@ -114,22 +131,109 @@ async def servercount():
 
 @bot.command(pass_context=True)
 async def whoami(contx):
-    """Returns the amount of servers AveBot is in."""
-    await bot.say("You are {}.".format(contx.message.author.name + "` (`" + contx.message.author.id + '`)')) # TODO: Add user's permission level
+    """Returns your information."""
+    await bot.say("You are {} (`{}`).".format(
+        contx.message.author.name, contx.message.author.id))  # TODO: Add user's permission level
 
 
 @bot.command()
 async def addavebot():
     """Gives a link that can be used to add AveBot."""
-    inviteurl = discord.utils.oauth_url("305708836361207810")  # TODO: Move the hardcoded info to config file. Do isset, do not allow command if it isn't set.
-    await bot.say("You can use {} to add AveBot to your server.".format(inviteurl))
+    inviteurl = discord.utils.oauth_url(
+        "305708836361207810")  # TODO: Move the hardcoded info to config file. Do isset, do not allow command if it isn't set.
+    await bot.say("You can use <{}> to add AveBot to your server.".format(inviteurl))
 
 
-@bot.command(alias="dig")
+@bot.command(pass_context=True)
+async def contact(contx, *, contact_text: str):
+    """Contacts developers with a message."""
+    em = discord.Embed(title='Contact received!',
+                       description='**Message by:** {} ({})\n on {} at {}\n**Message content:** {}'.format(str(
+                           contx.message.author), contx.message.author.id, contx.message.channel.name,
+                           contx.message.server.name, contact_text),
+                       colour=0xDEADBF)
+    em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
+    await bot.send_message(discord.Object(id='305857608378613761'), embed=em) # TODO: Move this ID to config.
+
+    em = discord.Embed(title='Contact sent!',
+                       description='Your message has been delivered to the developers.',
+                       colour=0xDEADBF)
+    em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
+    await bot.send_message(contx.message.channel, embed=em)
+
+
+@bot.command(hidden=True)
+async def dig():
+    await bot.say("Please use >resolve")
+
+
+@bot.command()
 async def resolve(domain: str):
     """Resolves a domain to a URL."""
     resolved = repr(socket.gethostbyname_ex(domain))
-    await bot.say("Successfully resolved {} to {}".format(domain, resolved))
+    await bot.say("Successfully resolved `{}` to `{}`".format(domain, resolved))
+
+
+@bot.command(name="!")
+async def _duckduckgo():
+    """Resolves a duckduckgo bang."""
+    await bot.say("No bang supplied. Try giving a bang like >!wiki.")
+
+
+@bot.command(hidden=True)
+async def unixtime():
+    await bot.say("Current epoch time is: **{}**.".format(str(int(time.time()))))
+
+
+@bot.command()
+async def epoch():
+    """Returns the Unix Time / Epoch."""
+    await bot.say("Current epoch time is: **{}**.".format(str(int(time.time()))))
+
+
+@bot.command(pass_context=True)
+async def ping(contx):
+    """Calculates the ping between the bot and the discord server."""
+    before = time.monotonic()
+    tmp = await bot.send_message(contx.message.channel, 'Calculating...')
+    after = time.monotonic()
+    ping_ms = (after - before) * 1000
+    message_text = ':ping_pong: Ping is {}ms'.format(ping_ms[:6])
+    await bot.edit_message(tmp, message_text)
+
+
+@bot.command(name='exit', pass_context=True)
+async def _exit(contx):
+    """Quits the bot."""
+    if check_level(contx.message.author.id) == "9":
+        await bot.say("Exiting AveBot, goodbye!")
+        await bot.logout()
+
+
+@bot.command()
+async def xkcd(xkcdcount: int):
+    """Returns info about the specified xkcd comic."""
+    output = requests.get("https://xkcd.com/{}/info.0.json".format(str(xkcdcount)))
+    j = output.json()
+    resolvedto = j["img"]
+    if resolvedto:
+        messagecont = "**XKCD {}:** `{}`, published on {}-{}-{} (DMY)\n**Image:** {}\n**Alt text:** `{}`\n" \
+                      "Explain xkcd: <http://www.explainxkcd.com/wiki/index.php/{0}>" \
+            .format(str(j["num"]), j["safe_title"], j["day"], j["month"], j["year"], resolvedto, j["alt"])
+        await bot.say(messagecont)
+
+
+@bot.command()
+async def xkcdlatest():
+    """Returns info about the latest xkcd comic."""
+    output = requests.get("https://xkcd.com/info.0.json")
+    j = output.json()
+    resolvedto = j["img"]
+    if resolvedto:
+        messagecont = "**XKCD {}:** `{}`, published on {}-{}-{} (DMY)\n**Image:** {}\n**Alt text:** `{}`\n" \
+                      "Explain xkcd: <http://www.explainxkcd.com/wiki/index.php/{0}>" \
+            .format(str(j["num"]), j["safe_title"], j["day"], j["month"], j["year"], resolvedto, j["alt"])
+        await bot.say(messagecont)
 
 
 @bot.command()
@@ -140,12 +244,33 @@ async def copypasta(ticker: str):
                       "Clappy Lemme buy a {0} before I send you a {0} Clappy",
                       "GivePLZ TRAIN TO PROFIT TOWN TakeNRG BUY {}! GivePLZ BUY {} TakeNRG",
                       "PogChamp {} PogChamp IS PogChamp OUR PogChamp LAST PogChamp HOPE PogChamp"]
-    to_post = random.choice(copypasta_list).format(ticker)
+    to_post = "Copypasta ready: `{}`".format(random.choice(copypasta_list).format(ticker))
     await bot.say(to_post)
 
 
+@bot.command(hidden=True)
+async def stockchart():
+    await bot.say("Please use >c")
+
+
+@bot.command(hidden=True)
+async def chart():
+    await bot.say("Please use >c")
+
+
+@bot.command(pass_context=True)
+async def c(contx, ticker: str):
+    """Returns stock chart of the given ticker."""
+    link = "http://finviz.com/chart.ashx?t={}&ty=c&ta=1&p=d&s=l".format(ticker.upper())
+    filename = "files/{}.png".format(ticker.upper())
+    download_file(link, filename)
+    await bot.send_file(contx.message.channel, filename,
+                        content="Here's the charts for {0}. See <http://finviz.com/quote.ashx?t={0}> for more info.".format(
+                            ticker.upper()))
+
+
 @bot.command()
-async def bigly(text_to_bigly: str):
+async def bigly(*, text_to_bigly: str):
     """Makes a piece of text as big as the hands of the god emperor."""
     letters = re.findall(r'[a-z0-9 ]', text_to_bigly.lower())
     biglytext = ''
@@ -157,7 +282,7 @@ async def bigly(text_to_bigly: str):
                                                             "four").replace(ri + "5", "five").replace(ri + "6",
                                                                                                       "six").replace(
         ri + "7", "seven").replace(ri + "8", "eight").replace(ri + "9", "nine") \
-        .replace(":" + ri + " :", "\n") # Worst fucking hack ever.
+        .replace(":" + ri + " :", "\n").replace("\n :", "\n:")  # Worst fucking hack ever.
     await bot.say(to_post)
 
 
@@ -172,9 +297,65 @@ async def howmanymessages(context):
         if log.author == context.message.author:
             counter += 1
     percentage_of_messages = str(100 * (counter / allcounter))[:6]
-    message_text = '{}: You have sent {} messages out of the last {} in this channel (%{}).'\
+    message_text = '{}: You have sent {} messages out of the last {} in this channel (%{}).' \
         .format(context.message.author.mention, str(counter), str(allcounter), percentage_of_messages)
     await bot.edit_message(tmp, message_text)
+
+
+@bot.command(hidden=True)
+async def stock():
+    await bot.say("Please use >s")
+
+
+@bot.command(pass_context=True)
+async def s(contx, ticker: str):
+    """Returns stock info about the given ticker."""
+    symbols = requests.get(
+        "https://api.robinhood.com/quotes/?symbols={}".format(ticker.upper()))
+    if symbols.status_code != 200:
+        error_text = (
+            "Stock not found." if symbols.status_code == 400 else "HTTPError Code: {}".format(
+                str(symbols.status_code)))
+        em = discord.Embed(title="HTTP Error",
+                           description=error_text,
+                           colour=0xab000d)
+        em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
+        await bot.send_message(contx.message.channel, embed=em)
+        return
+    symbolsj = symbols.json()["results"][0]
+    instrument = requests.get(symbolsj["instrument"])
+    instrumentj = instrument.json()
+    fundamentals = requests.get(
+        "https://api.robinhood.com/fundamentals/{}/".format(ticker.upper()))
+    fundamentalsj = fundamentals.json()
+
+    current_price = (
+        symbolsj["last_trade_price"] if symbolsj["last_extended_hours_trade_price"] is None else symbolsj[
+            "last_extended_hours_trade_price"])
+    diff = str(Decimal(current_price) - Decimal(symbolsj["previous_close"]))
+    if not diff.startswith("-"):
+        diff = "+" + diff
+    percentage = str(100 * Decimal(diff) / Decimal(current_price))[:6]
+
+    if not percentage.startswith("-"):
+        percentage = "+" + percentage
+
+    reply_text = "Name: **{}**\nCurrent Price: **{} USD**\nChange from yesterday: **{} USD**, (**{}%**)\n" \
+                 "Bid size: **{} ({} USD)**, Ask size: **{} ({} USD)**\n" \
+                 "Current Volume: **{}**, Average Volume: **{}** \n" \
+                 "Tradeable (on robinhood): {}, :flag_{}:".format(instrumentj["name"], current_price, diff,
+                                                                  percentage, str(symbolsj["bid_size"]),
+                                                                  symbolsj["bid_price"], str(symbolsj["ask_size"]),
+                                                                  symbolsj["ask_price"], fundamentalsj["volume"],
+                                                                  fundamentalsj["average_volume"], (
+                                                                      ":white_check_mark:" if instrumentj[
+                                                                          "tradeable"] else ":x:"),
+                                                                  instrumentj["country"].lower())
+
+    em = discord.Embed(title="{}'s stocks info as of {}".format(symbolsj["symbol"], symbolsj["updated_at"]),
+                       description=reply_text, colour=(0xab000d if diff.startswith("-") else 0x32cb00))
+    em.set_author(name='AveBot - Stocks', icon_url='https://s.ave.zone/c7d.png')
+    await bot.send_message(contx.message.channel, embed=em)
 
 
 @bot.event
@@ -193,12 +374,23 @@ async def on_message(message):
         if "🤔" in message.content:  # thinking emoji
             await bot.add_reaction(message, "🤔")
 
-        if not str(message.author.id) in get_ban_list():  # Banned users simply do not get a response
+        if check_level(str(message.author.id)) != "0":  # Banned users simply do not get a response
+            if message.content.startswith('>!'):  # implementing this here because ext.commands handle the bang name ugh
+                toduck = message.content.replace(">!", "!").replace(" ", "+")
+                output = requests.get(
+                    "https://api.duckduckgo.com/?q={}&format=json&pretty=0&no_redirect=1".format(toduck),
+                    allow_redirects=True)
+                j = output.json()
+                resolvedto = j["Redirect"]
+                if resolvedto:
+                    await bot.send_message(message.channel, "Bang resolved to: {}".format(resolvedto))
+
             if message.channel.is_private:
                 avelog("{} ({}) said \"{}\" on PMs.".format(message.author.name, message.author.id, message.content))
             else:
                 avelog("{} ({}) said \"{}\" on \"{}\" at \"{}\"."
-                       .format(message.author.name, message.author.id, message.content, message.channel.name, message.server.name))
+                       .format(message.author.name, message.author.id, message.content, message.channel.name,
+                               message.server.name))
 
             await bot.process_commands(message)
     except Exception:
@@ -214,7 +406,7 @@ if not os.path.isdir("files"):
     os.makedirs("files")
 
 try:
-    with open("bottoken", "r") as tokfile: #TODO: Read from config instead
+    with open("bottoken", "r") as tokfile:  # TODO: Read from config instead
         bot.run(tokfile.read().replace("\n", ""))
 except FileNotFoundError:
     avelog("No bottoken file found! Please create one. Join discord.gg/discord-api and check out #faq for more info.")
