@@ -126,6 +126,18 @@ async def roll(dice: str):
     await bot.say(result)
 
 
+@bot.command(pass_context=True)
+async def info(contx):
+    """Returns bot's info."""
+    st = str(datetime.datetime.now()).split('.')[0]
+    em = discord.Embed(title='AveBot Info',
+                       description='You\'re running AveBot Rewrite.\nGit hash: `{}`\nLast git message: `{}`\nHostname: `{}`\nLocal Time: `{}`'
+                       .format(get_git_revision_short_hash(), get_git_commit_text(), socket.gethostname(), st),
+                       colour=0xDEADBF)
+    em.set_author(name='AveBot', icon_url='https://s.ave.zone/c7d.png')
+    await bot.send_message(discord.Object(id=contx.message.channel), embed=em)
+
+
 @bot.command(hidden=True)
 async def govegan():
     """Links a resource that'll make you reconsider eating meat."""
@@ -478,9 +490,9 @@ async def howmanymessages(contx):
     tmp = await bot.send_message(contx.message.channel, 'Calculating messages...')
     counter = 0
     allcounter = 0
-    async for log in bot.logs_from(contx.message.channel, limit=10000):
+    async for hmlog in bot.logs_from(contx.message.channel, limit=10000):
         allcounter += 1
-        if log.author == contx.message.author:
+        if hmlog.author == contx.message.author:
             counter += 1
     percentage_of_messages = str(100 * (counter / allcounter))[:6]
     message_text = '{}: You have sent {} messages out of the last {} in this channel (%{}).' \
@@ -623,7 +635,7 @@ def unfurl_b(link):
 @bot.event
 async def on_message(message):
     try:
-        if config["advanced"]["add-reactions"] == True:
+        if config["advanced"]["add-reactions"]:
             if message.content.lower().startswith('ok'):
                 await bot.add_reaction(message, "🆗")  # OK emoji
             elif message.content.lower().startswith('hot'):
