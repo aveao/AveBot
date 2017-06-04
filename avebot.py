@@ -451,6 +451,7 @@ async def c(contx, ticker: str):
     await bot.send_file(contx.message.channel, filename,
                         content="Here's the charts for {0}. See <http://finviz.com/quote.ashx?t={0}> for more info.".format(
                             ticker.upper()))
+    os.remove(filename)
 
 
 @bot.command()
