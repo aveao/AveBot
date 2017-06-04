@@ -1,56 +1,57 @@
-# AveBot Commands:      
+# AveBot Commands:<br>
 
-## Bot Help Commands:      
-**>help:** Shows a shortened version of this message.      
-**>helplong:** Links to this.      
-**>servercount:** Returns the amount of servers AveBot is in.      
-**>whoami:** Returns your information.      
-**>contact <message>:** Contacts developers with a message.      
-**>ping:** Calculates the ping between the bot and the discord server.  
+## Bot Help Commands:<br>
+**>help:** Shows a shortened version of this message.<br>
+**>helplong:** Links to this.<br>
+**>servercount:** Returns the amount of servers AveBot is in.<br>
+**>whoami:** Returns your information.<br>
+**>info:** Returns bot's information.<br>
+**>contact <message>:** Contacts developers with a message.<br>
+**>ping:** Calculates the ping between the bot and the discord server.
 
-## Server Commands:      
-**>addavebot:** Gives a link that can be used to add AveBot.      
-**>howmanymessages:** Counts how many messages you sent in this channel in last 10000.      
-**>log <count>:** Returns a log of the last <count> messages in this channel.      
-**>logall:** Yells at you for being lazy.      
+## Server Commands:<br>
+**>addavebot:** Gives a link that can be used to add AveBot.<br>
+**>howmanymessages:** Counts how many messages you sent in this channel in last 10000.<br>
+**>log <count>:** Returns a log of the last <count> messages in this channel.<br>
+**>logall:** Yells at you for being lazy.<br>
 
-## Stocks Commands      
-**>s <ticker>:** Returns stock info about the given ticker.      
-**>c <ticker>:** Returns stock chart of the given ticker.      
+## Stocks Commands<br>
+**>s <ticker>:** Returns stock info about the given ticker.<br>
+**>c <ticker>:** Returns stock chart of the given ticker.<br>
 
-## Fun Commands      
-**>copypasta <ticker>:** Generates a copypasta for StockStream using the given ticker.      
-**>bigly <text>:** Makes a piece of text as big as the hands of the god emperor.      
-**>roll <NdN>:** Rolls a dice in NdN format.      
-**>!<bang> <query>:** Resolves a duckduckgo bang.      
-**>xkcd:** Returns info about the specified xkcd comic.      
-**>xkcdlatest:** Returns info about the latest xkcd comic.      
+## Fun Commands<br>
+**>copypasta <ticker>:** Generates a copypasta for StockStream using the given ticker.<br>
+**>bigly <text>:** Makes a piece of text as big as the hands of the god emperor.<br>
+**>roll <NdN>:** Rolls a dice in NdN format.<br>
+**>!<bang> <query>:** Resolves a duckduckgo bang.<br>
+**>xkcd:** Returns info about the specified xkcd comic.<br>
+**>xkcdlatest:** Returns info about the latest xkcd comic.<br>
 
-## Linguistic Commands      
-**>similar <word or a word group>:** Finds a similar word      
-**>typo <word or a word group>:** Fixes a typo      
-**>soundslike <word or a word group>:** Finds a word that sounds like that      
-**>rhyme <word or a word group>:** Finds a word that rhymes with it      
+## Linguistic Commands<br>
+**>similar <word or a word group>:** Finds a similar word<br>
+**>typo <word or a word group>:** Fixes a typo<br>
+**>soundslike <word or a word group>:** Finds a word that sounds like that<br>
+**>rhyme <word or a word group>:** Finds a word that rhymes with it<br>
 
-## Technical Commands      
-**>unfurl <url>:** Finds where a URL redirects to.      
-**>resolve <domain>:** Resolves a domain to a URL.      
-**>epoch:** Returns the Unix Time / Epoch.      
+## Technical Commands<br>
+**>unfurl <url>:** Finds where a URL redirects to.<br>
+**>resolve <domain>:** Resolves a domain to a URL.<br>
+**>epoch:** Returns the Unix Time / Epoch.<br>
 
-## Privileged-only Commands      
-**>get:** Gets a file from the internet (Privileged/Mod/Admin only).      
-**>dget:** Directly gets (doesn't care about name) a file from the internet (Privileged/Mod/Admin only).      
-**>material:** Gets a file from material.io's icons gallery (Privileged/Mod/Admin only)      
+## Privileged-only Commands<br>
+**>get:** Gets a file from the internet (Privileged/Mod/Admin only).<br>
+**>dget:** Directly gets (doesn't care about name) a file from the internet (Privileged/Mod/Admin only).<br>
+**>material:** Gets a file from material.io's icons gallery (Privileged/Mod/Admin only)<br>
 
-## Mod-only Commands      
-**>say <text>:** Says something (Mod/Owner only).      
-**>addpriv <tag as many people as you like>:** Adds a privileged user (Mod/Owner only)      
-**>rmpriv <tag as many people as you like>:** Removes a privileged user (Mod/Owner only)      
-**>ban <tag as many people as you like>:** Bans a user (Mod/Owner only)      
-**>unban <tag as many people as you like>:** Unbans a user (Mod/Owner only)      
+## Mod-only Commands<br>
+**>say <text>:** Says something (Mod/Owner only).<br>
+**>addpriv <tag as many people as you like>:** Adds a privileged user (Mod/Owner only)<br>
+**>rmpriv <tag as many people as you like>:** Removes a privileged user (Mod/Owner only)<br>
+**>ban <tag as many people as you like>:** Bans a user (Mod/Owner only)<br>
+**>unban <tag as many people as you like>:** Unbans a user (Mod/Owner only)<br>
 
-## Owner-only Commands      
-**>addmod <tag as many people as you like>:** Adds a mod (Owner only)      
-**>rmmod <tag as many people as you like>:** Removes a mod (Owner only)      
-**>fetchlog:** replies with the log file (Owner only)      
-**>exit:** Quits the bot (Owner only).      
+## Owner-only Commands<br>
+**>addmod <tag as many people as you like>:** Adds a mod (Owner only)<br>
+**>rmmod <tag as many people as you like>:** Removes a mod (Owner only)<br>
+**>fetchlog:** replies with the log file (Owner only)<br>
+**>exit:** Quits the bot (Owner only).<br>

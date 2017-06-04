@@ -35,14 +35,14 @@ def avelog(content):
             myfile.write(text + "\n")
         return
     except Exception:
-        exit()
+        exit(2)
 
 
 config = configparser.ConfigParser()
 
 if not Path(config_file_name).is_file():
     avelog("No config file ({}) found, please create one from avebot.ini.example file.".format(config_file_name))
-    exit()
+    exit(3)
 
 config.read(config_file_name)
 
@@ -110,7 +110,7 @@ async def on_ready():
     except Exception:
         avelog(traceback.format_exc())
         bot.close()
-        exit()
+        exit(1)
 
 
 @bot.command()
