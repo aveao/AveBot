@@ -304,7 +304,7 @@ async def rmmod(contx):
 async def fetchlog(contx):
     """Returns log"""
     if check_level(contx.message.author.id) in ["9"]:
-        await bot.send_file(contx.message.channel, "log.txt", content="Here's the current log file:")
+        await bot.send_file(contx.message.channel, log_file_name, content="Here's the current log file:")
 
 
 @bot.command(pass_context=True)
