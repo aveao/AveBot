@@ -1,0 +1,10 @@
+This is the changelog between old AveBot and AveBot Rewrite.
+
+Scraped:
+>geninvite -> Was going to be problematic to some servers probably.
+
+Added:
+>dice <NdN> -> Because it was in sample code, and why not?
+
+Proposed:
+>chatlog [message-count]
