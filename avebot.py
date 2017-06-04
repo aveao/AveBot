@@ -428,7 +428,7 @@ async def copypasta(ticker: str):
                       "Clappy Lemme buy a {0} before I send you a {0} Clappy",
                       "GivePLZ TRAIN TO PROFIT TOWN TakeNRG BUY {}! GivePLZ BUY {} TakeNRG",
                       "PogChamp {} PogChamp IS PogChamp OUR PogChamp LAST PogChamp HOPE PogChamp"]
-    to_post = "Copypasta ready: `{}`".format(random.choice(copypasta_list).format(ticker))
+    to_post = "Copypasta ready: `{}`".format(random.choice(copypasta_list).format(ticker.upper()))
     await bot.say(to_post)
 
 
