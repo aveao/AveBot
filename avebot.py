@@ -260,14 +260,14 @@ async def sinfo(contx):
 async def uinfo(contx):
     """Shows info about the user."""
     to_post = contx.message.mentions
-    if len(to_post) == 0: # if no one is mentioned, return current user
+    if len(to_post) == 0:  # if no one is mentioned, return current user
         to_post.append(contx.message.author)
     no_play_text = "No game is being played."
     for the_user in to_post:
         the_member = contx.message.server.get_member_named(str(the_user))
         played_game_text = no_play_text if the_member.game is None else the_member.game.name
         if played_game_text != no_play_text and the_member.game.type == 1:
-            played_game_text += "\nStreaming at: **{}**".format(the_member.game.url)
+            played_game_text += "**\nStreaming at: **{}".format(the_member.game.url)
         em = discord.Embed(title='User info of {} ({})'.format(str(the_user), the_user.id),
                            description='Registered at: **{}**\nJoined this server at: **{}**\nStatus: **{}**\nGame: **{}**\nIs bot: **{}**'.format(
                                str(the_user.created_at), str(the_member.joined_at), str(the_member.status),
@@ -404,8 +404,7 @@ async def ban(contx):
         for dtag in toban:
             if not (check_level(contx.message.author.id) == "8" and check_level(dtag.id) in ["8", "9"]):
                 config['permissions'][dtag.id] = "0"
-                em = discord.Embed(title='Banned {} ({}).'.format(str(dtag), dtag.id),
-                                   description='Welcome to the team!', colour=0x64dd17)
+                em = discord.Embed(title='Banned {} ({}).'.format(str(dtag), dtag.id), colour=0x64dd17)
                 await bot.send_message(contx.message.channel, embed=em)
         save_config()
 
@@ -529,12 +528,36 @@ async def chart():
     await bot.say("Please use >c")
 
 
+def get_change_color(ticker: str):
+    symbols = requests.get(
+        "https://api.robinhood.com/quotes/?symbols={}".format(ticker.upper()))
+
+    if symbols.status_code != 200:
+        return 0x000000  # black
+
+    symbolsj = symbols.json()["results"][0]
+
+    current_price = (
+        symbolsj["last_trade_price"] if symbolsj["last_extended_hours_trade_price"] is None else symbolsj[
+            "last_extended_hours_trade_price"])
+    diff = str(Decimal(current_price) - Decimal(symbolsj["previous_close"]))
+    percentage = str(100 * Decimal(diff) / Decimal(current_price)).split('.')[0] # before the dor
+    if percentage.startswith('-'):
+        int_perc = int(percentage) * -1  # make it plus
+        colors = [0xFFEBEE, 0xFFCDD2, 0xEF9A9A, 0xE57373, 0xEF5350, 0xF44336, 0xE53935, 0xD32F2F, 0xC62828, 0xB71C1C, 0xD50000]
+        return colors[10 if int_perc > 10 else int_perc]
+    else:
+        int_perc = int(percentage) + 1
+        colors = [0xF1F8E9, 0xDCEDC8, 0xC5E1A5, 0xAED581, 0x9CCC65, 0x8BC34A, 0x7CB342, 0x689F38, 0x558B2F, 0x33691E, 0x1B5E20]
+        return colors[10 if int_perc > 10 else int_perc]
+
+
 @bot.command(pass_context=True)
 async def c(contx, ticker: str):
     """Returns stock chart of the given ticker."""
     link = "https://finviz.com/chart.ashx?t={}&ty=c&ta=1&p=d&s=l".format(ticker.upper())
     em = discord.Embed(title='Chart for {0}'.format(ticker.upper()),
-                       colour=0xDEADBF)
+                       colour=get_change_color(ticker))
     em.set_image(url=link)
     em.set_footer(text='See https://finviz.com/quote.ashx?t={0} for more info.'.format(ticker.upper()))
     await bot.send_message(contx.message.channel, embed=em)
@@ -684,7 +707,7 @@ async def s(contx, ticker: str):
                                                                   instrumentj["country"].lower())
 
     em = discord.Embed(title="{}'s stocks info as of {}".format(symbolsj["symbol"], symbolsj["updated_at"]),
-                       description=reply_text, colour=(0xab000d if diff.startswith("-") else 0x32cb00))
+                       description=reply_text, colour=get_change_color(symbolsj["symbol"]))
     await bot.send_message(contx.message.channel, embed=em)
 
 

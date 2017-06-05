@@ -1,5 +1,9 @@
 # AveBot Commands:<br>
 
+### How to read the variables
+- A `<>` after a command will state a required variable
+- A `[]` after a command will state an optional variable
+
 ## Bot Help Commands:<br>
 **>help:** Shows a shortened version of this message.<br>
 **>helplong:** Links to this.<br>
@@ -7,7 +11,7 @@
 **>whoami:** Returns your information.<br>
 **>info:** Returns bot's information.<br>
 **>uinfo:** Returns information about the user.<br>
-**>sinfo:** Returns information about the server.<br>
+**>sinfo [mention people to get their info]:** Returns information about the server.<br>
 **>contact <message>:** Contacts developers with a message.<br>
 **>ping:** Calculates the ping between the bot and the discord server.
 
