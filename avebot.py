@@ -570,13 +570,13 @@ async def bigly(*, text_to_bigly: str):
     biglytext = ''
     ri = 'regional_indicator_'
     for letter in letters:
-        biglytext = biglytext + ":" + ri + str(letter) + ": "
+        biglytext = biglytext + ":" + ri + str(letter) + ":\u200b"
     to_post = biglytext.replace(ri + "0", "zero").replace(ri + "1", "one").replace(
         ri + "2", "two").replace(ri + "3", "three").replace(ri + "4",
                                                             "four").replace(ri + "5", "five").replace(ri + "6",
                                                                                                       "six").replace(
         ri + "7", "seven").replace(ri + "8", "eight").replace(ri + "9", "nine") \
-        .replace(":" + ri + " :", "\n").replace("\n :", "\n:")  # Worst fucking hack ever.
+        .replace(":" + ri + " :", "\n").replace("\n :", "\n:").replace("\n :", "\n:")  # Worst fucking hack ever.
     await bot.say(to_post)
 
 
