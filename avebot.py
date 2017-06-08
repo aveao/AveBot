@@ -231,7 +231,7 @@ async def sbahjify(contx):
         images_to_process.append(filename)
     for mention in contx.message.mentions:
         linky = mention.avatar_url
-        extension = os.path.splitext(linky)[1].split('?')[0]
+        extension = str(os.path.splitext(linky)[1].split('?')[0])
         filename = "files/{}avi.{}".format(mention.id, extension)
         download_file(linky, filename)
         if extension != ".jpg" or extension != ".jpeg":
@@ -242,7 +242,7 @@ async def sbahjify(contx):
         images_to_process.append(filename)
     stuff_after = contx.message.content.replace(prefix + "sbahjify", "").replace(" ", "")
     if stuff_after != "" and stuff_after.startswith("http"):
-        extension = os.path.splitext(stuff_after)[1].split('?')[0]
+        extension = str(os.path.splitext(stuff_after)[1].split('?')[0])
         filename = "files/{}txt.{}".format(contx.message.id, extension)
         download_file(stuff_after, filename)
         if extension != ".jpg" or extension != ".jpeg":
