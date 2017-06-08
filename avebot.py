@@ -220,13 +220,25 @@ async def sbahjify(contx):
     """Makes images hella and sweet."""
     images_to_process = []
     for attach in contx.message.attachments:
-        filename = "files/{}a{}".format(contx.message.id, os.path.splitext(attach['filename'])[1])
+        extension = os.path.splitext(attach['filename'])[1]
+        filename = "files/{}a{}".format(contx.message.id, extension)
         download_file(attach['proxy_url'], filename)
+        if extension == ".png":
+            im = PIL.Image.open(filename)
+            new_name = filename.replace(extension, ".jpg")
+            im.save(new_name, "JPEG")
+            filename = new_name
         images_to_process.append(filename)
     stuff_after = contx.message.content.replace(prefix + "sbahjify", "").replace(" ", "")
     if stuff_after != "":
-        filename = "files/{}t{}".format(contx.message.id, os.path.splitext(stuff_after)[1])
+        extension = os.path.splitext(stuff_after)[1]
+        filename = "files/{}t{}".format(contx.message.id, extension)
         download_file(stuff_after, filename)
+        if extension == ".png":
+            im = PIL.Image.open(filename)
+            new_name = filename.replace(extension, ".jpg")
+            im.save(new_name, "JPEG")
+            filename = new_name
         images_to_process.append(filename)
     msg_to_send = '{}: Processing image(s).' if len(
         images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'
