@@ -11,6 +11,7 @@ The stuff it can do can be seen by running `>help` on a server it's added on or 
 ### How can I set it up?
 - Install python3.
 - Install `discord.py` (`pip install -U discord.py`).
+- Install `pillow` ([See this for more info on how to install it](https://askubuntu.com/a/427359/511534))
 - Learn your bot token ([hint](https://discordapp.com/developers/applications/me)).
 - Set up a room for `>contact` messages and one for messages on launch time, note their IDs down (looks like `305715263951732737`). Developer mode will help with this one.
 - Learn your Discord ID (looks like `137584770145058817`). Developer mode will help with this one.

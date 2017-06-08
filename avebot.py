@@ -18,6 +18,10 @@ from discord.ext import commands
 
 import configparser
 
+import PIL.Image
+import PIL.ImageFilter
+import PIL.ImageOps
+
 # TODO: COGS https://gist.github.com/leovoel/46cd89ed6a8f41fd09c5
 # TODO: >get >dget size and timeouts
 
@@ -209,6 +213,48 @@ async def whoami(contx):
     await bot.say(
         "You are {} (`{}`) and your permission level is {}.".format(
             contx.message.author.name, contx.message.author.id, perm_names[check_level(contx.message.author.id)]))
+
+
+@bot.command(pass_context=True)
+async def sbahjify(contx):
+    """Makes images hella and sweet."""
+    images_to_process = []
+    for attach in contx.message.attachments:
+        filename = "files/{}a{}".format(contx.message.id, os.path.splitext(attach['filename'])[1])
+        download_file(attach['proxy_url'], filename)
+        images_to_process.append(filename)
+    stuff_after = contx.message.content.replace(prefix + "sbahjify", "").replace(" ", "")
+    if stuff_after != "":
+        filename = "files/{}t{}".format(contx.message.id, os.path.splitext(stuff_after)[1])
+        download_file(stuff_after, filename)
+        images_to_process.append(filename)
+    msg_to_send = '{}: Processing image(s).' if len(
+        images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'
+    tmp = await bot.send_message(contx.message.channel,
+                                 msg_to_send.format(contx.message.author.mention))
+
+    for imgtp in images_to_process:
+        im = PIL.Image.open(imgtp)
+
+        for _ in range(2):
+            im = PIL.ImageOps.equalize(im)  # Drab-ify, but embellish otherwise hidden artifacts
+            im = PIL.ImageOps.solarize(im, 250)  # Create weird blotchy artifacts, but inverts huge swaths
+            im = PIL.ImageOps.posterize(im, 2)  # Flatten colors
+            for _ in range(2):
+                im = im.filter(PIL.ImageFilter.SHARPEN)
+                im = im.filter(PIL.ImageFilter.SMOOTH)
+                im = im.filter(PIL.ImageFilter.SHARPEN)
+        w, h = im.size
+        im = im.resize((w, int(h * 0.7)))
+        im = PIL.ImageOps.equalize(im)  # Drab-ify, but embellish otherwise hidden artifacts
+        im = im.filter(PIL.ImageFilter.SHARPEN)
+        im = im.filter(PIL.ImageFilter.SHARPEN)
+        out_filename = "files/sbah{}".format(imgtp.replace("files/", ""))
+        im.save(out_filename, quality=0, optimize=False, progressive=False)
+        await bot.send_file(contx.message.channel, out_filename,
+                            content="{}: Here's your image, hella and sweetened:".format(contx.message.author.mention))
+    await asyncio.sleep(5)
+    await bot.delete_message(tmp)
 
 
 @bot.command()
@@ -541,14 +587,16 @@ def get_change_color(ticker: str):
         symbolsj["last_trade_price"] if symbolsj["last_extended_hours_trade_price"] is None else symbolsj[
             "last_extended_hours_trade_price"])
     diff = str(Decimal(current_price) - Decimal(symbolsj["previous_close"]))
-    percentage = str(100 * Decimal(diff) / Decimal(current_price)).split('.')[0] # before the dor
+    percentage = str(100 * Decimal(diff) / Decimal(current_price)).split('.')[0]  # before the dor
     if percentage.startswith('-'):
         int_perc = int(percentage) * -1  # make it plus
-        colors = [0xFFEBEE, 0xFFCDD2, 0xEF9A9A, 0xE57373, 0xEF5350, 0xF44336, 0xE53935, 0xD32F2F, 0xC62828, 0xB71C1C, 0xD50000]
+        colors = [0xFFEBEE, 0xFFCDD2, 0xEF9A9A, 0xE57373, 0xEF5350, 0xF44336, 0xE53935, 0xD32F2F, 0xC62828, 0xB71C1C,
+                  0xD50000]
         return colors[10 if int_perc > 10 else int_perc]
     else:
         int_perc = int(percentage) + 1
-        colors = [0xF1F8E9, 0xDCEDC8, 0xC5E1A5, 0xAED581, 0x9CCC65, 0x8BC34A, 0x7CB342, 0x689F38, 0x558B2F, 0x33691E, 0x1B5E20]
+        colors = [0xF1F8E9, 0xDCEDC8, 0xC5E1A5, 0xAED581, 0x9CCC65, 0x8BC34A, 0x7CB342, 0x689F38, 0x558B2F, 0x33691E,
+                  0x1B5E20]
         return colors[10 if int_perc > 10 else int_perc]
 
 
