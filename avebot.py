@@ -588,6 +588,19 @@ async def copypasta(ticker: str):
     await bot.say(to_post)
 
 
+@bot.command()
+async def copypastasell(ticker: str):
+    """Generates a copypasta for StockStream using the given ticker."""
+    copypasta_list = ["Kreygasm MUST Kreygasm SELL Kreygasm {} Kreygasm THIS Kreygasm ROUND Kreygasm",
+                      "Kreygasm TIME Kreygasm TO Kreygasm CASH Kreygasm IN Kreygasm {} Kreygasm",
+                      "FutureMan SELL FutureMan {} FutureMan FOR FutureMan A FutureMan BRIGHTER FutureMan FUTURE FutureMan",
+                      "Clappy Lemme sell a {0} before I send you a {0} Clappy",
+                      "GivePLZ TRAIN TO PROFIT TOWN TakeNRG SELL {}! GivePLZ SELL {} TakeNRG",
+                      "SELLING PogChamp {} PogChamp IS PogChamp OUR PogChamp LAST PogChamp HOPE PogChamp"]
+    to_post = "Copypasta ready: `{}`".format(random.choice(copypasta_list).format(ticker.upper()))
+    await bot.say(to_post)
+
+
 @bot.command(hidden=True)
 async def stockchart():
     await bot.say("Please use >c")

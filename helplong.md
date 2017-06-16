@@ -26,7 +26,8 @@
 **>c \<ticker>:** Returns stock chart of the given ticker.<br>
 
 ## Fun Commands<br>
-**>copypasta \<ticker>:** Generates a copypasta for StockStream using the given ticker.<br>
+**>copypasta \<ticker>:** Generates a buy copypasta for StockStream using the given ticker.<br>
+**>copypastasell \<ticker>:** Generates a sell copypasta for StockStream using the given ticker.<br>
 **>bigly \<text>:** Makes a piece of text as big as the hands of the god emperor.<br>
 **>roll \<NdN>:** Rolls a dice in NdN format.<br>
 **>!\<bang> \<query>:** Resolves a duckduckgo bang.<br>
