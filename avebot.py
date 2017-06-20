@@ -207,6 +207,16 @@ async def servercount():
     await bot.say("AveBot is in {} servers.".format(str(len(bot.servers))))
 
 
+@bot.command()
+async def serverlist():
+    """Returns the list of servers AveBot is in."""
+    avebot_servers = bot.servers
+    text_to_post = "AveBot is in {} servers:\n".format(str(len(avebot_servers)))
+    for server in avebot_servers:
+        text_to_post += "{} ({} members)\n".format(server.name.replace("@", ""), str(server.member_count))
+    await bot.say(text_to_post)
+
+
 @bot.command(pass_context=True)
 async def whoami(contx):
     """Returns your information."""
