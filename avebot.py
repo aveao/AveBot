@@ -214,9 +214,9 @@ async def serverlist():
     text_to_post = "**AveBot is in {} servers:**\n".format(str(len(avebot_servers)))
     total_user_count = 0
     for server in avebot_servers:
-        text_to_post += "• **{}** (**{}** members)\n".format(server.name.replace("@", ""), str(server.member_count))
+        text_to_post += "• **{}** (**{} members**)\n".format(server.name.replace("@", ""), str(server.member_count))
         total_user_count += server.member_count
-    text_to_post += "In total, AveBot is servicing {} users.".format(str(total_user_count))
+    text_to_post += "In total, AveBot is servicing **{} users**.".format(str(total_user_count))
     await bot.say(text_to_post)
 
 

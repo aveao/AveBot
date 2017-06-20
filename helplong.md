@@ -8,6 +8,7 @@
 **>help:** Shows a shortened version of this message.<br>
 **>helplong:** Links to this.<br>
 **>servercount:** Returns the amount of servers AveBot is in.<br>
+**>serverlist:** Returns the list of servers AveBot is in.<br>
 **>whoami:** Returns your information.<br>
 **>info:** Returns bot's information.<br>
 **>uinfo:** Returns information about the user.<br>
