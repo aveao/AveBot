@@ -836,6 +836,8 @@ async def on_message(message):
                 await bot.add_reaction(message, "❄")  # snowflake emoji
             if "🤔" in message.content:  # thinking emoji
                 await bot.add_reaction(message, "🤔")
+        if message.mention_everyone:
+            await bot.send_message(message.channel, "https://s.ave.zone/gofuckyourself.gif")
 
         if message.content.lower().startswith(config["advanced"]["voting-prefix"].lower()):
             await bot.add_reaction(message, config["advanced"]["voting-emoji-y"])
@@ -852,7 +854,7 @@ async def on_message(message):
                 if resolvedto:
                     await bot.send_message(message.channel, "Bang resolved to: {}".format(unfurl_b(resolvedto)))
 
-            if message.content.startswith(prefix):
+            if message.content.startswith(prefix) or True: # Temp enabling this. TODO: Make it optional through config.
                 if message.channel.is_private:
                     avelog(
                         "{} ({}) said \"{}\" on PMs.".format(message.author.name, message.author.id, message.content))
