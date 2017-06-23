@@ -837,7 +837,8 @@ async def on_message(message):
             if "🤔" in message.content:  # thinking emoji
                 await bot.add_reaction(message, "🤔")
         if message.mention_everyone:
-            await bot.send_message(message.channel, "https://s.ave.zone/gofuckyourself.gif")
+            everyone_meme_list = ["https://s.ave.zone/gofuckyourself.gif", "https://s.ave.zone/notcool.jpg"]
+            await bot.send_message(message.channel, random.choice(everyone_meme_list))
 
         if message.content.lower().startswith(config["advanced"]["voting-prefix"].lower()):
             await bot.add_reaction(message, config["advanced"]["voting-emoji-y"])
