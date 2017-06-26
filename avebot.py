@@ -882,5 +882,5 @@ avelog("AveBot started. Git hash: " + get_git_revision_short_hash())
 if not os.path.isdir("files"):
     os.makedirs("files")
 
-bot.loop.create_task(twitch_checker_task())
+# bot.loop.create_task(twitch_checker_task())
 bot.run(config['base']['token'])
