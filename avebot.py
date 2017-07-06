@@ -875,7 +875,7 @@ async def on_message(message):
         avelog(traceback.format_exc())
         em = discord.Embed(title="An error happened", description="It was logged and will be reviewed by developers.",
                            colour=0xcc0000)
-        await bot.send_message(message.channel, embed=em)
+        # await bot.send_message(message.channel, embed=em)
 
 
 avelog("AveBot started. Git hash: " + get_git_revision_short_hash())
