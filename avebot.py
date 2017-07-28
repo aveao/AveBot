@@ -482,12 +482,12 @@ async def _eval(contx, *, code : str):
                 'author': contx.message.author
             }
             env.update(globals())
-            
+
             avelog("running:" + repr(code))
             result = eval(code, env)
             if inspect.isawaitable(result):
                 result = await result
-            await bot.send_message(contx.message.channel, "SUCCESS! ```{}```".format(result))
+            await bot.send_message(contx.message.channel, "SUCCESS! ```{}```".format(repr(result)))
         except:
             await bot.send_message(contx.message.channel, "ERROR! ```{}```".format(traceback.format_exc()))
         save_config()
