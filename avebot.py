@@ -6,6 +6,7 @@ import socket
 import subprocess
 import time
 import traceback
+import inspect
 
 from pathlib import Path
 from decimal import *
@@ -470,12 +471,13 @@ async def eval(contx):
     """Evaluates some code (Owner only)"""
     if check_level(contx.message.author.id) in ["9"]:
         try:
-            to_run_split = contx.message.content.split("```")
-            avelog(repr(to_run_split))
+            to_run_split = contx.message.content.strip(">eval ")
+            result = None
             to_run = str(to_run_split[1])
             avelog(repr(to_run))
             result = eval(to_run)
-            result = await result
+            if inspect.isawaitable(result):
+                result = await result
             await bot.send_message(contx.message.channel, "SUCCESS! ```{}```".format(result))
         except:
             await bot.send_message(contx.message.channel, "ERROR! ```{}```".format(traceback.format_exc()))
