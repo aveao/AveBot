@@ -513,6 +513,8 @@ async def _exec(contx, *, code: str):
 
             avelog("running:" + repr(code))
             result = exec(code, env)
+            if inspect.isawaitable(result):
+                result = await result
             await bot.send_message(contx.message.channel, "SUCCESS! ```{}```".format(repr(result)))
         except:
             await bot.send_message(contx.message.channel, "ERROR! ```{}```".format(traceback.format_exc()))
