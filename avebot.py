@@ -471,6 +471,7 @@ async def eval(contx, *, code : str):
     """Evaluates some code (Owner only)"""
     if check_level(contx.message.author.id) in ["9"]:
         try:
+            code = code.strip('` ')
             result = None
             avelog("running:" + repr(code))
             result = eval(code)
