@@ -38,6 +38,10 @@ def avelog(content):
         print(text)
         with open(log_file_name, "a") as myfile:
             myfile.write(text + "\n")
+
+        log_size = Path(log_file_name).stat().st_size
+        if log_size > 1000 * 1000 * 8:  # Limit of discord is 8MB (not MiB)
+            os.rename(log_file_name, "{}.rot.{}".format(log_file_name, str(time.time())))
         return
     except Exception:
         exit(2)
@@ -96,37 +100,6 @@ def download_file(url,
             if chunk:  # filter out keep-alive new chunks
                 f.write(chunk)
                 # f.flush() commented by recommendation from J.F.Sebastian
-
-
-def get_twitch_text(channame):
-    try:
-        text_to_return = config['twitch-text'][channame].replace("$CHANNAME", channame)
-        return text_to_return
-    except KeyError:
-        text_to_return = config['twitch-text']['default'].replace("$CHANNAME", channame)
-        return text_to_return
-
-
-async def twitch_checker_task():
-    await bot.wait_until_ready()
-    while not bot.is_closed:
-        try:
-            client_id = config['base']['twitch-client-id']
-            url = "https://api.twitch.tv/kraken/streams/{}?client_id={}"
-            for key in config['twitch']:
-                st = requests.get(url.format(key, client_id))
-                streamlive = ("\"stream\":null" not in st.text)
-                j = st.json()
-                if streamlive and (str(j['stream']['_id']) != config['twitch-last'][key]):
-                    avelog("twitch.tv/{} went online, posting".format(key))
-                    config['twitch-last'][key] = str(j['stream']['_id'])
-                    save_config()
-                    await bot.send_message(discord.Object(id=config['twitch'][key]),
-                                           get_twitch_text(key))
-        except KeyError:
-            avelog("No Client ID found for twitch.")
-            return
-        await asyncio.sleep(int(config['advanced']['twitch-check-duration']))
 
 
 @bot.event
@@ -493,6 +466,19 @@ async def ban(contx):
 
 
 @bot.command(pass_context=True)
+async def eval(contx):
+    """Evaluates some code (Owner only)"""
+    if check_level(contx.message.author.id) in ["9"]:
+        torun = contx.message.split("```")
+        try:
+            result = eval(torun[1])
+            await bot.send_message(contx.message.channel, "SUCCESS! ```{}```".format(result))
+        except:
+            await bot.send_message(contx.message.channel, "ERROR! ```{}```".format(traceback.format_exc()))
+        save_config()
+
+
+@bot.command(pass_context=True)
 async def unban(contx):
     """Unbans a user (Mod/Owner only)"""
     if check_level(contx.message.author.id) in ["8", "9"]:
@@ -827,18 +813,18 @@ def unfurl_b(link):
 @bot.event
 async def on_message(message):
     try:
-        if config["advanced"]["add-reactions"]:
-            if message.content.lower().startswith('ok'):
-                await bot.add_reaction(message, "🆗")  # OK emoji
-            elif message.content.lower().startswith('hot'):
-                await bot.add_reaction(message, "🔥")  # fire emoji
-            elif message.content.lower().startswith('cool'):
-                await bot.add_reaction(message, "❄")  # snowflake emoji
-            if "🤔" in message.content:  # thinking emoji
-                await bot.add_reaction(message, "🤔")
-        if message.mention_everyone:
-            everyone_meme_list = ["https://s.ave.zone/gofuckyourself.gif", "https://s.ave.zone/notcool.jpg"]
-            await bot.send_message(message.channel, random.choice(everyone_meme_list))
+        # if config["advanced"]["add-reactions"]:
+        #   if message.content.lower().startswith('ok'):
+        #        await bot.add_reaction(message, "🆗")  # OK emoji
+        #   elif message.content.lower().startswith('hot'):
+        #        await bot.add_reaction(message, "🔥")  # fire emoji
+        #   elif message.content.lower().startswith('cool'):
+        #       await bot.add_reaction(message, "❄")  # snowflake emoji
+        #   if "🤔" in message.content:  # thinking emoji
+        #       await bot.add_reaction(message, "🤔")
+        # if message.mention_everyone:
+        #   everyone_meme_list = ["https://s.ave.zone/gofuckyourself.gif", "https://s.ave.zone/notcool.jpg"]
+        #   await bot.send_message(message.channel, random.choice(everyone_meme_list))
 
         if message.content.lower().startswith(config["advanced"]["voting-prefix"].lower()):
             await bot.add_reaction(message, config["advanced"]["voting-emoji-y"])
@@ -882,5 +868,4 @@ avelog("AveBot started. Git hash: " + get_git_revision_short_hash())
 if not os.path.isdir("files"):
     os.makedirs("files")
 
-# bot.loop.create_task(twitch_checker_task())
 bot.run(config['base']['token'])
