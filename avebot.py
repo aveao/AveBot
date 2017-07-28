@@ -467,15 +467,13 @@ async def ban(contx):
 
 
 @bot.command(pass_context=True)
-async def eval(contx):
+async def eval(contx, *, code : str):
     """Evaluates some code (Owner only)"""
     if check_level(contx.message.author.id) in ["9"]:
         try:
-            to_run_split = contx.message.content.strip(">eval ")
             result = None
-            to_run = str(to_run_split[1])
-            avelog(repr(to_run))
-            result = eval(to_run)
+            avelog("running:" + repr(code))
+            result = eval(code)
             if inspect.isawaitable(result):
                 result = await result
             await bot.send_message(contx.message.channel, "SUCCESS! ```{}```".format(result))
