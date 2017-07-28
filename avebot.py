@@ -466,13 +466,12 @@ async def ban(contx):
         save_config()
 
 
-@bot.command(pass_context=True)
-async def eval(contx, *, code : str):
+@bot.command(name='eval', pass_context=True)
+async def _eval(contx, *, code : str):
     """Evaluates some code (Owner only)"""
     if check_level(contx.message.author.id) in ["9"]:
         try:
             code = code.strip('` ')
-            result = None
             avelog("running:" + repr(code))
             result = eval(code)
             if inspect.isawaitable(result):
