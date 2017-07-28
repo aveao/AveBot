@@ -472,8 +472,19 @@ async def _eval(contx, *, code : str):
     if check_level(contx.message.author.id) in ["9"]:
         try:
             code = code.strip('` ')
+
+            env = {
+                'bot': bot,
+                'contx': contx,
+                'message': contx.message,
+                'server': contx.message.server,
+                'channel': contx.message.channel,
+                'author': contx.message.author
+            }
+            env.update(globals())
+            
             avelog("running:" + repr(code))
-            result = eval(code)
+            result = eval(code, env)
             if inspect.isawaitable(result):
                 result = await result
             await bot.send_message(contx.message.channel, "SUCCESS! ```{}```".format(result))
