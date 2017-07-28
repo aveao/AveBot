@@ -469,7 +469,7 @@ async def ban(contx):
 async def eval(contx):
     """Evaluates some code (Owner only)"""
     if check_level(contx.message.author.id) in ["9"]:
-        torun = contx.message.split("```")
+        torun = contx.message.content.split("```")
         try:
             result = eval(torun[1])
             await bot.send_message(contx.message.channel, "SUCCESS! ```{}```".format(result))
