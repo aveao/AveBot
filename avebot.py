@@ -470,8 +470,12 @@ async def eval(contx):
     """Evaluates some code (Owner only)"""
     if check_level(contx.message.author.id) in ["9"]:
         try:
-            torun = contx.message.content.split("```")
-            result = eval(str(torun[1]))
+            to_run_split = contx.message.content.split("```")
+            print(repr(to_run_split))
+            to_run = str(to_run_split[1])
+            print(repr(to_run))
+            result = repr(eval(to_run))
+            print(result)
             await bot.send_message(contx.message.channel, "SUCCESS! ```{}```".format(result))
         except:
             await bot.send_message(contx.message.channel, "ERROR! ```{}```".format(traceback.format_exc()))
