@@ -467,14 +467,14 @@ async def ban(contx):
 
 
 @bot.command(name='eval', pass_context=True)
-async def _eval(contx, *, code : str):
+async def _eval(self, contx, *, code : str):
     """Evaluates some code (Owner only)"""
     if check_level(contx.message.author.id) in ["9"]:
         try:
             code = code.strip('` ')
 
             env = {
-                'bot': bot,
+                'bot': self.bot,
                 'contx': contx,
                 'message': contx.message,
                 'server': contx.message.server,
