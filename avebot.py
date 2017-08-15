@@ -201,10 +201,7 @@ async def whoami(contx):
         "You are {} (`{}`) and your permission level is {}.".format(
             contx.message.author.name, contx.message.author.id, perm_names[check_level(contx.message.author.id)]))
 
-
-@bot.command(pass_context=True)
-async def sbahjify(contx):
-    """Makes images hella and sweet."""
+async def get_images(contx):
     images_to_process = []
     for attach in contx.message.attachments:
         extension = os.path.splitext(attach['filename'])[1]
@@ -241,8 +238,13 @@ async def sbahjify(contx):
     msg_to_send = '{}: Processing image(s).' if len(
         images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'
     tmp = await bot.send_message(contx.message.channel,
-                                 msg_to_send.format(contx.message.author.mention))
+                     msg_to_send.format(contx.message.author.mention))
+    return images_to_process
 
+@bot.command(pass_context=True)
+async def sbahjify(contx):
+    """Makes images hella and sweet."""
+    images_to_process = get_images(contx)
     for imgtp in images_to_process:
         avelog("Processing {}".format(imgtp))
         im = PIL.Image.open(imgtp)
