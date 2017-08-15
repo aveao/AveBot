@@ -494,34 +494,6 @@ async def _eval(contx, *, code: str):
         avelog("no perms for eval")
 
 
-@bot.command(name='exec', pass_context=True)
-async def _exec(contx, *, code: str):
-    """Executes some code (Owner only)"""
-    if check_level(contx.message.author.id) in ["9"]:
-        try:
-            code = code.strip('` ')
-
-            env = {
-                'bot': bot,
-                'contx': contx,
-                'message': contx.message,
-                'server': contx.message.server,
-                'channel': contx.message.channel,
-                'author': contx.message.author
-            }
-            env.update(globals())
-
-            avelog("running:" + repr(code))
-            result = exec(code, env)
-            if inspect.isawaitable(result):
-                result = await result
-            await bot.send_message(contx.message.channel, "SUCCESS! ```{}```".format(repr(result)))
-        except:
-            await bot.send_message(contx.message.channel, "ERROR! ```{}```".format(traceback.format_exc()))
-    else:
-        avelog("no perms for exec")
-
-
 @bot.command(pass_context=True)
 async def unban(contx):
     """Unbans a user (Mod/Owner only)"""
