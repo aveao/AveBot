@@ -842,8 +842,11 @@ async def on_message(message):
         #   everyone_meme_list = ["https://s.ave.zone/gofuckyourself.gif", "https://s.ave.zone/notcool.jpg"]
         #   await bot.send_message(message.channel, random.choice(everyone_meme_list))
 
-        if message.author.name == "GitHub" and message.channel.id == config['base']['main-channel']:
-            print(message.content.embeds[0].title)
+        if message.author.name == "GitHub" and message.channel.id == config['base']['main-channel'] and message.content.embeds[0].title.contains("new commit"):
+            tmp = await bot.send_message(message.channel, 'Pulling...')
+            git_pull()
+            await bot.edit_message(tmp, "Pull complete, exiting!")
+            await bot.logout()
 
         if message.content.lower().startswith(config["advanced"]["voting-prefix"].lower()):
             await bot.add_reaction(message, config["advanced"]["voting-emoji-y"])
