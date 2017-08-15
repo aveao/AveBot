@@ -842,11 +842,15 @@ async def on_message(message):
         #   everyone_meme_list = ["https://s.ave.zone/gofuckyourself.gif", "https://s.ave.zone/notcool.jpg"]
         #   await bot.send_message(message.channel, random.choice(everyone_meme_list))
 
-        if message.author.name == "GitHub" and message.channel.id == config['base']['main-channel'] and message.content.embeds[0].title.contains("new commit"):
-            tmp = await bot.send_message(message.channel, 'Pulling...')
-            git_pull()
-            await bot.edit_message(tmp, "Pull complete, exiting!")
-            await bot.logout()
+        # if message.author.name == "GitHub" and message.channel.id == config['base']['main-channel'] and message.embeds[0].title.contains("new commit"):
+        #     tmp = await bot.send_message(message.channel, 'Pulling...')
+        #     git_pull()
+        #     await bot.edit_message(tmp, "Pull complete, exiting!")
+        #     await bot.logout()
+
+        if message.author.name == "GitHub" and message.channel.id == config['base']['main-channel']:
+            avelog(message.embeds[0].title)
+            await bot.send_message(discord.Object(id=config['base']['main-channel']), "bot title: " + message.embeds[0].title)
 
         if message.content.lower().startswith(config["advanced"]["voting-prefix"].lower()):
             await bot.add_reaction(message, config["advanced"]["voting-emoji-y"])
@@ -855,7 +859,7 @@ async def on_message(message):
         if check_level(str(message.author.id)) != "0":  # Banned users simply do not get a response
             if message.content.startswith(
                             prefix + '!'):  # implementing this here because ext.commands handle the bang name ugh
-                toduck = message.content.replace(prefix + "!", "!").replace(" ", "+")
+                toduck = message.content.replace("+", "%2B").replace(prefix + "!", "!").replace(" ", "+")
                 output = requests.get(
                     "https://api.duckduckgo.com/?q={}&format=json&pretty=0&no_redirect=1".format(toduck))
                 j = output.json()
@@ -863,7 +867,7 @@ async def on_message(message):
                 if resolvedto:
                     await bot.send_message(message.channel, "Bang resolved to: {}".format(unfurl_b(resolvedto)))
 
-            if message.content.startswith(prefix) or True: # Temp enabling this. TODO: Make it optional through config.
+            if message.content.startswith(prefix) or True:  # Temp enabling this. TODO: Make it optional through config.
                 if message.channel.is_private:
                     avelog(
                         "{} ({}) said \"{}\" on PMs.".format(message.author.name, message.author.id, message.content))
@@ -881,9 +885,9 @@ async def on_message(message):
                 await bot.process_commands(message)
     except Exception:
         avelog(traceback.format_exc())
-        em = discord.Embed(title="An error happened", description="It was logged and will be reviewed by developers.",
+        em = discord.Embed(title="An error happened", description=traceback.format_exc(),
                            colour=0xcc0000)
-        # await bot.send_message(message.channel, embed=em)
+        await bot.send_message(discord.Object(id=config['base']['main-channel']), embed=em)
 
 
 avelog("AveBot started. Git hash: " + get_git_revision_short_hash())
