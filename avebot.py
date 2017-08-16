@@ -235,16 +235,16 @@ async def get_images(contx):
             im.save(new_name, "JPEG")
             filename = new_name
         images_to_process.append(filename)
-    msg_to_send = '{}: Processing image(s).' if len(
-        images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'
-    tmp = await bot.send_message(contx.message.channel,
-                     msg_to_send.format(contx.message.author.mention))
     return images_to_process
+
 
 @bot.command(pass_context=True)
 async def sbahjify(contx):
     """Makes images hella and sweet."""
     images_to_process = get_images(contx)
+    msg_to_send = '{}: Processing image(s).' if len(
+        images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'
+    tmp = await bot.send_message(contx.message.channel, msg_to_send.format(contx.message.author.mention))
     for imgtp in images_to_process:
         avelog("Processing {}".format(imgtp))
         im = PIL.Image.open(imgtp)
@@ -663,6 +663,17 @@ async def c(contx, ticker: str):
     em.set_image(url=link)
     em.set_footer(text='See https://finviz.com/quote.ashx?t={0} for more info.'.format(ticker.upper()))
     await bot.send_message(contx.message.channel, embed=em)
+
+
+@bot.command(pass_context=True)
+async def siterender(contx, page_link: str):
+    """Returns an image of the site."""
+    if check_level(contx.message.author.id) in ["2", "8", "9"]:
+        link = "http://http2pic.haschek.at/api.php?url={}".format(page_link)
+        em = discord.Embed(title='Page render for {}, as requested by {}'.format(page_link, str(contx.message.author)))
+        em.set_image(url=link)
+        em.set_footer(text='Powered by http2pic.haschek.at. If you want a domain banned (nsfw site etc) please PM ao#5755.')
+        await bot.send_message(contx.message.channel, embed=em)
 
 
 @bot.command()
