@@ -862,8 +862,8 @@ async def on_message(message):
         #     await bot.logout()
 
         if message.author.name == "GitHub" and message.channel.id == config['base']['main-channel']:
-            avelog(message.embeds[0].title)
-            await bot.send_message(discord.Object(id=config['base']['main-channel']), "bot title: " + message.embeds[0].title)
+            avelog(repr(message.embeds[0]))
+            await bot.send_message(discord.Object(id=config['base']['main-channel']), "embed content: " + repr(message.embeds[0]))
 
         if message.content.lower().startswith(config["advanced"]["voting-prefix"].lower()):
             await bot.add_reaction(message, config["advanced"]["voting-emoji-y"])
