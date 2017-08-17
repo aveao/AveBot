@@ -270,6 +270,26 @@ async def sbahjify(contx):
     await bot.delete_message(tmp)
 
 
+@bot.command(pass_context=True)
+async def tag(contx):
+    """Tags images. Based on tagbox."""
+    images_to_process = get_images(contx)
+    msg_to_send = '{}: Processing image(s).' if len(
+        images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'
+    tmp = await bot.send_message(contx.message.channel, msg_to_send.format(contx.message.author.mention))
+    for imgtp in images_to_process:
+        avelog("Processing {}".format(imgtp))
+        post = requests.post("http://52.168.149.3:8080/tagbox/check", files={'file': open(imgtp, 'rb')})
+        postj = post.json()
+        if postj.success:
+            text = "Image successfully viewed~ [based on tagbox] \nTags:"
+            for t in postj.tags:
+                text.append("**{}** ({} confidence)\n".format(t.tag, t.confidence))
+            await bot.send_message(contx.message.channel, "{}: {}".format(contx.message.author.mention, text))
+    await asyncio.sleep(5)
+    await bot.delete_message(tmp)
+
+
 @bot.command()
 async def unfurl(link: str):
     """Finds where a URL redirects to."""
