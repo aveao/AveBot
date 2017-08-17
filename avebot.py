@@ -284,12 +284,14 @@ async def tag(contx):
             files = dict(file=open(imgtp, 'rb'))
             postr = requests.post("http://52.168.149.3:8080/tagbox/check", files=files, headers=headers)
             avelog(postr.text)
-            await bot.send_message(contx.message.channel, postr.text)
             postj = postr.json()
+            avelog(postj.success)
             if postj.success:
+                avelog("success")
                 text = "Image successfully viewed~ [based on tagbox] \nTags:"
                 for t in postj.tags:
                     text.append("**{}** ({} confidence)\n".format(t.tag, t.confidence))
+                avelog(text)
                 await bot.send_message(contx.message.channel, "{}: {}".format(contx.message.author.mention, text))
         await asyncio.sleep(5)
         await bot.delete_message(tmp)
