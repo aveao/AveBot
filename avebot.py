@@ -273,26 +273,25 @@ async def sbahjify(contx):
 @bot.command(pass_context=True)
 async def tag(contx):
     """Tags images. Based on tagbox."""
-    if check_level(contx.message.author.id) in ["2", "8", "9"]:
-        images_to_process = await get_images(contx, "tag")
-        msg_to_send = '{}: Processing image(s). (this might take some time)' if len(
-            images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'
-        tmp = await bot.send_message(contx.message.channel, msg_to_send.format(contx.message.author.mention))
-        for imgtp in images_to_process:
-            avelog("Processing {} for tag".format(imgtp))
-            headers = {"Accept": "application/json; charset=utf-8"}
-            files = dict(file=open(imgtp, 'rb'))
-            postr = requests.post("http://52.168.149.3:8080/tagbox/check", files=files, headers=headers)
-            avelog(postr.text)
-            postj = postr.json()
-            if postj["success"]:
-                text = "Image successfully tagged (with tagbox). \nTags:"
-                for t in postj["tags"]:
-                    text.append("**{}** ({} confidence)\n".format(t["tag"], t["confidence"]))
-                avelog(text)
-                await bot.send_message(contx.message.channel, "{}: {}".format(contx.message.author.mention, text))
-        await asyncio.sleep(5)
-        await bot.delete_message(tmp)
+    images_to_process = await get_images(contx, "tag")
+    msg_to_send = '{}: Processing image(s). (this might take some time)' if len(
+        images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'
+    tmp = await bot.send_message(contx.message.channel, msg_to_send.format(contx.message.author.mention))
+    for imgtp in images_to_process:
+        avelog("Processing {} for tag".format(imgtp))
+        headers = {"Accept": "application/json; charset=utf-8"}
+        files = dict(file=open(imgtp, 'rb'))
+        postr = requests.post(config['tagbox']['url'], files=files, headers=headers)
+        avelog(postr.text)
+        postj = postr.json()
+        if postj["success"]:
+            text = "Image successfully tagged (with tagbox). \nTags:"
+            for t in postj["tags"]:
+                text += ("**{}** ({} confidence)\n".format(t["tag"], t["confidence"]))
+            avelog(text)
+            await bot.send_message(contx.message.channel, "{}: {}".format(contx.message.author.mention, text))
+    await asyncio.sleep(5)
+    await bot.delete_message(tmp)
 
 
 @bot.command()
