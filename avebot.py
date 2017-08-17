@@ -287,7 +287,7 @@ async def tag(contx):
         if postj["success"]:
             text = ""
             for t in postj["tags"]:
-                text += ("**{}** ({} confidence)\n".format(t["tag"], t["confidence"][:4]))
+                text += ("**{}** ({} confidence)\n".format(t["tag"], str(t["confidence"])[:4]))
             avelog(text)
             em = discord.Embed(
                 title='Tags for the image requested by {}'.format(str(contx.message.author)), description=text)
