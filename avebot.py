@@ -235,6 +235,7 @@ async def get_images(contx):
             im.save(new_name, "JPEG")
             filename = new_name
         images_to_process.append(filename)
+    avelog("{} images found to process1, repr: {}".format(len(images_to_process), repr(images_to_process)))
     return images_to_process
 
 
@@ -242,6 +243,7 @@ async def get_images(contx):
 async def sbahjify(contx):
     """Makes images hella and sweet."""
     images_to_process = get_images(contx)
+    avelog("{} images found to process2, repr: {}".format(len(images_to_process), repr(images_to_process)))
     msg_to_send = '{}: Processing image(s).' if len(
         images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'
     tmp = await bot.send_message(contx.message.channel, msg_to_send.format(contx.message.author.mention))
@@ -274,6 +276,7 @@ async def sbahjify(contx):
 async def tag(contx):
     """Tags images. Based on tagbox."""
     images_to_process = get_images(contx)
+    avelog("{} images found to process3, repr: {}".format(len(images_to_process), repr(images_to_process)))
     msg_to_send = '{}: Processing image(s).' if len(
         images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'
     tmp = await bot.send_message(contx.message.channel, msg_to_send.format(contx.message.author.mention))
@@ -882,8 +885,8 @@ async def on_message(message):
         #     await bot.logout()
 
         if message.author.name == "GitHub" and message.channel.id == config['base']['main-channel']:
-            avelog(repr(message.embeds[0]))
-            await bot.send_message(discord.Object(id=config['base']['main-channel']), "embed content: " + repr(message.embeds[0]))
+            avelog(repr(message.embeds[0]['title']))
+            await bot.send_message(discord.Object(id=config['base']['main-channel']), "embed content: " + repr(message.embeds[0]['title']))
 
         if message.content.lower().startswith(config["advanced"]["voting-prefix"].lower()):
             await bot.add_reaction(message, config["advanced"]["voting-emoji-y"])
