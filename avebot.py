@@ -293,7 +293,7 @@ async def tag(contx):
                 title='Tags for the image requested by {}'.format(str(contx.message.author)), description=text)
             # em.set_thumbnail(url=link)
             em.set_footer(
-                text='Powered by [tagbox](http://tagbox.in).')
+                text='Powered by tagbox.')
             await bot.send_message(contx.message.channel, embed=em)
             # await bot.send_message(contx.message.channel, "{}: {}".format(contx.message.author.mention, text))
     await asyncio.sleep(5)
