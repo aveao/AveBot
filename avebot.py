@@ -285,11 +285,17 @@ async def tag(contx):
         avelog(postr.text)
         postj = postr.json()
         if postj["success"]:
-            text = "Image successfully tagged (with tagbox). \nTags:\n "
+            text = ""
             for t in postj["tags"]:
                 text += ("**{}** ({} confidence)\n".format(t["tag"], t["confidence"][:4]))
             avelog(text)
-            await bot.send_message(contx.message.channel, "{}: {}".format(contx.message.author.mention, text))
+            em = discord.Embed(
+                title='Tags for the image requested by {}'.format(str(contx.message.author)), description=text)
+            # em.set_thumbnail(url=link)
+            em.set_footer(
+                text='Powered by [tagbox](http://tagbox.in).')
+            await bot.send_message(contx.message.channel, embed=em)
+            # await bot.send_message(contx.message.channel, "{}: {}".format(contx.message.author.mention, text))
     await asyncio.sleep(5)
     await bot.delete_message(tmp)
 
