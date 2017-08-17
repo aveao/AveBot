@@ -47,6 +47,7 @@
 **>resolve \<domain>:** Resolves a domain to a URL.<br>
 **>epoch:** Returns the Unix Time / Epoch.<br>
 **>siterender \<url>:** Returns the page render of that URL.<br>
+**>tag <image/mention/url>:** Tags an image using tagbox, and returns results.<br>
 
 ## Privileged-only Commands<br>
 **>get:** Gets a file from the internet (Privileged/Mod/Admin only).<br>
