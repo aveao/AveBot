@@ -281,6 +281,8 @@ async def tag(contx):
         for imgtp in images_to_process:
             avelog("Processing {}".format(imgtp))
             post = requests.post("http://52.168.149.3:8080/tagbox/check", files={'file': open(imgtp, 'rb')}, headers={"Accept": "application/json; charset=utf-8", "Content-Type": "multipart/form-data; charset=utf-8"})
+            avelog(post.text)
+            await bot.send_message(contx.message.channel, post.text)
             postj = post.json()
             if postj.success:
                 text = "Image successfully viewed~ [based on tagbox] \nTags:"
