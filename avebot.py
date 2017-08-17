@@ -242,7 +242,7 @@ async def get_images(contx):
 @bot.command(pass_context=True)
 async def sbahjify(contx):
     """Makes images hella and sweet."""
-    images_to_process = get_images(contx)
+    images_to_process = await get_images(contx)
     avelog("{} images found to process2, repr: {}".format(len(images_to_process), repr(images_to_process)))
     msg_to_send = '{}: Processing image(s).' if len(
         images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'
@@ -275,7 +275,7 @@ async def sbahjify(contx):
 @bot.command(pass_context=True)
 async def tag(contx):
     """Tags images. Based on tagbox."""
-    images_to_process = get_images(contx)
+    images_to_process = await get_images(contx)
     avelog("{} images found to process3, repr: {}".format(len(images_to_process), repr(images_to_process)))
     msg_to_send = '{}: Processing image(s).' if len(
         images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'
