@@ -285,9 +285,9 @@ async def tag(contx):
         avelog(postr.text)
         postj = postr.json()
         if postj["success"]:
-            text = "Image successfully tagged (with tagbox). \nTags:"
+            text = "Image successfully tagged (with tagbox). \nTags:\n "
             for t in postj["tags"]:
-                text += ("**{}** ({} confidence)\n".format(t["tag"], t["confidence"]))
+                text += ("**{}** ({} confidence)\n".format(t["tag"], t["confidence"][:4]))
             avelog(text)
             await bot.send_message(contx.message.channel, "{}: {}".format(contx.message.author.mention, text))
     await asyncio.sleep(5)
