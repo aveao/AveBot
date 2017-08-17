@@ -246,7 +246,7 @@ async def sbahjify(contx):
         images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'
     tmp = await bot.send_message(contx.message.channel, msg_to_send.format(contx.message.author.mention))
     for imgtp in images_to_process:
-        avelog("Processing {}".format(imgtp))
+        avelog("Processing {} for sbahj".format(imgtp))
         im = PIL.Image.open(imgtp)
 
         for _ in range(2):
@@ -279,10 +279,10 @@ async def tag(contx):
             images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'
         tmp = await bot.send_message(contx.message.channel, msg_to_send.format(contx.message.author.mention))
         for imgtp in images_to_process:
-            avelog("Processing {}".format(imgtp))
-            headers = {"Accept": "application/json; charset=utf-8",
-                       "Content-Type": "multipart/form-data; charset=utf-8"}
-            postr = requests.post("http://52.168.149.3:8080/tagbox/check", files={'file': open(imgtp, 'rb')}, headers = headers)
+            avelog("Processing {} for tag".format(imgtp))
+            headers = {"Accept": "application/json; charset=utf-8"}
+            files = dict(file=open(imgtp, 'rb'))
+            postr = requests.post("http://52.168.149.3:8080/tagbox/check", files=files, headers=headers)
             avelog(postr.text)
             await bot.send_message(contx.message.channel, postr.text)
             postj = postr.json()
