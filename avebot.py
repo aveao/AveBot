@@ -882,11 +882,11 @@ async def on_message(message):
             await bot.edit_message(tmp, "Pull complete, exiting!")
             await bot.logout()
 
-        if message.content.lower().startswith(config["advanced"]["voting-prefix"].lower()):
-            await bot.add_reaction(message, config["advanced"]["voting-emoji-y"])
-            await bot.add_reaction(message, config["advanced"]["voting-emoji-n"])
-
         if check_level(str(message.author.id)) != "0":  # Banned users simply do not get a response
+            if message.content.lower().startswith(config["advanced"]["voting-prefix"].lower()):
+                await bot.add_reaction(message, config["advanced"]["voting-emoji-y"])
+                await bot.add_reaction(message, config["advanced"]["voting-emoji-n"])
+
             if message.content.startswith(
                             prefix + '!'):  # implementing this here because ext.commands handle the bang name ugh
                 toduck = message.content.replace("+", "%2B").replace(prefix + "!", "!").replace(" ", "+")
