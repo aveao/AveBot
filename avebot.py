@@ -201,7 +201,7 @@ async def whoami(contx):
         "You are {} (`{}`) and your permission level is {}.".format(
             contx.message.author.name, contx.message.author.id, perm_names[check_level(contx.message.author.id)]))
 
-async def get_images(contx):
+async def get_images(contx, caller_command):
     images_to_process = []
     for attach in contx.message.attachments:
         extension = os.path.splitext(attach['filename'])[1]
@@ -224,7 +224,7 @@ async def get_images(contx):
             im.save(new_name, "JPEG")
             filename = new_name
         images_to_process.append(filename)
-    stuff_after = contx.message.content.replace(prefix + "sbahjify", "").replace(" ", "")
+    stuff_after = contx.message.content.replace(prefix + caller_command, "").replace(" ", "")
     if stuff_after != "" and stuff_after.startswith("http"):
         extension = str(os.path.splitext(stuff_after)[1].split('?')[0])
         filename = "files/{}txt.{}".format(contx.message.id, extension)
@@ -241,7 +241,7 @@ async def get_images(contx):
 @bot.command(pass_context=True)
 async def sbahjify(contx):
     """Makes images hella and sweet."""
-    images_to_process = await get_images(contx)
+    images_to_process = await get_images(contx, "sbahjify")
     msg_to_send = '{}: Processing image(s).' if len(
         images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'
     tmp = await bot.send_message(contx.message.channel, msg_to_send.format(contx.message.author.mention))
@@ -274,7 +274,7 @@ async def sbahjify(contx):
 async def tag(contx):
     """Tags images. Based on tagbox."""
     if check_level(contx.message.author.id) in ["2", "8", "9"]:
-        images_to_process = await get_images(contx)
+        images_to_process = await get_images(contx, "tag")
         msg_to_send = '{}: Processing image(s). (this might take some time)' if len(
             images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'
         tmp = await bot.send_message(contx.message.channel, msg_to_send.format(contx.message.author.mention))
