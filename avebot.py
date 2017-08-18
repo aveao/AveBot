@@ -271,6 +271,55 @@ async def sbahjify(contx):
 
 
 @bot.command(pass_context=True)
+async def jpegify(contx):
+    """Makes images jaypeg."""
+    images_to_process = await get_images(contx, "jpegify")
+    msg_to_send = '{}: Processing image(s).' if len(
+        images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'
+    tmp = await bot.send_message(contx.message.channel, msg_to_send.format(contx.message.author.mention))
+    for imgtp in images_to_process:
+        avelog("Processing {} for jpeg".format(imgtp))
+        im = PIL.Image.open(imgtp)
+
+        im = im.filter(PIL.ImageFilter.SHARPEN)
+        im = im.filter(PIL.ImageFilter.SMOOTH)
+        out_filename = "files/jpeg{}".format(imgtp.replace("files/", ""))
+        im.save(out_filename, quality=10, optimize=False, progressive=False)
+        await bot.send_file(contx.message.channel, out_filename,
+                            content="{}: Here's your image, jpegified:".format(contx.message.author.mention))
+    await asyncio.sleep(5)
+    await bot.delete_message(tmp)
+
+
+@bot.command(pass_context=True)
+async def testimg(contx):
+    """testing~"""
+    images_to_process = await get_images(contx, "testimg")
+    msg_to_send = '{}: Processing image(s).' if len(
+        images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'
+    tmp = await bot.send_message(contx.message.channel, msg_to_send.format(contx.message.author.mention))
+    for imgtp in images_to_process:
+        avelog("Processing {} for testimg".format(imgtp))
+        im = PIL.Image.open(imgtp)
+
+        w, h = im.size
+        im = im.resize(int(w * 0.1), int(h * 0.1))
+        im = im.filter(PIL.ImageFilter.SHARPEN)
+        im = im.resize(int(w * 10), int(h * 10))
+        im = im.filter(PIL.ImageFilter.SMOOTH)
+        im = im.resize(int(w * 0.1), int(h * 0.1))
+        im = im.filter(PIL.ImageFilter.SHARPEN)
+        im = im.resize(w, h)
+
+        out_filename = "files/testimg{}".format(imgtp.replace("files/", ""))
+        im.save(out_filename, quality=50, optimize=False, progressive=False)
+        await bot.send_file(contx.message.channel, out_filename,
+                            content="{}: Here's your image:".format(contx.message.author.mention))
+    await asyncio.sleep(5)
+    await bot.delete_message(tmp)
+
+
+@bot.command(pass_context=True)
 async def tag(contx):
     """Tags images. Based on tagbox."""
     images_to_process = await get_images(contx, "tag")
@@ -696,7 +745,7 @@ async def c(contx, ticker: str):
 
 
 @bot.command(pass_context=True)
-async def siterender(contx, page_link: str):
+async def render(contx, page_link: str):
     """Returns an image of the site."""
     if check_level(contx.message.author.id) in ["2", "8", "9"]:
         link = "http://http2pic.haschek.at/api.php?url={}".format(page_link)

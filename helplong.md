@@ -35,6 +35,7 @@
 **>xkcd:** Returns info about the specified xkcd comic.<br>
 **>xkcdlatest:** Returns info about the latest xkcd comic.<br>
 **>sbahjify \<image link or uploaded image>:** Makes images hella and sweet.<br>
+**>tag <image/mention/url>:** Tags an image using tagbox, and returns results.<br>
 
 ## Linguistic Commands<br>
 **>similar \<word or a word group>:** Finds a similar word<br>
@@ -46,8 +47,9 @@
 **>unfurl \<url>:** Finds where a URL redirects to.<br>
 **>resolve \<domain>:** Resolves a domain to a URL.<br>
 **>epoch:** Returns the Unix Time / Epoch.<br>
-**>siterender \<url>:** Returns the page render of that URL.<br>
-**>tag <image/mention/url>:** Tags an image using tagbox, and returns results.<br>
+
+## Beta Commandds (requires priv/mod/admin)<br>
+**>render \<url>:** Returns the page render of that URL.<br>
 
 ## Privileged-only Commands<br>
 **>get:** Gets a file from the internet (Privileged/Mod/Admin only).<br>
