@@ -349,9 +349,9 @@ async def joelify(contx):
             im = PIL.Image.open(imgtp)
 
             w, h = im.size
-            for i in range(0, 10):
-                w_val = (random.randint(1, 3) / 10)
-                h_val = (random.randint(1, 3) / 10)
+            for i in range(0, 100):
+                w_val = (random.randint(1, 20) / 10)
+                h_val = (random.randint(1, 20) / 10)
                 im = im.resize((int(w * w_val), int(h * h_val)))
                 im = im.resize((w, h))
 
