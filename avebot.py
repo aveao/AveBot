@@ -349,10 +349,9 @@ async def testimg(contx):
             im = PIL.Image.open(imgtp)
 
             w, h = im.size
-            im = im.resize(int(w * 0.1), int(h * 0.1))
-            im = im.resize(w, h)
-            im = im.resize(int(w * 0.1), int(h * 0.1))
-            im = im.resize(w, h)
+            for i in range(0, 3):
+                im = im.resize((int(w * 0.1), int(h * 0.1)))
+                im = im.resize((w, h))
 
             out_filename = "files/testimg{}".format(imgtp.replace("files/", ""))
             im.save(out_filename, quality=50, optimize=False, progressive=False)
