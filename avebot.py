@@ -337,26 +337,28 @@ async def mazeify(contx):
 
 
 @bot.command(pass_context=True)
-async def testimg(contx):
-    """testing~"""
+async def joelify(contx):
+    """A tribute to joel (of vinesauce)."""
     try:
-        images_to_process = await get_images(contx, "testimg")
+        images_to_process = await get_images(contx, "joelify")
         msg_to_send = '{}: Processing image(s).' if len(
             images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'
         tmp = await bot.send_message(contx.message.channel, msg_to_send.format(contx.message.author.mention))
         for imgtp in images_to_process:
-            avelog("Processing {} for testimg".format(imgtp))
+            avelog("Processing {} for joelification".format(imgtp))
             im = PIL.Image.open(imgtp)
 
             w, h = im.size
             for i in range(0, 3):
-                im = im.resize((int(w * 0.1), int(h * 0.1)))
+                w_val = (random.randint(1, 11) / 10)
+                h_val = (random.randint(1, 11) / 10)
+                im = im.resize((int(w * w_val), int(h * h_val)))
                 im = im.resize((w, h))
 
-            out_filename = "files/testimg{}".format(imgtp.replace("files/", ""))
+            out_filename = "files/joel{}".format(imgtp.replace("files/", ""))
             im.save(out_filename, quality=50, optimize=False, progressive=False)
             await bot.send_file(contx.message.channel, out_filename,
-                                content="{}: Here's your image:".format(contx.message.author.mention))
+                                content="{}: Here's your image, :vinesauce: joelified :joel::".format(contx.message.author.mention))
         await asyncio.sleep(5)
         await bot.delete_message(tmp)
     except Exception:
