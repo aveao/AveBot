@@ -302,7 +302,7 @@ async def ultrajpegify(contx):
         avelog("Processing {} for jpeg".format(imgtp))
         im = PIL.Image.open(imgtp)
 
-        for x in range(0, 10):
+        for x in range(0, 5):
             im = im.filter(PIL.ImageFilter.SHARPEN)
             out_filename = "files/jpeg{}".format(imgtp.replace("files/", ""))
             im.save(out_filename, quality=0, optimize=False, progressive=False)
