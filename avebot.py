@@ -339,26 +339,32 @@ async def mazeify(contx):
 @bot.command(pass_context=True)
 async def testimg(contx):
     """testing~"""
-    images_to_process = await get_images(contx, "testimg")
-    msg_to_send = '{}: Processing image(s).' if len(
-        images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'
-    tmp = await bot.send_message(contx.message.channel, msg_to_send.format(contx.message.author.mention))
-    for imgtp in images_to_process:
-        avelog("Processing {} for testimg".format(imgtp))
-        im = PIL.Image.open(imgtp)
+    try:
+        images_to_process = await get_images(contx, "testimg")
+        msg_to_send = '{}: Processing image(s).' if len(
+            images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'
+        tmp = await bot.send_message(contx.message.channel, msg_to_send.format(contx.message.author.mention))
+        for imgtp in images_to_process:
+            avelog("Processing {} for testimg".format(imgtp))
+            im = PIL.Image.open(imgtp)
 
-        w, h = im.size
-        im = im.resize(int(w * 0.1), int(h * 0.1))
-        im = im.resize(w, h)
-        im = im.resize(int(w * 0.1), int(h * 0.1))
-        im = im.resize(w, h)
+            w, h = im.size
+            im = im.resize(int(w * 0.1), int(h * 0.1))
+            im = im.resize(w, h)
+            im = im.resize(int(w * 0.1), int(h * 0.1))
+            im = im.resize(w, h)
 
-        out_filename = "files/testimg{}".format(imgtp.replace("files/", ""))
-        im.save(out_filename, quality=50, optimize=False, progressive=False)
-        await bot.send_file(contx.message.channel, out_filename,
-                            content="{}: Here's your image:".format(contx.message.author.mention))
-    await asyncio.sleep(5)
-    await bot.delete_message(tmp)
+            out_filename = "files/testimg{}".format(imgtp.replace("files/", ""))
+            im.save(out_filename, quality=50, optimize=False, progressive=False)
+            await bot.send_file(contx.message.channel, out_filename,
+                                content="{}: Here's your image:".format(contx.message.author.mention))
+        await asyncio.sleep(5)
+        await bot.delete_message(tmp)
+    except Exception:
+        avelog(traceback.format_exc())
+        em = discord.Embed(title="An error happened", description=traceback.format_exc(),
+                           colour=0xcc0000)
+        await bot.send_message(discord.Object(id=config['base']['main-channel']), embed=em)
 
 
 @bot.command(pass_context=True)
