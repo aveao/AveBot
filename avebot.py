@@ -373,11 +373,11 @@ async def ultrajoelify(contx):
     """A tribute to joel (of vinesauce)."""
     try:
         images_to_process = await get_images(contx, "ultrajoelify")
-        msg_to_send = '{}: Processing image(s).' if len(
+        msg_to_send = '{}: Processing image(s), this\'ll take some time (~30 secs).' if len(
             images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'
         tmp = await bot.send_message(contx.message.channel, msg_to_send.format(contx.message.author.mention))
         for imgtp in images_to_process:
-            avelog("Processing {} for ultra joelification, this'll take some time (~30 secs)".format(imgtp))
+            avelog("Processing {} for ultra joelification".format(imgtp))
             im = PIL.Image.open(imgtp)
 
             w, h = im.size
