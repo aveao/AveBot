@@ -34,7 +34,11 @@
 **>!\<bang> \<query>:** Resolves a duckduckgo bang.<br>
 **>xkcd:** Returns info about the specified xkcd comic.<br>
 **>xkcdlatest:** Returns info about the latest xkcd comic.<br>
+
+## Image Commands<br>
 **>sbahjify \<image link or uploaded image>:** Makes images hella and sweet.<br>
+**>jpegify \<image link or uploaded image>:** Makes images jaypeg.<br>
+**>ultrajpegify \<image link or uploaded image>:** Makes images ULTRA jaypeg.<br>
 **>tag <image/mention/url>:** Tags an image using tagbox, and returns results.<br>
 
 ## Linguistic Commands<br>
