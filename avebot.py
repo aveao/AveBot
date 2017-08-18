@@ -303,8 +303,7 @@ async def ultrajpegify(contx):
         im = PIL.Image.open(imgtp)
 
         for x in range(0, 10):
-            for y in range(0, 2):
-                im = im.filter(PIL.ImageFilter.SHARPEN)
+            im = im.filter(PIL.ImageFilter.SHARPEN)
             out_filename = "files/jpeg{}".format(imgtp.replace("files/", ""))
             im.save(out_filename, quality=0, optimize=False, progressive=False)
             im = PIL.Image.open(out_filename)
