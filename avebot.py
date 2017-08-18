@@ -286,7 +286,34 @@ async def jpegify(contx):
         out_filename = "files/jpeg{}".format(imgtp.replace("files/", ""))
         im.save(out_filename, quality=10, optimize=False, progressive=False)
         await bot.send_file(contx.message.channel, out_filename,
-                            content="{}: Here's your image, jpegified:".format(contx.message.author.mention))
+                            content="{}: Here's your image, jpegified: (also try `{}ultrajpegify`!)".format(contx.message.author.mention, prefix))
+    await asyncio.sleep(5)
+    await bot.delete_message(tmp)
+
+
+@bot.command(pass_context=True)
+async def ultrajpegify(contx):
+    """Makes images ultra jaypeg."""
+    images_to_process = await get_images(contx, "jpegify")
+    msg_to_send = '{}: Processing image(s).' if len(
+        images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'
+    tmp = await bot.send_message(contx.message.channel, msg_to_send.format(contx.message.author.mention))
+    for imgtp in images_to_process:
+        avelog("Processing {} for jpeg".format(imgtp))
+        im = PIL.Image.open(imgtp)
+
+        for x in range(0, 10):
+            im = im.filter(PIL.ImageFilter.SHARPEN)
+            im = im.filter(PIL.ImageFilter.SMOOTH)
+            im = im.filter(PIL.ImageFilter.SHARPEN)
+            im = im.filter(PIL.ImageFilter.SMOOTH)
+            im = im.filter(PIL.ImageFilter.SHARPEN)
+            im = im.filter(PIL.ImageFilter.SMOOTH)
+            out_filename = "files/jpeg{}".format(imgtp.replace("files/", ""))
+            im.save(out_filename, quality=10, optimize=False, progressive=False)
+            im = PIL.Image.open(out_filename)
+        await bot.send_file(contx.message.channel, out_filename,
+                            content="{}: Here's your image, ULTRA jpegified:".format(contx.message.author.mention))
     await asyncio.sleep(5)
     await bot.delete_message(tmp)
 
@@ -305,7 +332,7 @@ async def testimg(contx):
         w, h = im.size
         im = im.resize(int(w * 0.1), int(h * 0.1))
         im = im.filter(PIL.ImageFilter.SHARPEN)
-        im = im.resize(int(w * 10), int(h * 10))
+        im = im.resize(w, h)
         im = im.filter(PIL.ImageFilter.SMOOTH)
         im = im.resize(int(w * 0.1), int(h * 0.1))
         im = im.filter(PIL.ImageFilter.SHARPEN)
