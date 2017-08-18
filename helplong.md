@@ -39,6 +39,7 @@
 **>sbahjify \<image link or uploaded image>:** Makes images hella and sweet.<br>
 **>jpegify \<image link or uploaded image>:** Makes images jaypeg.<br>
 **>ultrajpegify \<image link or uploaded image>:** Makes images ULTRA jaypeg.<br>
+**>joelify \<image link or uploaded image>:** Makes images *frog voice that would get my DMCA'd if I named it* joel.<br>
 **>tag <image/mention/url>:** Tags an image using tagbox, and returns results.<br>
 
 ## Linguistic Commands<br>

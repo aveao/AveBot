@@ -349,7 +349,7 @@ async def joelify(contx):
             im = PIL.Image.open(imgtp)
 
             w, h = im.size
-            for i in range(0, 100):
+            for i in range(0, 500):
                 w_val = (random.randint(1, 20) / 10)
                 h_val = (random.randint(1, 20) / 10)
                 im = im.resize((int(w * w_val), int(h * h_val)))
@@ -358,7 +358,7 @@ async def joelify(contx):
             out_filename = "files/joel{}".format(imgtp.replace("files/", ""))
             im.save(out_filename, quality=50, optimize=False, progressive=False)
             await bot.send_file(contx.message.channel, out_filename,
-                                content="{}: Here's your image, :vinesauce: joelified :joel::".format(contx.message.author.mention))
+                                content="{}: Here's your image, joelified:".format(contx.message.author.mention))
         await asyncio.sleep(5)
         await bot.delete_message(tmp)
     except Exception:
