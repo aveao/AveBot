@@ -294,7 +294,7 @@ async def jpegify(contx):
 @bot.command(pass_context=True)
 async def ultrajpegify(contx):
     """Makes images ultra jaypeg."""
-    images_to_process = await get_images(contx, "jpegify")
+    images_to_process = await get_images(contx, "ultrajpegify")
     msg_to_send = '{}: Processing image(s).' if len(
         images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'
     tmp = await bot.send_message(contx.message.channel, msg_to_send.format(contx.message.author.mention))
@@ -303,14 +303,10 @@ async def ultrajpegify(contx):
         im = PIL.Image.open(imgtp)
 
         for x in range(0, 10):
-            im = im.filter(PIL.ImageFilter.SHARPEN)
-            im = im.filter(PIL.ImageFilter.SMOOTH)
-            im = im.filter(PIL.ImageFilter.SHARPEN)
-            im = im.filter(PIL.ImageFilter.SMOOTH)
-            im = im.filter(PIL.ImageFilter.SHARPEN)
-            im = im.filter(PIL.ImageFilter.SMOOTH)
+            for y in range(0, 10):
+                im = im.filter(PIL.ImageFilter.SHARPEN)
             out_filename = "files/jpeg{}".format(imgtp.replace("files/", ""))
-            im.save(out_filename, quality=10, optimize=False, progressive=False)
+            im.save(out_filename, quality=0, optimize=False, progressive=False)
             im = PIL.Image.open(out_filename)
         await bot.send_file(contx.message.channel, out_filename,
                             content="{}: Here's your image, ULTRA jpegified:".format(contx.message.author.mention))
