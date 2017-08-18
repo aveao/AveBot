@@ -40,6 +40,7 @@
 **>jpegify \<image link or uploaded image>:** Makes images jaypeg.<br>
 **>ultrajpegify \<image link or uploaded image>:** Makes images ULTRA jaypeg.<br>
 **>joelify \<image link or uploaded image>:** Makes images *frog voice that would get my DMCA'd if I named it* joel.<br>
+**>ultrajoelify \<image link or uploaded image>:** like joelify but more joel.<br>
 **>tag <image/mention/url>:** Tags an image using tagbox, and returns results.<br>
 
 ## Linguistic Commands<br>

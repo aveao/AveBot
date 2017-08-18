@@ -349,6 +349,38 @@ async def joelify(contx):
             im = PIL.Image.open(imgtp)
 
             w, h = im.size
+            for i in range(0, 100):
+                w_val = (random.randint(1, 20) / 10)
+                h_val = (random.randint(1, 20) / 10)
+                im = im.resize((int(w * w_val), int(h * h_val)))
+                im = im.resize((w, h))
+
+            out_filename = "files/joel{}".format(imgtp.replace("files/", ""))
+            im.save(out_filename, quality=50, optimize=False, progressive=False)
+            await bot.send_file(contx.message.channel, out_filename,
+                                content="{}: Here's your image, joelified (also try `{}ultrajoelify`):".format(contx.message.author.mention, prefix))
+        await asyncio.sleep(5)
+        await bot.delete_message(tmp)
+    except Exception:
+        avelog(traceback.format_exc())
+        em = discord.Embed(title="An error happened", description=traceback.format_exc(),
+                           colour=0xcc0000)
+        await bot.send_message(discord.Object(id=config['base']['main-channel']), embed=em)
+
+
+@bot.command(pass_context=True)
+async def ultrajoelify(contx):
+    """A tribute to joel (of vinesauce)."""
+    try:
+        images_to_process = await get_images(contx, "ultrajoelify")
+        msg_to_send = '{}: Processing image(s).' if len(
+            images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'
+        tmp = await bot.send_message(contx.message.channel, msg_to_send.format(contx.message.author.mention))
+        for imgtp in images_to_process:
+            avelog("Processing {} for ultra joelification, this'll take some time (~30 secs)".format(imgtp))
+            im = PIL.Image.open(imgtp)
+
+            w, h = im.size
             for i in range(0, 500):
                 w_val = (random.randint(1, 20) / 10)
                 h_val = (random.randint(1, 20) / 10)
@@ -358,7 +390,7 @@ async def joelify(contx):
             out_filename = "files/joel{}".format(imgtp.replace("files/", ""))
             im.save(out_filename, quality=50, optimize=False, progressive=False)
             await bot.send_file(contx.message.channel, out_filename,
-                                content="{}: Here's your image, joelified:".format(contx.message.author.mention))
+                                content="{}: Here's your image, ultra joelified:".format(contx.message.author.mention))
         await asyncio.sleep(5)
         await bot.delete_message(tmp)
     except Exception:
