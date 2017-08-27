@@ -138,7 +138,7 @@ async def roll(contx, dice: str):
         return
 
     try:
-        modifier = contx.message.content.replace(prefix+"roll "+dice).replace(" ", "")
+        modifier = contx.message.content.replace(prefix+"roll "+dice, "").replace(" ", "")
         avelog("modifier is " + modifier)
         if modifier.startswith("+"):
             modification = int(modifier.replace("+", ""))
