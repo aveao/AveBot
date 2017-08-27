@@ -127,15 +127,27 @@ async def on_ready():
 
 
 @bot.command()
-async def roll(dice: str):
+async def roll(dice: str, modifier: str):
     """Rolls a dice in NdN format."""
+
+    modification = 0
     try:
         rolls, limit = map(int, dice.split('d'))
     except Exception:
         await bot.say('Format has to be in NdN!')
         return
 
-    result = ', '.join(str(random.randint(1, limit)) for r in range(rolls))
+    try:
+        avelog("modifier is " + modifier)
+        if modifier.startswith("+"):
+            modification = int(modifier.replace("+", ""))
+        elif modifier.startswith("-"):
+            modification = -int(modifier.replace("-", ""))
+    except Exception:
+        await bot.say('Exception during modifier stuff!')
+        return
+
+    result = ', '.join(str(random.randint(1, limit)+modification) for r in range(rolls))
     await bot.say(result)
 
 
