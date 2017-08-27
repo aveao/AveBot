@@ -126,8 +126,8 @@ async def on_ready():
         exit(1)
 
 
-@bot.command()
-async def roll(dice: str, modifier: str):
+@bot.command(pass_context=True)
+async def roll(contx, dice: str):
     """Rolls a dice in NdN format."""
 
     modification = 0
@@ -138,6 +138,7 @@ async def roll(dice: str, modifier: str):
         return
 
     try:
+        modifier = contx.message.content.replace(prefix+"roll "+dice).replace(" ", "")
         avelog("modifier is " + modifier)
         if modifier.startswith("+"):
             modification = int(modifier.replace("+", ""))
