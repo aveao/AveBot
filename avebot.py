@@ -145,6 +145,10 @@ async def roll(contx, dice: str):
         elif modifier.startswith("-"):
             modification = -int(modifier.replace("-", ""))
     except Exception:
+        avelog(traceback.format_exc())
+        em = discord.Embed(title="An error happened", description=traceback.format_exc(),
+                           colour=0xcc0000)
+        await bot.send_message(discord.Object(id=config['base']['main-channel']), embed=em)
         await bot.say('Exception during modifier stuff!')
         return
 
