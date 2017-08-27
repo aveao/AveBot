@@ -156,7 +156,7 @@ async def roll(contx, dice: str):
         return
 
     result = ', '.join(str(random.randint(1, limit)+modification) for r in range(rolls))
-    await bot.say(result)
+    await bot.say("{} (Modifier: {})".format(result, modification))
 
 
 @bot.command(pass_context=True)
