@@ -282,7 +282,7 @@ async def sbahjify(contx):
         im = PIL.ImageOps.equalize(im)  # Drab-ify, but embellish otherwise hidden artifacts
         im = im.filter(PIL.ImageFilter.SHARPEN)
         im = im.filter(PIL.ImageFilter.SHARPEN)
-        out_filename = "files/sbah{}".format(imgtp.replace("files/", ""))
+        out_filename = "files/sbahjify-{}".format(imgtp.replace("files/", ""))
         im.save(out_filename, quality=0, optimize=False, progressive=False)
         await bot.send_file(contx.message.channel, out_filename,
                             content="{}: Here's your image, hella and sweetened:".format(contx.message.author.mention))
@@ -303,7 +303,7 @@ async def jpegify(contx):
 
         im = im.filter(PIL.ImageFilter.SHARPEN)
         im = im.filter(PIL.ImageFilter.SMOOTH)
-        out_filename = "files/jpeg{}".format(imgtp.replace("files/", ""))
+        out_filename = "files/jpegify-{}".format(imgtp.replace("files/", ""))
         im.save(out_filename, quality=10, optimize=False, progressive=False)
         await bot.send_file(contx.message.channel, out_filename,
                             content="{}: Here's your image, jpegified: (also try `{}ultrajpegify`!)".format(contx.message.author.mention, prefix))
@@ -324,7 +324,7 @@ async def ultrajpegify(contx):
 
         for x in range(0, 7):
             im = im.filter(PIL.ImageFilter.SHARPEN)
-            out_filename = "files/jpeg{}".format(imgtp.replace("files/", ""))
+            out_filename = "files/ultrajpegify-{}".format(imgtp.replace("files/", ""))
             im.save(out_filename, quality=0, optimize=False, progressive=False)
             im = PIL.Image.open(out_filename)
         await bot.send_file(contx.message.channel, out_filename,
@@ -347,7 +347,7 @@ async def mazeify(contx):
         for x in range(0, 10):
             for y in range(0, 10):
                 im = im.filter(PIL.ImageFilter.SHARPEN)
-            out_filename = "files/jpeg{}".format(imgtp.replace("files/", ""))
+            out_filename = "files/mazeify-{}".format(imgtp.replace("files/", ""))
             im.save(out_filename, quality=0, optimize=False, progressive=False)
             im = PIL.Image.open(out_filename)
         await bot.send_file(contx.message.channel, out_filename,
@@ -375,7 +375,7 @@ async def joelify(contx):
                 im = im.resize((int(w * w_val), int(h * h_val)))
                 im = im.resize((w, h))
 
-            out_filename = "files/joel{}".format(imgtp.replace("files/", ""))
+            out_filename = "files/joelify-{}".format(imgtp.replace("files/", ""))
             im.save(out_filename, quality=50, optimize=False, progressive=False)
             await bot.send_file(contx.message.channel, out_filename,
                                 content="{}: Here's your image, joelified (also try `{}ultrajoelify`):".format(contx.message.author.mention, prefix))
