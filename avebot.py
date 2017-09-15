@@ -139,7 +139,7 @@ async def roll(contx, dice: str):
     try:
         rolls, limit = map(int, dice.split('d'))
     except Exception:
-        catch_error(traceback.format_exc())
+        await catch_error(traceback.format_exc())
         await bot.say('Format has to be in NdN!')
         return
 
@@ -151,7 +151,7 @@ async def roll(contx, dice: str):
         elif modifier.startswith("-"):
             modification = -int(modifier.replace("-", ""))
     except Exception:
-        catch_error(traceback.format_exc())
+        await catch_error(traceback.format_exc())
         await bot.say('Exception during modifier stuff!')
         return
 
@@ -1081,7 +1081,7 @@ async def on_message(message):
             else:
                 await bot.process_commands(message)
     except Exception:
-        catch_error(traceback.format_exc())
+        await catch_error(traceback.format_exc())
 
 async def update_stats():
     await bot.wait_until_ready()
