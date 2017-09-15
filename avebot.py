@@ -1040,7 +1040,7 @@ async def on_message(message):
         global new_message
         global new_command
         new_message += 1
-        if message.config.startswith(prefix):  # TODO: OK this is not reliable at all, find a better way to check this.
+        if message.content.startswith(prefix):  # TODO: OK this is not reliable at all, find a better way to check this.
             new_command += 1
 
         if message.author.name == "GitHub" and message.channel.id == config['base']['main-channel'] and "new commit" in message.embeds[0]['title']:
