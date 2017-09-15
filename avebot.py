@@ -1019,7 +1019,8 @@ def unfurl_b(link):
         return prev_link
 
 
-
+global new_message
+global new_command
 new_message = 0
 new_command = 0
 
