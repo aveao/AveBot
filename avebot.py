@@ -1094,7 +1094,7 @@ async def update_stats():
 
             global new_message
             global new_command
-            url_to_call = "{}?key={}&user_count={}&server_count={}&new_total_messages={}&new_addressed_messages={}".format(config['stats']['url'], config['stats']['key'], server_count, user_count, new_message, new_command)
+            url_to_call = "{}?key={}&user_count={}&server_count={}&new_total_messages={}&new_addressed_messages={}".format(config['stats']['url'], config['stats']['key'], user_count, server_count, new_message, new_command)
             new_message = 0
             new_command = 0
             requests.get(url_to_call)
