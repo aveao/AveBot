@@ -225,7 +225,7 @@ async def get_images(contx, caller_command):
     images_to_process = []
     for attach in contx.message.attachments:
         extension = os.path.splitext(attach['filename'])[1]
-        filename = "files/{}att.{}".format(contx.message.id, extension).split('?')[0]
+        filename = "files/powered-by-avebot-bot.ave.zone-{}att{}".format(contx.message.id, extension).split('?')[0]
         download_file(attach['proxy_url'], filename)
         if extension != ".jpg" or extension != ".jpeg":
             im = PIL.Image.open(filename)
@@ -236,7 +236,7 @@ async def get_images(contx, caller_command):
     for mention in contx.message.mentions:
         linky = mention.avatar_url
         extension = str(os.path.splitext(linky)[1].split('?')[0])
-        filename = "files/{}avi.{}".format(mention.id, extension)
+        filename = "files/powered-by-avebot-bot.ave.zone-{}avi{}".format(mention.id, extension)
         download_file(linky, filename)
         if extension != ".jpg" or extension != ".jpeg":
             im = PIL.Image.open(filename)
@@ -247,7 +247,7 @@ async def get_images(contx, caller_command):
     stuff_after = contx.message.content.replace(prefix + caller_command, "").replace(" ", "")
     if stuff_after != "" and stuff_after.startswith("http"):
         extension = str(os.path.splitext(stuff_after)[1].split('?')[0])
-        filename = "files/{}txt.{}".format(contx.message.id, extension)
+        filename = "files/powered-by-avebot-bot.ave.zone-{}txt{}".format(contx.message.id, extension)
         download_file(stuff_after, filename)
         if extension != ".jpg" or extension != ".jpeg":
             im = PIL.Image.open(filename)
