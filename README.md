@@ -6,7 +6,7 @@ The stuff it can do can be seen by running `>help` on a server it's added on or 
 
 ### How can I use your setup?
 - Add it to your server with: https://discordapp.com/oauth2/authorize?client_id=305708836361207810&scope=bot
-- I don't add anyone as mod. Sorry.
+- I don't add anyone as mod or privileged. Sorry.
 
 ### How can I set it up?
 - Install python3.
