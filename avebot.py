@@ -1083,8 +1083,8 @@ async def on_message(message):
         catch_error(traceback.format_exc())
 
 async def update_stats():
-    await client.wait_until_ready()
-    while not client.is_closed:
+    await bot.wait_until_ready()
+    while not bot.is_closed:
         if config['stats']['url'] and config['stats']['key']:
             server_count = len(bot.servers)
             user_count = 0
