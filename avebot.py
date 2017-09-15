@@ -1019,6 +1019,10 @@ def unfurl_b(link):
         return prev_link
 
 
+
+new_message = 0
+new_command = 0
+
 @bot.event
 async def on_message(message):
     try:
@@ -1034,6 +1038,9 @@ async def on_message(message):
         # if message.mention_everyone:
         #   everyone_meme_list = ["https://s.ave.zone/gofuckyourself.gif", "https://s.ave.zone/notcool.jpg"]
         #   await bot.send_message(message.channel, random.choice(everyone_meme_list))
+        new_message += 1
+        if message.config.startswith(prefix):  # TODO: OK this is not reliable at all, find a better way to check this.
+            new_command += 1
 
         if message.author.name == "GitHub" and message.channel.id == config['base']['main-channel'] and "new commit" in message.embeds[0]['title']:
             tmp = await bot.send_message(message.channel, 'Pulling...')
@@ -1075,9 +1082,24 @@ async def on_message(message):
     except Exception:
         catch_error(traceback.format_exc())
 
+async def update_stats():
+    await client.wait_until_ready()
+    while not client.is_closed:
+        if config['stats']['url'] and config['stats']['key']:
+            server_count = len(bot.servers)
+            user_count = 0
+            for server in bot.servers:
+                user_count += server.member_count
+
+            url_to_call = "{}?key={}&user_count={}&server_count={}&new_total_messages={}&new_addressed_messages={}".format(config['stats']['url'], config['stats']['key'], server_count, user_count, new_message, new_command)
+            new_message = 0
+            new_command = 0
+            requests.get(url_to_call)
+        await asyncio.sleep(3)
 
 avelog("AveBot started. Git hash: " + get_git_revision_short_hash())
 if not os.path.isdir("files"):
     os.makedirs("files")
 
+bot.loop.create_task(update_stats())
 bot.run(config['base']['token'])
