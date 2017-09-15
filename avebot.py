@@ -94,7 +94,7 @@ def save_config():
 
 
 def download_file(url,
-                  local_filename):  # This function is based on https://stackoverflow.com/a/16696317/3286892 by Poman Podlinov (https://stackoverflow.com/users/427457/roman-podlinov), modified by Avery (https://github.com/ardaozkal), licensed CC-BY-SA 3.0
+                  local_filename):  # This function is based on https://stackoverflow.com/a/16696317/3286892 by Poman Podlinov (https://stackoverflow.com/users/427457/roman-podlinov), modified by Avery (https://github.com/aveao), licensed CC-BY-SA 3.0
     r = requests.get(url, stream=True)
     with open(local_filename, 'wb') as f:
         for chunk in r.iter_content(chunk_size=1024):
@@ -180,7 +180,7 @@ async def govegan():
 @bot.command(hidden=True)
 async def helplong():
     """Links to a longer, better help file."""
-    await bot.say("https://github.com/ardaozkal/AveBot/blob/rewrite/helplong.md")
+    await bot.say("https://github.com/aveao/AveBot/blob/rewrite/helplong.md")
 
 
 @bot.command(hidden=True)
