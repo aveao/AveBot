@@ -57,7 +57,7 @@ def avelog(content):
         with open(log_file_name, "a") as myfile:
             myfile.write(text + "\n")
 
-        logroller(false)
+        logroller(False)
         return
     except Exception:
         avelog(traceback.format_exc())
@@ -135,7 +135,7 @@ async def on_ready():
                            colour=0xDEADBF)
         await bot.send_message(discord.Object(id=config['base']['main-channel']), embed=em)
         await bot.send_file(discord.Object(id=config['base']['main-channel']), log_file_name)
-        logroller(true) # forces log to rotate
+        logroller(True) # forces log to rotate
         #open(log_file_name, 'w').close()  # Clears log
     except Exception:
         avelog(traceback.format_exc())
@@ -1115,7 +1115,7 @@ async def update_stats():
             new_message = 0
             new_command = 0
             requests.get(url_to_call)
-        logroller(false) # if log is over the required size, rotates it
+        logroller(False) # if log is over the required size, rotates it
         await asyncio.sleep(3)
 
 avelog("AveBot started. Git hash: " + get_git_revision_short_hash())
