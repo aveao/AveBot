@@ -60,6 +60,7 @@ def avelog(content):
         logroller(false)
         return
     except Exception:
+        avelog(traceback.format_exc())
         exit(2)
 
 
