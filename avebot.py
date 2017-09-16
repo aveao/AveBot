@@ -23,6 +23,8 @@ import PIL.Image
 import PIL.ImageFilter
 import PIL.ImageOps
 
+import logging
+
 # TODO: COGS https://gist.github.com/leovoel/46cd89ed6a8f41fd09c5
 # TODO: >get >dget size and timeouts
 
@@ -31,6 +33,15 @@ log_file_name = "avebot.log"
 
 perm_names = {'0': 'Banned', '1': 'Regular User', '2': 'Privileged User', '8': 'Mod', '9': 'Owner'}
 
+file_handler = logging.FileHandler(filename=log_file_name)
+stdout_handler = logging.StreamHandler(sys.stdout)
+handlers = [file_handler, stdout_handler]
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='[%(asctime)s] {%(filename)s:%(lineno)d} %(levelname)s - %(message)s',
+    handlers=handlers
+)
 
 def avelog(content):
     try:
