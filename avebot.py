@@ -24,6 +24,7 @@ import PIL.ImageFilter
 import PIL.ImageOps
 
 import logging
+import logging.handlers
 import sys
 
 # TODO: COGS https://gist.github.com/leovoel/46cd89ed6a8f41fd09c5
