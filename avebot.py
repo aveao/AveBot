@@ -44,6 +44,11 @@ logging.basicConfig(
     handlers=handlers
 )
 
+def logroller(force):
+    log_size = Path(log_file_name).stat().st_size
+    if log_size > 1000 * 1000 * 8 or force:  # Limit of discord (non-nitro) is 8MB (not MiB)
+        os.rename(log_file_name, "{}.rot.{}".format(log_file_name, str(time.time())))
+
 def avelog(content):
     try:
         st = str(datetime.datetime.now()).split('.')[0]
@@ -52,9 +57,7 @@ def avelog(content):
         with open(log_file_name, "a") as myfile:
             myfile.write(text + "\n")
 
-        log_size = Path(log_file_name).stat().st_size
-        if log_size > 1000 * 1000 * 8:  # Limit of discord is 8MB (not MiB)
-            os.rename(log_file_name, "{}.rot.{}".format(log_file_name, str(time.time())))
+        logroller(false)
         return
     except Exception:
         exit(2)
@@ -131,7 +134,8 @@ async def on_ready():
                            colour=0xDEADBF)
         await bot.send_message(discord.Object(id=config['base']['main-channel']), embed=em)
         await bot.send_file(discord.Object(id=config['base']['main-channel']), log_file_name)
-        open(log_file_name, 'w').close()  # Clears log
+        logroller(true) # forces log to rotate
+        #open(log_file_name, 'w').close()  # Clears log
     except Exception:
         avelog(traceback.format_exc())
         bot.close()
@@ -1110,6 +1114,7 @@ async def update_stats():
             new_message = 0
             new_command = 0
             requests.get(url_to_call)
+        logroller(false) # if log is over the required size, rotates it
         await asyncio.sleep(3)
 
 avelog("AveBot started. Git hash: " + get_git_revision_short_hash())
