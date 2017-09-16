@@ -34,7 +34,9 @@ log_file_name = "avebot.log"
 
 perm_names = {'0': 'Banned', '1': 'Regular User', '2': 'Privileged User', '8': 'Mod', '9': 'Owner'}
 
-file_handler = logging.FileHandler(filename=log_file_name)
+max_file_size = 1000 * 1000 * 8 # Limit of discord (non-nitro) is 8MB (not MiB)
+backup_count = 90000000000000 # random big number
+file_handler = logging.RotatingFileHandler(filename=log_file_name, maxBytes=max_file_size, backupCount=backup_count)
 stdout_handler = logging.StreamHandler(sys.stdout)
 handlers = [file_handler, stdout_handler]
 
@@ -43,12 +45,6 @@ logging.basicConfig(
     format='[%(asctime)s] {%(filename)s:%(lineno)d} %(levelname)s - %(message)s',
     handlers=handlers
 )
-
-def logroller(force):
-    log_size = Path(log_file_name).stat().st_size
-    if log_size > 1000 * 1000 * 8 or force:  # Limit of discord (non-nitro) is 8MB (not MiB)
-        os.rename(log_file_name, "{}.rot.{}".format(log_file_name, str(time.time())))
-
 
 config = configparser.ConfigParser()
 
@@ -121,7 +117,6 @@ async def on_ready():
                            colour=0xDEADBF)
         await bot.send_message(discord.Object(id=config['base']['main-channel']), embed=em)
         await bot.send_file(discord.Object(id=config['base']['main-channel']), log_file_name)
-        logroller(True) # forces log to rotate
         #open(log_file_name, 'w').close()  # Clears log
     except Exception:
         logging.error(traceback.format_exc())
@@ -1095,7 +1090,6 @@ async def update_stats():
             new_message = 0
             new_command = 0
             requests.get(url_to_call)
-        logroller(False) # if log is over the required size, rotates it
         await asyncio.sleep(3)
 
 logging.info("AveBot started. Git hash: " + get_git_revision_short_hash())
