@@ -49,25 +49,11 @@ def logroller(force):
     if log_size > 1000 * 1000 * 8 or force:  # Limit of discord (non-nitro) is 8MB (not MiB)
         os.rename(log_file_name, "{}.rot.{}".format(log_file_name, str(time.time())))
 
-def avelog(content):
-    try:
-        st = str(datetime.datetime.now()).split('.')[0]
-        text = '[' + st + ']: ' + content
-        print(text)
-        with open(log_file_name, "a") as myfile:
-            myfile.write(text + "\n")
-
-        logroller(False)
-        return
-    except Exception:
-        avelog(traceback.format_exc())
-        exit(2)
-
 
 config = configparser.ConfigParser()
 
 if not Path(config_file_name).is_file():
-    avelog("No config file ({}) found, please create one from avebot.ini.example file.".format(config_file_name))
+    logging.warning("No config file ({}) found, please create one from avebot.ini.example file.".format(config_file_name))
     exit(3)
 
 config.read(config_file_name)
@@ -122,10 +108,10 @@ def download_file(url,
 @bot.event
 async def on_ready():
     st = str(datetime.datetime.now()).split('.')[0]
-    avelog('Logged in as')
-    avelog(bot.user.name)
-    avelog(bot.user.id)
-    avelog('------')
+    logging.info('Logged in as')
+    logging.info(bot.user.name)
+    logging.info(bot.user.id)
+    logging.info('------')
     try:
         await asyncio.sleep(3)
         await bot.change_presence(game=discord.Game(name='run {}help'.format(prefix)))
@@ -138,12 +124,12 @@ async def on_ready():
         logroller(True) # forces log to rotate
         #open(log_file_name, 'w').close()  # Clears log
     except Exception:
-        avelog(traceback.format_exc())
+        logging.error(traceback.format_exc())
         bot.close()
         exit(1)
 
 async def catch_error(text):
-    avelog("Error: " + text)
+    logging.error("Error: " + text)
     em = discord.Embed(title="An error happened", description=text,
                        colour=0xcc0000)
     await bot.send_message(discord.Object(id=config['base']['main-channel']), embed=em)
@@ -162,7 +148,7 @@ async def roll(contx, dice: str):
 
     try:
         modifier = contx.message.content.replace(prefix+"roll "+dice, "").replace(" ", "")
-        avelog("modifier is " + modifier)
+        logging.error("modifier is " + modifier)
         if modifier.startswith("+"):
             modification = int(modifier.replace("+", ""))
         elif modifier.startswith("-"):
@@ -283,7 +269,7 @@ async def sbahjify(contx):
         images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'
     tmp = await bot.send_message(contx.message.channel, msg_to_send.format(contx.message.author.mention))
     for imgtp in images_to_process:
-        avelog("Processing {} for sbahj".format(imgtp))
+        logging.info("Processing {} for sbahj".format(imgtp))
         im = PIL.Image.open(imgtp)
 
         for _ in range(2):
@@ -315,7 +301,7 @@ async def jpegify(contx):
         images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'
     tmp = await bot.send_message(contx.message.channel, msg_to_send.format(contx.message.author.mention))
     for imgtp in images_to_process:
-        avelog("Processing {} for jpeg".format(imgtp))
+        logging.info("Processing {} for jpeg".format(imgtp))
         im = PIL.Image.open(imgtp)
 
         im = im.filter(PIL.ImageFilter.SHARPEN)
@@ -336,7 +322,7 @@ async def ultrajpegify(contx):
         images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'
     tmp = await bot.send_message(contx.message.channel, msg_to_send.format(contx.message.author.mention))
     for imgtp in images_to_process:
-        avelog("Processing {} for jpeg".format(imgtp))
+        logging.info("Processing {} for jpeg".format(imgtp))
         im = PIL.Image.open(imgtp)
 
         for x in range(0, 7):
@@ -358,7 +344,7 @@ async def mazeify(contx):
         images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'
     tmp = await bot.send_message(contx.message.channel, msg_to_send.format(contx.message.author.mention))
     for imgtp in images_to_process:
-        avelog("Processing {} for jpeg".format(imgtp))
+        logging.info("Processing {} for jpeg".format(imgtp))
         im = PIL.Image.open(imgtp)
 
         for x in range(0, 10):
@@ -382,7 +368,7 @@ async def joelify(contx):
             images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'
         tmp = await bot.send_message(contx.message.channel, msg_to_send.format(contx.message.author.mention))
         for imgtp in images_to_process:
-            avelog("Processing {} for joelification".format(imgtp))
+            logging.info("Processing {} for joelification".format(imgtp))
             im = PIL.Image.open(imgtp)
 
             w, h = im.size
@@ -399,10 +385,7 @@ async def joelify(contx):
         await asyncio.sleep(5)
         await bot.delete_message(tmp)
     except Exception:
-        avelog(traceback.format_exc())
-        em = discord.Embed(title="An error happened", description=traceback.format_exc(),
-                           colour=0xcc0000)
-        await bot.send_message(discord.Object(id=config['base']['main-channel']), embed=em)
+        await catch_error(traceback.format_exc())
 
 
 @bot.command(pass_context=True)
@@ -414,7 +397,7 @@ async def ultrajoelify(contx):
             images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'
         tmp = await bot.send_message(contx.message.channel, msg_to_send.format(contx.message.author.mention))
         for imgtp in images_to_process:
-            avelog("Processing {} for ultra joelification".format(imgtp))
+            logging.info("Processing {} for ultra joelification".format(imgtp))
             im = PIL.Image.open(imgtp)
 
             w, h = im.size
@@ -431,10 +414,7 @@ async def ultrajoelify(contx):
         await asyncio.sleep(5)
         await bot.delete_message(tmp)
     except Exception:
-        avelog(traceback.format_exc())
-        em = discord.Embed(title="An error happened", description=traceback.format_exc(),
-                           colour=0xcc0000)
-        await bot.send_message(discord.Object(id=config['base']['main-channel']), embed=em)
+        await catch_error(traceback.format_exc())
 
 
 @bot.command(pass_context=True)
@@ -445,17 +425,17 @@ async def tag(contx):
         images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'
     tmp = await bot.send_message(contx.message.channel, msg_to_send.format(contx.message.author.mention))
     for imgtp in images_to_process:
-        avelog("Processing {} for tag".format(imgtp))
+        logging.info("Processing {} for tag".format(imgtp))
         headers = {"Accept": "application/json; charset=utf-8"}
         files = dict(file=open(imgtp, 'rb'))
         postr = requests.post(config['tagbox']['url'], files=files, headers=headers)
-        avelog(postr.text)
+        logging.info("tagbox result: {}".format(postr.text))
         postj = postr.json()
         if postj["success"]:
             text = ""
             for t in postj["tags"]:
                 text += ("**{}** ({} confidence)\n".format(t["tag"], str(t["confidence"])[:4]))
-            avelog(text)
+            logging.info("tagbox text: {}".format(text))
             em = discord.Embed(
                 title='Tags for the image requested by {}'.format(str(contx.message.author)), description=text)
             # em.set_thumbnail(url=link)
@@ -682,7 +662,7 @@ async def _eval(contx, *, code: str):
             }
             env.update(globals())
 
-            avelog("running:" + repr(code))
+            logging.info("running:" + repr(code))
             result = eval(code, env)
             if inspect.isawaitable(result):
                 result = await result
@@ -690,7 +670,7 @@ async def _eval(contx, *, code: str):
         except:
             await bot.send_message(contx.message.channel, "ERROR! ```{}```".format(traceback.format_exc()))
     else:
-        avelog("no perms for eval")
+        logging.info("no perms for eval")
 
 
 @bot.command(pass_context=True)
@@ -1083,10 +1063,10 @@ async def on_message(message):
 
             if message.content.startswith(prefix) or True:  # Temp enabling this. TODO: Make it optional through config.
                 if message.channel.is_private:
-                    avelog(
+                    logging.info(
                         "{} ({}) said \"{}\" on PMs.".format(message.author.name, message.author.id, message.content))
                 else:
-                    avelog("{} ({}) said \"{}\" on \"{}\" at \"{}\"."
+                    logging.info("{} ({}) said \"{}\" on \"{}\" at \"{}\"."
                            .format(message.author.name, message.author.id, message.content, message.channel.name,
                                    message.server.name))
             if message.content.lower() == ">help":
@@ -1118,7 +1098,7 @@ async def update_stats():
         logroller(False) # if log is over the required size, rotates it
         await asyncio.sleep(3)
 
-avelog("AveBot started. Git hash: " + get_git_revision_short_hash())
+logging.info("AveBot started. Git hash: " + get_git_revision_short_hash())
 if not os.path.isdir("files"):
     os.makedirs("files")
 
