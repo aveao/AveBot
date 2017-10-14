@@ -232,17 +232,6 @@ async def get_images(contx, caller_command):
             im.save(new_name, "JPEG")
             filename = new_name
         images_to_process.append(filename)
-    for mention in contx.message.mentions:
-        linky = mention.avatar_url
-        extension = str(os.path.splitext(linky)[1].split('?')[0])
-        filename = "files/powered-by-avebot-bot.ave.zone-{}avi{}".format(mention.id, extension)
-        download_file(linky, filename)
-        if extension != ".jpg" or extension != ".jpeg":
-            im = PIL.Image.open(filename)
-            new_name = filename.replace(extension, ".jpg")
-            im.save(new_name, "JPEG")
-            filename = new_name
-        images_to_process.append(filename)
     stuff_after = contx.message.content.replace(prefix + caller_command, "").replace(" ", "")
     if stuff_after != "" and stuff_after.startswith("http"):
         extension = str(os.path.splitext(stuff_after)[1].split('?')[0])
@@ -256,6 +245,15 @@ async def get_images(contx, caller_command):
         images_to_process.append(filename)
     return images_to_process
 
+
+async def get_image_links(contx, caller_command):
+    image_links = []
+    for attach in contx.message.attachments:
+        image_links.append(attach['proxy_url'])
+    stuff_after = contx.message.content.replace(prefix + caller_command, "").replace(" ", "")
+    if stuff_after != "" and stuff_after.startswith("http"):
+        image_links.append(stuff_after)
+    return image_links
 
 @bot.command(pass_context=True)
 async def sbahjify(contx):
@@ -941,6 +939,32 @@ async def rhyme(*, word: str):
     await bot.say(
         "**Rhymes with:** `{}`\n(more on <http://www.rhymezone.com/r/rhyme.cgi?Word={}&typeofrhyme=adv&org1=syl&org2=l&org3=y>)".format(
             j[0]["word"], word.replace(" ", "_")))
+
+
+@bot.command(pass_context=True)
+async def howold(contx):
+    uri_base = config['howold']['uribase']
+    subscription_key = config['howold']['subkey']
+    urls = await get_image_links(contx, "howold")
+    headers = {
+        'Content-Type': 'application/json',
+        'Ocp-Apim-Subscription-Key': subscription_key,
+    }
+    params = {
+        'returnFaceId': 'false',
+        'returnFaceLandmarks': 'false',
+        'returnFaceAttributes': 'age,gender',
+    }
+    for url in urls:
+        body = {'url': url}
+        response = requests.request('POST', uri_base + '/face/v1.0/detect', json=body, data=None, headers=headers, params=params)
+        parsed = response.json()
+        try:
+            age = parsed[0]["faceAttributes"]["age"]
+            gender = parsed[0]["faceAttributes"]["gender"]
+            await bot.say("Age: **{}**\nGender: **{}**\n(powered by microsoft cognitive services' face api, blame them, not us)".format(age, gender))
+        except:
+            await bot.say("No face detected.")
 
 
 @bot.command(hidden=True)
