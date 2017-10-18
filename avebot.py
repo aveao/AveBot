@@ -1100,7 +1100,8 @@ async def on_message(message):
     except Exception:
         await catch_error(traceback.format_exc())
 
-@client.event
+
+@bot.event
 async def on_message_edit(before, after):
     global new_message
     new_message += 1
