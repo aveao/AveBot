@@ -1100,6 +1100,18 @@ async def on_message(message):
     except Exception:
         await catch_error(traceback.format_exc())
 
+@client.event
+async def on_message_edit(before, after):
+    global new_message
+    new_message += 1
+    if message.channel.is_private:
+        logging.info(
+            "{} ({}) said \"{}\" on PMs and then edited it to \"{}\".".format(after.author.name, after.author.id, before.content, after.content))
+    else:
+        logging.info("{} ({}) said \"{}\" on \"{}\" at \"{}\" and then edited it to \"{}\"."
+               .format(after.author.name, after.author.id, before.content, after.channel.name,
+                       after.server.name, after.content))
+
 async def update_stats():
     await bot.wait_until_ready()
     while not bot.is_closed:
