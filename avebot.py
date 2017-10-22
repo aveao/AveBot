@@ -962,7 +962,7 @@ async def howold(contx):
         try:
             age = parsed[0]["faceAttributes"]["age"]
             gender = parsed[0]["faceAttributes"]["gender"]
-            await bot.say("Age: **{}**\nGender: **{}**\n(powered by microsoft cognitive services' face api, blame them, not us)".format(age, gender))
+            await bot.say("Age: **{}**\nGender: **{}**\n(powered by microsoft cognitive services' face api, blame them, not us)\n{}".format(age, gender))
         except:
             await bot.say("No face detected.")
 
@@ -1105,7 +1105,7 @@ async def on_message(message):
 async def on_message_edit(before, after):
     global new_message
     new_message += 1
-    if message.channel.is_private:
+    if after.channel.is_private:
         logging.info(
             "{} ({}) said \"{}\" on PMs and then edited it to \"{}\".".format(after.author.name, after.author.id, before.content, after.content))
     else:
