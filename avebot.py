@@ -1084,11 +1084,10 @@ async def on_message(message):
             if message.content.startswith(prefix) or True:  # Temp enabling this. TODO: Make it optional through config.
                 if message.channel.is_private:
                     logging.info(
-                        "{} ({}) said \"{}\" on PMs.".format(message.author.name, message.author.id, message.content))
+                        "{} ({}) said \"{}\" on PMs ({}).".format(message.author.name, message.author.id, message.content, message.channel.id))
                 else:
-                    logging.info("{} ({}) said \"{}\" on \"{}\" at \"{}\"."
-                           .format(message.author.name, message.author.id, message.content, message.channel.name,
-                                   message.server.name))
+                    logging.info("{} ({}) said \"{}\" on \"{}\" ({}) at \"{}\" ({})."
+                           .format(message.author.name, message.author.id, message.content, message.channel.name, message.channel.id, message.server.name, message.server.id))
             if message.content.lower() == ">help":
                 help_text = open("help.md", "r").read()
                 em = discord.Embed(title="Welcome to AveBot Rewrite",
