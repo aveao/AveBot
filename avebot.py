@@ -210,7 +210,9 @@ async def serverlist():
         text_to_post += "• **{}** (**{} members**)\n".format(server.name.replace("@", ""), str(server.member_count))
         total_user_count += server.member_count
     text_to_post += "In total, AveBot is servicing **{} users**.".format(str(total_user_count))
-    await bot.say(text_to_post)
+    sliced_message = slice_message(text_to_post)
+    for msg in sliced_message:
+        await bot.say(msg)
 
 
 @bot.command(pass_context=True)
@@ -1034,6 +1036,14 @@ def unfurl_b(link):
         return last_link
     except Exception:
         return prev_link
+
+def slice_message(text):
+    reply_list = []
+    while len(text) > 2000:
+        reply_list.append(text[:2000])
+        text = text[2000:]
+    reply_list.append(text)
+    return reply_list
 
 
 new_message = 0
