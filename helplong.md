@@ -41,6 +41,8 @@
 **>ultrajpegify \<image link or uploaded image>:** Makes images ULTRA jaypeg.<br>
 **>joelify \<image link or uploaded image>:** Makes images *frog voice that would get my DMCA'd if I named it* joel.<br>
 **>ultrajoelify \<image link or uploaded image>:** like joelify but more joel.<br>
+**>mazeify \<image link or uploaded image>:** mazeifies an image.<br>
+**>ultramazeify \<image link or uploaded image>:** makes images even more maze.<br>
 **>tag <image/mention/url>:** Tags an image using tagbox, and returns results.<br>
 **>howold <attach or link image>** Returns gender and age data based on Microsoft Cognitive Services' Face API. Pretty unreliable. Gender detection is basically checking if you have a lipstick on or not, reads AFAB female-defining feminine-looking people as male etc, it's pretty terrible, don't rely on it too much. Data doesn't match how-old.net too, even though they should theoretically use the same backend. Sorry for ramble, going back to documenting commands.<br>
 

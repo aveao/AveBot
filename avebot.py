@@ -303,7 +303,7 @@ async def jpegify(contx):
         im = im.filter(PIL.ImageFilter.SHARPEN)
         im = im.filter(PIL.ImageFilter.SMOOTH)
         out_filename = "files/jpegify-{}".format(imgtp.replace("files/", ""))
-        im.save(out_filename, quality=10, optimize=False, progressive=False)
+        im.save(out_filename, quality=0, optimize=False, progressive=False)
         await bot.send_file(contx.message.channel, out_filename,
                             content="{}: Here's your image, jpegified: (also try `{}ultrajpegify`!)".format(contx.message.author.mention, prefix))
     await asyncio.sleep(5)
@@ -318,14 +318,20 @@ async def ultrajpegify(contx):
         images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'
     tmp = await bot.send_message(contx.message.channel, msg_to_send.format(contx.message.author.mention))
     for imgtp in images_to_process:
-        logging.info("Processing {} for jpeg".format(imgtp))
+        logging.info("Processing {} for new ultrajpeg".format(imgtp))
         im = PIL.Image.open(imgtp)
-
-        for x in range(0, 7):
-            im = im.filter(PIL.ImageFilter.SHARPEN)
-            out_filename = "files/ultrajpegify-{}".format(imgtp.replace("files/", ""))
+        out_filename = "files/ultrajpegify-{}".format(imgtp.replace("files/", ""))
+        w, h = im.size
+        for x in range(0, 25):
+            im = im.resize((int(w * 0.9), int(h * 1.1)))
             im.save(out_filename, quality=0, optimize=False, progressive=False)
             im = PIL.Image.open(out_filename)
+
+            im = im.resize((int(w * 1.1), int(h * 0.9)))
+            im.save(out_filename, quality=0, optimize=False, progressive=False)
+            im = PIL.Image.open(out_filename)
+        im = im.resize((w, h))
+        im.save(out_filename, quality=0, optimize=False, progressive=False)
         await bot.send_file(contx.message.channel, out_filename,
                             content="{}: Here's your image, ULTRA jpegified:".format(contx.message.author.mention))
     await asyncio.sleep(5)
@@ -334,23 +340,45 @@ async def ultrajpegify(contx):
 
 @bot.command(pass_context=True)
 async def mazeify(contx):
-    """Makes images maze."""
+    """Makes images ultra jaypeg."""
     images_to_process = await get_images(contx, "mazeify")
     msg_to_send = '{}: Processing image(s).' if len(
         images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'
     tmp = await bot.send_message(contx.message.channel, msg_to_send.format(contx.message.author.mention))
     for imgtp in images_to_process:
-        logging.info("Processing {} for jpeg".format(imgtp))
+        logging.info("Processing {} for new mazeify".format(imgtp))
         im = PIL.Image.open(imgtp)
+        out_filename = "files/mazeify-{}".format(imgtp.replace("files/", ""))
+
+        for x in range(0, 7):
+            im = im.filter(PIL.ImageFilter.SHARPEN)
+            im.save(out_filename, quality=0, optimize=False, progressive=False)
+            im = PIL.Image.open(out_filename)
+        await bot.send_file(contx.message.channel, out_filename,
+                            content="{}: Here's your image, mazeified (also try `{}ultramazeify`!):".format(contx.message.author.mention, prefix))
+    await asyncio.sleep(5)
+    await bot.delete_message(tmp)
+
+
+@bot.command(pass_context=True)
+async def ultramazeify(contx):
+    """Makes images maze."""
+    images_to_process = await get_images(contx, "ultramazeify")
+    msg_to_send = '{}: Processing image(s).' if len(
+        images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'
+    tmp = await bot.send_message(contx.message.channel, msg_to_send.format(contx.message.author.mention))
+    for imgtp in images_to_process:
+        logging.info("Processing {} for new ultramazeify".format(imgtp))
+        im = PIL.Image.open(imgtp)
+        out_filename = "files/ultramazeify-{}".format(imgtp.replace("files/", ""))
 
         for x in range(0, 10):
             for y in range(0, 10):
                 im = im.filter(PIL.ImageFilter.SHARPEN)
-            out_filename = "files/mazeify-{}".format(imgtp.replace("files/", ""))
             im.save(out_filename, quality=0, optimize=False, progressive=False)
             im = PIL.Image.open(out_filename)
         await bot.send_file(contx.message.channel, out_filename,
-                            content="{}: Here's your image, mazeified:".format(contx.message.author.mention))
+                            content="{}: Here's your image, ULTRA mazeified:".format(contx.message.author.mention))
     await asyncio.sleep(5)
     await bot.delete_message(tmp)
 
