@@ -988,6 +988,7 @@ async def howold(contx):
     for url in urls:
         body = {'url': url}
         response = requests.request('POST', uri_base + '/face/v1.0/detect', json=body, data=None, headers=headers, params=params)
+        logging.info("Howold response: {}".format(response.text))
         parsed = response.json()
         try:
             age = parsed[0]["faceAttributes"]["age"]
