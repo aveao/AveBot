@@ -261,9 +261,9 @@ async def get_image_links(contx, caller_command):
 async def sbahjify(contx):
     """Makes images hella and sweet."""
     images_to_process = await get_images(contx, "sbahjify")
-    msg_to_send = '{}: Processing image(s).' if len(
-        images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'
-    tmp = await bot.send_message(contx.message.channel, msg_to_send.format(contx.message.author.mention))
+    msg_to_send = 'Processing image(s).' if len(
+        images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'.format(contx.message.author.mention)
+    tmp = await bot.send_message(contx.message.channel, msg_to_send)
     for imgtp in images_to_process:
         logging.info("Processing {} for sbahj".format(imgtp))
         im = PIL.Image.open(imgtp)
@@ -293,9 +293,9 @@ async def sbahjify(contx):
 async def jpegify(contx):
     """Makes images jaypeg."""
     images_to_process = await get_images(contx, "jpegify")
-    msg_to_send = '{}: Processing image(s).' if len(
-        images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'
-    tmp = await bot.send_message(contx.message.channel, msg_to_send.format(contx.message.author.mention))
+    msg_to_send = 'Processing image(s).' if len(
+        images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'.format(contx.message.author.mention)
+    tmp = await bot.send_message(contx.message.channel, msg_to_send)
     for imgtp in images_to_process:
         logging.info("Processing {} for jpeg".format(imgtp))
         im = PIL.Image.open(imgtp)
@@ -314,9 +314,9 @@ async def jpegify(contx):
 async def ultrajpegify(contx):
     """Makes images ultra jaypeg."""
     images_to_process = await get_images(contx, "ultrajpegify")
-    msg_to_send = '{}: Processing image(s).' if len(
-        images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'
-    tmp = await bot.send_message(contx.message.channel, msg_to_send.format(contx.message.author.mention))
+    msg_to_send = 'Processing image(s).' if len(
+        images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'.format(contx.message.author.mention)
+    tmp = await bot.send_message(contx.message.channel, msg_to_send)
     for imgtp in images_to_process:
         logging.info("Processing {} for new ultrajpeg".format(imgtp))
         im = PIL.Image.open(imgtp)
@@ -342,9 +342,9 @@ async def ultrajpegify(contx):
 async def mazeify(contx):
     """Makes images ultra jaypeg."""
     images_to_process = await get_images(contx, "mazeify")
-    msg_to_send = '{}: Processing image(s).' if len(
-        images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'
-    tmp = await bot.send_message(contx.message.channel, msg_to_send.format(contx.message.author.mention))
+    msg_to_send = 'Processing image(s).' if len(
+        images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'.format(contx.message.author.mention)
+    tmp = await bot.send_message(contx.message.channel, msg_to_send)
     for imgtp in images_to_process:
         logging.info("Processing {} for new mazeify".format(imgtp))
         im = PIL.Image.open(imgtp)
@@ -364,9 +364,9 @@ async def mazeify(contx):
 async def ultramazeify(contx):
     """Makes images maze."""
     images_to_process = await get_images(contx, "ultramazeify")
-    msg_to_send = '{}: Processing image(s).' if len(
-        images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'
-    tmp = await bot.send_message(contx.message.channel, msg_to_send.format(contx.message.author.mention))
+    msg_to_send = 'Processing image(s).' if len(
+        images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'.format(contx.message.author.mention)
+    tmp = await bot.send_message(contx.message.channel, msg_to_send)
     for imgtp in images_to_process:
         logging.info("Processing {} for new ultramazeify".format(imgtp))
         im = PIL.Image.open(imgtp)
@@ -388,9 +388,9 @@ async def joelify(contx):
     """A tribute to joel (of vinesauce)."""
     try:
         images_to_process = await get_images(contx, "joelify")
-        msg_to_send = '{}: Processing image(s).' if len(
-            images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'
-        tmp = await bot.send_message(contx.message.channel, msg_to_send.format(contx.message.author.mention))
+        msg_to_send = 'Processing image(s).' if len(
+            images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'.format(contx.message.author.mention)
+        tmp = await bot.send_message(contx.message.channel, msg_to_send)
         for imgtp in images_to_process:
             logging.info("Processing {} for joelification".format(imgtp))
             im = PIL.Image.open(imgtp)
@@ -418,8 +418,8 @@ async def ultrajoelify(contx):
     try:
         images_to_process = await get_images(contx, "ultrajoelify")
         msg_to_send = '{}: Processing image(s), this\'ll take some time (~30 secs).' if len(
-            images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'
-        tmp = await bot.send_message(contx.message.channel, msg_to_send.format(contx.message.author.mention))
+            images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'.format(contx.message.author.mention)
+        tmp = await bot.send_message(contx.message.channel, msg_to_send)
         for imgtp in images_to_process:
             logging.info("Processing {} for ultra joelification".format(imgtp))
             im = PIL.Image.open(imgtp)
@@ -446,8 +446,8 @@ async def tag(contx):
     """Tags images. Based on tagbox."""
     images_to_process = await get_images(contx, "tag")
     msg_to_send = '{}: Processing image(s). (this might take some time)' if len(
-        images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'
-    tmp = await bot.send_message(contx.message.channel, msg_to_send.format(contx.message.author.mention))
+        images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'.format(contx.message.author.mention)
+    tmp = await bot.send_message(contx.message.channel, msg_to_send)
     for imgtp in images_to_process:
         logging.info("Processing {} for tag".format(imgtp))
         headers = {"Accept": "application/json; charset=utf-8"}
