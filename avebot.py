@@ -1103,7 +1103,7 @@ async def on_message(message):
                 else:
                     logging.info("{} ({}) said \"{}\" on \"{}\" ({}) at \"{}\" ({})."
                            .format(message.author.name, message.author.id, message.content, message.channel.name, message.channel.id, message.server.name, message.server.id))
-            if message.content.lower() == ">help":
+            if message.content.lower() == "{}help".format(prefix):
                 help_text = open("help.md", "r").read()
                 em = discord.Embed(title="Welcome to AveBot Rewrite",
                                    description=help_text,
