@@ -993,8 +993,9 @@ async def howold(contx):
         try:
             age = parsed[0]["faceAttributes"]["age"]
             gender = parsed[0]["faceAttributes"]["gender"]
-            await bot.say("Age: **{}**\nGender: **{}**\n(powered by microsoft cognitive services' face api, blame them, not us)\n{}".format(age, gender))
+            await bot.say("Age: **{}**\nGender: **{}**".format(age, gender))
         except:
+            logging.warning("howold failed: {}".format(traceback.format_exc()))
             await bot.say("No face detected.")
 
 
