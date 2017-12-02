@@ -41,6 +41,8 @@ file_handler = logging.handlers.RotatingFileHandler(filename=log_file_name, maxB
 stdout_handler = logging.StreamHandler(sys.stdout)
 handlers = [file_handler, stdout_handler]
 
+old_commands = [">roll", ">info", ">govegan", ">helplong", ">help", ">trump", ">erdogan", ">servercount", ">serverlist", ">whoami", ">sbahjify", ">jpegify", ">ultrajpegify", ">mazeify", ">ultramazeify", ">joelify", ">ultrajoelify", ">unfurl", ">addavebot", ">contact", ">sinfo", ">uinfo", ">dig", ">resolve", ">!", ">unixtime", ">epoch", ">ping", ">exit", ">pull", ">addpriv", ">rmpriv", ">addmod", ">rmmod", ">fetchlog", ">ban", ">unban", ">eval", ">say", ">material", ">get", ">dget", ">xkcd", ">xkcdlatest", ">copypasta", ">copypastasell", ">stockchart", ">chart", ">c", ">render", ">bigly", ">howmanymessages", ">log", ">logall", ">similar", ">typo", ">soundslike", ">rhyme", ">howold", ">stock", ">s", ">fetchlog"]
+
 logging.basicConfig(
     level=logging.INFO,
     format='[%(asctime)s] {%(filename)s:%(lineno)d} %(levelname)s - %(message)s',
@@ -439,37 +441,6 @@ async def ultrajoelify(contx):
         await bot.delete_message(tmp)
     except Exception:
         await catch_error(traceback.format_exc())
-
-
-@bot.command(pass_context=True)
-async def tag(contx):
-    """Tags images. Based on tagbox."""
-    images_to_process = await get_images(contx, "tag")
-    msg_to_send = '{}: Processing image(s). (this might take some time)' if len(
-        images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'.format(contx.message.author.mention)
-    tmp = await bot.send_message(contx.message.channel, msg_to_send)
-    for imgtp in images_to_process:
-        logging.info("Processing {} for tag".format(imgtp))
-        headers = {"Accept": "application/json; charset=utf-8"}
-        files = dict(file=open(imgtp, 'rb'))
-        postr = requests.post(config['tagbox']['url'], files=files, headers=headers)
-        logging.info("tagbox result: {}".format(postr.text))
-        postj = postr.json()
-        if postj["success"]:
-            text = ""
-            for t in postj["tags"]:
-                text += ("**{}** ({} confidence)\n".format(t["tag"], str(t["confidence"])[:4]))
-            logging.info("tagbox text: {}".format(text))
-            em = discord.Embed(
-                title='Tags for the image requested by {}'.format(str(contx.message.author)), description=text)
-            # em.set_thumbnail(url=link)
-            em.set_footer(
-                text='Powered by tagbox.')
-            await bot.send_message(contx.message.channel, embed=em)
-            # await bot.send_message(contx.message.channel, "{}: {}".format(contx.message.author.mention, text))
-    await asyncio.sleep(5)
-    await bot.delete_message(tmp)
-
 
 @bot.command()
 async def unfurl(link: str):
@@ -993,7 +964,7 @@ async def howold(contx):
         try:
             age = parsed[0]["faceAttributes"]["age"]
             gender = parsed[0]["faceAttributes"]["gender"]
-            await bot.say("Age: **{}**\nGender: **{}**".format(age, gender))
+            await bot.say("Age: **{}**\nGender: **{}**\n(it's hella inaccurate I know blame microsoft not me)".format(age, gender))
         except:
             logging.warning("howold failed: {}".format(traceback.format_exc()))
             await bot.say("No face detected.")
@@ -1099,6 +1070,10 @@ async def on_message(message):
         new_message += 1
         if message.content.startswith(prefix):  # TODO: OK this is not reliable at all, find a better way to check this.
             new_command += 1
+
+        if message.content.startswith(">") and message.content.split(" ")[0] in old_commands:
+            new_command += 1
+            await bot.send_message(message.channel, 'Heya, AveBot changed prefixes! Please send your message again but use `ab!` instead of `>`. This message will stop being sent in 2018-01-01.\nThanks for supporting AveBot!')
 
         if message.author.name == "GitHub" and message.channel.id == config['base']['main-channel'] and "new commit" in message.embeds[0]['title']:
             tmp = await bot.send_message(message.channel, 'Pulling...')
