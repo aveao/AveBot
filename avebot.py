@@ -113,7 +113,7 @@ async def on_ready():
     logging.info('------')
     try:
         await asyncio.sleep(3)
-        await bot.change_presence(game=discord.Game(name='run {}help | hash: {}'.format(prefix, get_git_revision_short_hash())))
+        await bot.change_presence(game=discord.Game(name='{}help | {}'.format(prefix, get_git_revision_short_hash())))
         em = discord.Embed(title='AveBot initialized!',
                            description='Git hash: `{}`\nLast git message: `{}`\nHostname: `{}`\nLocal Time: `{}`\nLogs are below.'
                            .format(get_git_revision_short_hash(), get_git_commit_text(), socket.gethostname(), st),
