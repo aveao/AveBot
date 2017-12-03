@@ -1053,18 +1053,9 @@ new_command = 0
 @bot.event
 async def on_message(message):
     try:
-        # if config["advanced"]["add-reactions"]:
-        #   if message.content.lower().startswith('ok'):
-        #        await bot.add_reaction(message, "🆗")  # OK emoji
-        #   elif message.content.lower().startswith('hot'):
-        #        await bot.add_reaction(message, "🔥")  # fire emoji
-        #   elif message.content.lower().startswith('cool'):
-        #       await bot.add_reaction(message, "❄")  # snowflake emoji
-        #   if "🤔" in message.content:  # thinking emoji
-        #       await bot.add_reaction(message, "🤔")
-        # if message.mention_everyone:
-        #   everyone_meme_list = ["https://s.ave.zone/gofuckyourself.gif", "https://s.ave.zone/notcool.jpg"]
-        #   await bot.send_message(message.channel, random.choice(everyone_meme_list))
+        if message.author.bot:
+            return
+
         global new_message
         global new_command
         new_message += 1
