@@ -1,19 +1,23 @@
 # AveBot
 
-Batteries not included. See `How can I set it up FAQ:`.
+A discord bot that does a ton of weird (and neat) stuff.
 
-The stuff it can do can be seen by running `>help` on a server it's added on or by reading `help.md` file here.
+Please check out `help.md` to see the command list.
 
-### How can I use your setup?
-- Add it to your server with: https://discordapp.com/oauth2/authorize?client_id=305708836361207810&scope=bot
-- I don't add anyone as mod or privileged. Sorry.
+---
+
+Thanks to Discord ToS, I am required to tell you that AveBot DOES log messages that start with AveBot's prefix (`ab!), and you shouldn't add it to your server or use it if you don't agree with that.
+
+Invite link: https://discordapp.com/oauth2/authorize?client_id=305708836361207810&scope=bot
+
+---
 
 ### How can I set it up?
 - Install python3.
 - Install `discord.py` (`pip install -U discord.py`).
 - Install `pillow` ([See this for more info on how to install it](https://askubuntu.com/a/427359/511534))
 - Learn your bot token ([hint](https://discordapp.com/developers/applications/me)).
-- Set up a room for `>contact` messages and one for messages on launch time, note their IDs down (looks like `305715263951732737`). Developer mode will help with this one.
+- Set up a room for `ab!contact` messages and one for messages on launch time, note their IDs down (looks like `305715263951732737`). Developer mode will help with this one.
 - Learn your Discord ID (looks like `137584770145058817`). Developer mode will help with this one.
 - Copy `avebot.ini.example` to `avebot.ini`.
 - Put the token, Room IDs and your Discord ID on the `avebot.ini` file.

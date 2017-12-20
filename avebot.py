@@ -179,12 +179,6 @@ async def govegan():
 
 
 @bot.command(hidden=True)
-async def helplong():
-    """Links to a longer, better help file."""
-    await bot.say("https://github.com/aveao/AveBot/blob/rewrite/helplong.md")
-
-
-@bot.command(hidden=True)
 async def trump():
     """Reveals some stuff about my political leaning."""
     await bot.say("**Did you mean:** `Misogynist`")
@@ -450,10 +444,10 @@ async def unfurl(link: str):
 
 
 @bot.command()
-async def addavebot():
+async def invite():
     """Gives a link that can be used to add AveBot."""
     inviteurl = discord.utils.oauth_url(bot.user.id)
-    await bot.say("You can use <{}> to add AveBot to your server.".format(inviteurl))
+    await bot.say("You can use the following link to add AveBot to your server:\n<{}>".format(inviteurl))
 
 
 @bot.command(pass_context=True)
@@ -641,19 +635,19 @@ async def ban(contx):
 
 
 @bot.command(name='eval', pass_context=True)
-async def _eval(contx, *, code: str):
+async def _eval(ctx, *, code: str):
     """Evaluates some code (Owner only)"""
-    if check_level(contx.message.author.id) in ["9"]:
+    if check_level(ctx.message.author.id) in ["9"]:
         try:
             code = code.strip('` ')
 
             env = {
                 'bot': bot,
-                'contx': contx,
-                'message': contx.message,
-                'server': contx.message.server,
-                'channel': contx.message.channel,
-                'author': contx.message.author
+                'ctx': ctx,
+                'message': ctx.message,
+                'server': ctx.message.server,
+                'channel': ctx.message.channel,
+                'author': ctx.message.author
             }
             env.update(globals())
 
@@ -661,9 +655,9 @@ async def _eval(contx, *, code: str):
             result = eval(code, env)
             if inspect.isawaitable(result):
                 result = await result
-            await bot.send_message(contx.message.channel, "SUCCESS! ```{}```".format(repr(result)))
+            await bot.send_message(ctx.message.channel, "SUCCESS! ```{}```".format(repr(result)))
         except:
-            await bot.send_message(contx.message.channel, "ERROR! ```{}```".format(traceback.format_exc()))
+            await bot.send_message(ctx.message.channel, "ERROR! ```{}```".format(traceback.format_exc()))
     else:
         logging.info("no perms for eval")
 
@@ -884,23 +878,18 @@ async def howmanymessages(contx):
 @bot.command(pass_context=True)
 async def log(contx, count: int):
     """Returns a file out of the last N messages submitted in this channel."""
-    log_text = "===start of log, exported by avebot===\n"
-    async for mlog in bot.logs_from(contx.message.channel, limit=count):
-        log_text += "[{}]<{}>{}\n".format(str(mlog.timestamp), str(mlog.author), mlog.clean_content)
+    if check_level(contx.message.author.id) in ["2", "8", "9"]:
+        log_text = "===start of log, exported by avebot===\n"
+        async for mlog in bot.logs_from(contx.message.channel, limit=count):
+            log_text += "[{}]<{}>{}\n".format(str(mlog.timestamp), str(mlog.author), mlog.clean_content)
 
-    mlog_file_name = "files/{}.log".format(contx.message.channel.id)
-    file = open(mlog_file_name, "w")
-    file.write(log_text)
-    file.write("===end of log, exported by avebot===")
-    file.close()
-    await bot.send_file(contx.message.channel, mlog_file_name,
-                        content="{}: Here's the log file you requested.".format(contx.message.author.mention))
-
-
-@bot.command()
-async def logall():
-    """Returns a file with all of all the messages submitted in this channel."""
-    bot.say("Don't be lazy, just do a `{}log 100000000`, smh.".format(prefix))
+        mlog_file_name = "files/{}.log".format(contx.message.channel.id)
+        file = open(mlog_file_name, "w")
+        file.write(log_text)
+        file.write("===end of log, exported by avebot===")
+        file.close()
+        await bot.send_file(contx.message.channel, mlog_file_name,
+                            content="{}: Here's the log file you requested.".format(contx.message.author.mention))
 
 
 @bot.command()
@@ -1077,9 +1066,8 @@ async def on_message(message):
                 await bot.add_reaction(message, config["advanced"]["voting-emoji-y"])
                 await bot.add_reaction(message, config["advanced"]["voting-emoji-n"])
 
-            if message.content.startswith(
-                            prefix + '!'):  # implementing this here because ext.commands handle the bang name ugh
-                toduck = message.content.replace("+", "%2B").replace(prefix + "!", "!").replace(" ", "+")
+            if message.content.startswith('abddg!'):  # implementing this here because ext.commands handle the bang name ugh
+                toduck = message.content.replace("+", "%2B").replace("abddg!", "!").replace(" ", "+")
                 output = requests.get(
                     "https://api.duckduckgo.com/?q={}&format=json&pretty=0&no_redirect=1".format(toduck))
                 j = output.json()
@@ -1087,7 +1075,7 @@ async def on_message(message):
                 if resolvedto:
                     await bot.send_message(message.channel, "Bang resolved to: {}".format(unfurl_b(resolvedto)))
 
-            if message.content.startswith(prefix) or True:  # Temp enabling this. TODO: Make it optional through config.
+            if message.content.startswith(prefix):
                 if message.channel.is_private:
                     logging.info(
                         "{} ({}) said \"{}\" on PMs ({}).".format(message.author.name, message.author.id, message.content, message.channel.id))
@@ -1104,19 +1092,6 @@ async def on_message(message):
                 await bot.process_commands(message)
     except Exception:
         await catch_error(traceback.format_exc())
-
-
-@bot.event
-async def on_message_edit(before, after):
-    global new_message
-    new_message += 1
-    if after.channel.is_private:
-        logging.info(
-            "{} ({}) said \"{}\" on PMs and then edited it to \"{}\".".format(after.author.name, after.author.id, before.content, after.content))
-    else:
-        logging.info("{} ({}) said \"{}\" on \"{}\" at \"{}\" and then edited it to \"{}\"."
-               .format(after.author.name, after.author.id, before.content, after.channel.name,
-                       after.server.name, after.content))
 
 async def update_stats():
     await bot.wait_until_ready()
