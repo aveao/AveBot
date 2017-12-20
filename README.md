@@ -6,7 +6,7 @@ Please check out `help.md` to see the command list.
 
 ---
 
-Thanks to Discord ToS, I am required to tell you that AveBot DOES log messages that start with AveBot's prefix (`ab!), and you shouldn't add it to your server or use it if you don't agree with that.
+Thanks to Discord ToS, I am required to tell you that AveBot DOES log messages that start with AveBot's prefix (`ab!`), and you shouldn't add it to your server or use it if you don't agree with that.
 
 Invite link: https://discordapp.com/oauth2/authorize?client_id=305708836361207810&scope=bot
 
