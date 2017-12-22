@@ -22,7 +22,7 @@
 ## Stocks Commands<br>
 **ab!s \<ticker>:** Returns stock info about the given ticker.<br>
 **ab!c \<ticker>:** Returns stock chart of the given ticker.<br>
-**ab!btc:** Returns BTC/USD chart.<br>
+**ab!btc:** Returns a 30 day BTC/USD chart, last close, and the change since last close.<br>
 
 ## Fun Commands<br>
 **ab!copypasta \<ticker>:** Generates a buy copypasta for StockStream using the given ticker.<br>

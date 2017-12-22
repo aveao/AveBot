@@ -840,18 +840,17 @@ async def c(contx, ticker: str):
 @bot.command(pass_context=True)
 async def btc(contx):
     """Returns bitcoin chart and price info."""
-    btc_currentprice_req = requests.get(
-        "https://api.coindesk.com/v1/bpi/currentprice/USD.json")
-    btc_currentprice_req_json = btc_currentprice_req.json()
-    btc_currentprice_rate = btc_currentprice_req_json["bpi"]["USD"]["rate_float"]
-    btc_currentprice = locale.currency(btc_currentprice_rate, grouping=True)
+    btc_currentprice_req = requests.get("https://api.coindesk.com/v1/bpi/currentprice/USD.json")
+    btc_currentprice_json = btc_currentprice_req.json()
+    btc_currentprice_rate = btc_currentprice_json["bpi"]["USD"]["rate_float"]
+    btc_currentprice_string = locale.currency(btc_currentprice_rate, grouping=True)
 
-    btc_yesterdayclosing_req = requests.get("https://api.coindesk.com/v1/bpi/historical/close.json?for=yesterday")
-    btc_yesterdayclosing_req_json = btc_yesterdayclosing_req.json()
-    btc_yesterdayclosing_rate = next(iter(btc_yesterdayclosing_req_json["bpi"].values()))
-    btc_yesterdayclosing = locale.currency(btc_yesterdayclosing_rate, grouping=True)
+    btc_lastclose_req = requests.get("https://api.coindesk.com/v1/bpi/historical/close.json?for=yesterday")
+    btc_lastclose_json = btc_lastclose_req.json()
+    btc_lastclose_rate = next(iter(btc_lastclose_json["bpi"].values()))
+    btc_lastclose_string = locale.currency(btc_lastclose_rate, grouping=True)
 
-    btc_diff = btc_currentprice_rate - btc_yesterdayclosing_rate
+    btc_diff = btc_currentprice_rate - btc_lastclose_rate
     btc_change_percentage = (100 * Decimal(btc_diff) / Decimal(btc_currentprice_rate))
     btc_change_percentage_string = "{}%".format(str(btc_change_percentage)[:6])
 
@@ -863,8 +862,8 @@ async def btc(contx):
     em.set_author(name="30 Day BTC Chart and Info", icon_url="https://bitcoin.org/img/icons/opengraph.png")
     em.set_image(url=link)
     em.set_footer(text="Chart supplied by Google Finance. Price info supplied by CoinDesk.")
-    em.add_field(name="Current Price", value=btc_currentprice, inline=True)
-    em.add_field(name="Last Close Price", value=btc_yesterdayclosing, inline=True)
+    em.add_field(name="Current Price", value=btc_currentprice_string, inline=True)
+    em.add_field(name="Last Close Price", value=btc_lastclose_string, inline=True)
     em.add_field(name="Change", value=btc_change_percentage_string, inline=True)
 
     await bot.send_message(contx.message.channel, embed=em)
