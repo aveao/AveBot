@@ -808,14 +808,19 @@ def get_change_color(ticker: str):
         symbolsj["last_trade_price"] if symbolsj["last_extended_hours_trade_price"] is None else symbolsj[
             "last_extended_hours_trade_price"])
     diff = str(Decimal(current_price) - Decimal(symbolsj["previous_close"]))
-    percentage = str(100 * Decimal(diff) / Decimal(current_price)).split('.')[0]  # before the dor
-    if percentage.startswith('-'):
-        int_perc = int(percentage) * -1  # make it plus
+    percentage = (100 * Decimal(diff) / Decimal(current_price))
+    return _get_change_color(percentage)
+    
+
+def _get_change_color(change_percentage):
+    change_percentage = str(change_percentage).split('.')[0] # before the dot
+    if change_percentage.startswith('-'):
+        int_perc = int(change_percentage) * -1  # make it positive
         colors = [0xFFEBEE, 0xFFCDD2, 0xEF9A9A, 0xE57373, 0xEF5350, 0xF44336, 0xE53935, 0xD32F2F, 0xC62828, 0xB71C1C,
                   0xD50000]
         return colors[10 if int_perc > 10 else int_perc]
     else:
-        int_perc = int(percentage) + 1
+        int_perc = int(change_percentage) + 1
         colors = [0xF1F8E9, 0xDCEDC8, 0xC5E1A5, 0xAED581, 0x9CCC65, 0x8BC34A, 0x7CB342, 0x689F38, 0x558B2F, 0x33691E,
                   0x1B5E20]
         return colors[10 if int_perc > 10 else int_perc]
@@ -846,14 +851,21 @@ async def btc(contx):
     btc_yesterdayclosing_rate = next(iter(btc_yesterdayclosing_req_json["bpi"].values()))
     btc_yesterdayclosing = locale.currency(btc_yesterdayclosing_rate, grouping=True)
 
+    btc_diff = btc_currentprice_rate - btc_yesterdayclosing_rate
+    btc_change_percentage = (100 * Decimal(btc_diff) / Decimal(btc_currentprice_rate))
+    btc_change_percentage_string = "{}%".format(str(btc_change_percentage)[:6])
+
+    btc_change_color = _get_change_color(btc_change_percentage)
+
     link = "https://www.google.com/finance/chart?q=CURRENCY:BTCUSD&tkr=1&p=1M&chst=vkc&chs=500x300"
-    em = discord.Embed()
+    em = discord.Embed(color=btc_change_color)
 
     em.set_author(name="30 Day BTC Chart and Info", icon_url="https://bitcoin.org/img/icons/opengraph.png")
     em.set_image(url=link)
     em.set_footer(text="Chart supplied by Google Finance. Price info supplied by CoinDesk.")
     em.add_field(name="Current Price", value=btc_currentprice, inline=True)
     em.add_field(name="Last Close Price", value=btc_yesterdayclosing, inline=True)
+    em.add_field(name="Change", value=btc_change_percentage_string, inline=True)
 
     await bot.send_message(contx.message.channel, embed=em)
 
