@@ -657,9 +657,12 @@ async def _eval(ctx, *, code: str):
             result = eval(code, env)
             if inspect.isawaitable(result):
                 result = await result
-            await bot.send_message(ctx.message.channel, "SUCCESS! ```{}```".format(repr(result)))
+
+            result = "Success! ```{}```".format(repr(result))
+            for msg in slice_message(result):
+                await bot.send_message(ctx.message.channel, msg)
         except:
-            await bot.send_message(ctx.message.channel, "ERROR! ```{}```".format(traceback.format_exc()))
+            await bot.send_message(ctx.message.channel, "Error! ```{}```".format(traceback.format_exc()))
     else:
         logging.info("no perms for eval")
 
