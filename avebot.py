@@ -833,11 +833,20 @@ async def c(contx, ticker: str):
 
 @bot.command(pass_context=True)
 async def btc(contx):
-    """Returns bitcoin chart."""
+    """Returns bitcoin chart and price info."""
+    btc_currentprice = requests.get(
+        "https://api.coindesk.com/v1/bpi/currentprice/USD.json")
+    btc_currentprice_json = btc_currentprice.json()
+    btc_price = "{} USD".format(btc_currentprice_json["bpi"]["USD"]["rate"])
+
     link = "https://www.google.com/finance/chart?q=CURRENCY:BTCUSD&tkr=1&p=1M&chst=vkc&chs=500x300"
-    em = discord.Embed(title='30 day chart for BTC')
+    em = discord.Embed()
+
+    em.set_author(name="30 Day BTC Chart and Info", icon_url="https://bitcoin.org/img/icons/opengraph.png")
     em.set_image(url=link)
-    em.set_footer(text="Chart from Google Finance and might not be accurate")
+    em.set_footer(text="Chart supplied by Google Finance. Price info supplied by CoinDesk.")
+    em.add_field(name="Current Price", value=btc_price, inline=True)
+
     await bot.send_message(contx.message.channel, embed=em)
 
 
