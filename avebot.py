@@ -208,7 +208,7 @@ async def serverlist():
         text_to_post += "• **{}** (**{} members**)\n".format(server.name.replace("@", ""), str(server.member_count))
         total_user_count += server.member_count
     text_to_post += "In total, AveBot is servicing **{} users**.".format(str(total_user_count))
-    sliced_message = slice_message(text_to_post)
+    sliced_message = slice_message(text_to_post, 2000)
     for msg in sliced_message:
         await bot.say(msg)
 
@@ -659,8 +659,8 @@ async def _eval(ctx, *, code: str):
                 result = await result
 
             result = "Success! ```{}```".format(repr(result))
-            for msg in slice_message(result):
-                await bot.send_message(ctx.message.channel, msg)
+            for msg in slice_message(result, 1994):
+                await bot.send_message(ctx.message.channel, "```{}```".format(msg))
         except:
             await bot.send_message(ctx.message.channel, "Error! ```{}```".format(traceback.format_exc()))
     else:
@@ -1073,11 +1073,11 @@ def unfurl_b(link):
     except Exception:
         return prev_link
 
-def slice_message(text):
+def slice_message(text, size):
     reply_list = []
-    while len(text) > 2000:
-        reply_list.append(text[:2000])
-        text = text[2000:]
+    while len(text) > size:
+        reply_list.append(text[:size])
+        text = text[size:]
     reply_list.append(text)
     return reply_list
 
