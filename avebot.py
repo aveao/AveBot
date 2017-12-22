@@ -11,6 +11,7 @@ import locale
 
 from pathlib import Path
 from decimal import *
+from dateutil import parser
 
 import random
 import requests
@@ -916,7 +917,7 @@ async def howmanymessages(contx):
 @bot.command(pass_context=True)
 async def log(contx, count: int):
     """Returns a file out of the last N messages submitted in this channel."""
-    if check_level(contx.message.author.id) in ["2", "8", "9"]:
+    if check_level(contx.message.author.id) in ["9"]:
         log_text = "===start of log, exported by avebot===\n"
         async for mlog in bot.logs_from(contx.message.channel, limit=count):
             log_text += "[{}]<{}>{}\n".format(str(mlog.timestamp), str(mlog.author), mlog.clean_content)
@@ -1023,32 +1024,36 @@ async def s(contx, ticker: str):
         "https://api.robinhood.com/fundamentals/{}/".format(ticker.upper()))
     fundamentalsj = fundamentals.json()
 
-    current_price = (
+    current_price = Decimal(
         symbolsj["last_trade_price"] if symbolsj["last_extended_hours_trade_price"] is None else symbolsj[
             "last_extended_hours_trade_price"])
-    diff = str(Decimal(current_price) - Decimal(symbolsj["previous_close"]))
-    if not diff.startswith("-"):
-        diff = "+" + diff
-    percentage = str(100 * Decimal(diff) / Decimal(current_price))[:6]
+    diff = Decimal(Decimal(current_price) - Decimal(symbolsj["previous_close"]))
+    percentage = str(100 * diff / current_price)[:6]
 
     if not percentage.startswith("-"):
         percentage = "+" + percentage
 
-    reply_text = "Name: **{}**\nCurrent Price: **{} USD**\nChange from yesterday: **{} USD**, (**{}%**)\n" \
-                 "Bid size: **{} ({} USD)**, Ask size: **{} ({} USD)**\n" \
-                 "Current Volume: **{}**, Average Volume: **{}** \n" \
-                 "Tradeable (on robinhood): {}, :flag_{}:".format(instrumentj["name"], current_price, diff,
-                                                                  percentage, str(symbolsj["bid_size"]),
-                                                                  symbolsj["bid_price"], str(symbolsj["ask_size"]),
-                                                                  symbolsj["ask_price"], fundamentalsj["volume"],
-                                                                  fundamentalsj["average_volume"], (
-                                                                      ":white_check_mark:" if instrumentj[
-                                                                          "tradeable"] else ":x:"),
-                                                                  instrumentj["country"].lower())
+    current_price_string = locale.currency(current_price, grouping=True)
+    diff_string = locale.currency(diff, grouping=True)
+    bid_price_string = locale.currency(Decimal(symbolsj["bid_price"]), grouping=True)
+    ask_price_string = locale.currency(Decimal(symbolsj["ask_price"]), grouping=True)
+    tradeable_string = (":white_check_mark:" if instrumentj["tradeable"] else ":x:")
 
-    em = discord.Embed(title="{}'s stocks info as of {}".format(symbolsj["symbol"], symbolsj["updated_at"]),
-                       description=reply_text, colour=get_change_color(symbolsj["symbol"]))
-    await bot.send_message(contx.message.channel, embed=em)
+    update_timestamp = parser.parse(symbolsj["updated_at"])
+
+    embed = discord.Embed(title="{}'s stocks info".format(symbolsj["symbol"]), color=get_change_color(symbolsj["symbol"]), timestamp=update_timestamp)
+
+    embed.add_field(name="Name", value=instrumentj["name"])
+    embed.add_field(name="Current Price", value=current_price_string)
+    embed.add_field(name="Change from yesterday", value="{} ({}%)".format(diff_string, percentage))
+    embed.add_field(name="Bid size", value="{} ({})".format(symbolsj["bid_size"], bid_price_string), inline=True)
+    embed.add_field(name="Ask size", value="{} ({})".format(symbolsj["ask_size"], ask_price_string), inline=True)
+    embed.add_field(name="Current Volume", value=fundamentalsj["volume"], inline=True)
+    embed.add_field(name="Average Volume", value=fundamentalsj["average_volume"], inline=True)
+    embed.add_field(name="Tradeable on Robinhood", value=tradeable_string, inline=True)
+    embed.add_field(name="Country", value=":flag_{}:".format(instrumentj["country"].lower()), inline=True)
+
+    await bot.send_message(contx.message.channel, embed=embed)
 
 
 def unfurl_b(link):
