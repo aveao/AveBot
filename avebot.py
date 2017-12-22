@@ -7,6 +7,7 @@ import subprocess
 import time
 import traceback
 import inspect
+import locale
 
 from pathlib import Path
 from decimal import *
@@ -58,7 +59,7 @@ if not Path(config_file_name).is_file():
 config.read(config_file_name)
 
 prefix = config['base']['prefix']
-
+locale.setlocale(locale.LC_ALL, '')
 
 def get_git_commit_text():
     return str(subprocess.check_output(['git', 'log', '-1', '--pretty=%B']).strip())[2:-1]
@@ -834,10 +835,16 @@ async def c(contx, ticker: str):
 @bot.command(pass_context=True)
 async def btc(contx):
     """Returns bitcoin chart and price info."""
-    btc_currentprice = requests.get(
+    btc_currentprice_req = requests.get(
         "https://api.coindesk.com/v1/bpi/currentprice/USD.json")
-    btc_currentprice_json = btc_currentprice.json()
-    btc_price = "{} USD".format(btc_currentprice_json["bpi"]["USD"]["rate"])
+    btc_currentprice_req_json = btc_currentprice_req.json()
+    btc_currentprice_rate = btc_currentprice_req_json["bpi"]["USD"]["rate_float"]
+    btc_currentprice = locale.currency(btc_currentprice_rate, grouping=True)
+
+    btc_yesterdayclosing_req = requests.get("https://api.coindesk.com/v1/bpi/historical/close.json?for=yesterday")
+    btc_yesterdayclosing_req_json = btc_yesterdayclosing_req.json()
+    btc_yesterdayclosing_rate = next(iter(btc_yesterdayclosing_req_json["bpi"].values()))
+    btc_yesterdayclosing = locale.currency(btc_yesterdayclosing_rate, grouping=True)
 
     link = "https://www.google.com/finance/chart?q=CURRENCY:BTCUSD&tkr=1&p=1M&chst=vkc&chs=500x300"
     em = discord.Embed()
@@ -845,7 +852,8 @@ async def btc(contx):
     em.set_author(name="30 Day BTC Chart and Info", icon_url="https://bitcoin.org/img/icons/opengraph.png")
     em.set_image(url=link)
     em.set_footer(text="Chart supplied by Google Finance. Price info supplied by CoinDesk.")
-    em.add_field(name="Current Price", value=btc_price, inline=True)
+    em.add_field(name="Current Price", value=btc_currentprice, inline=True)
+    em.add_field(name="Last Close Price", value=btc_yesterdayclosing, inline=True)
 
     await bot.send_message(contx.message.channel, embed=em)
 
