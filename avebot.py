@@ -832,6 +832,16 @@ async def c(contx, ticker: str):
 
 
 @bot.command(pass_context=True)
+async def btc(contx):
+    """Returns bitcoin chart."""
+    link = "https://www.google.com/finance/chart?q=CURRENCY:BTCUSD&tkr=1&p=1M&chst=vkc&chs=500x300"
+    em = discord.Embed(title='30 day chart for BTC')
+    em.set_image(url=link)
+    em.set_footer(text="Chart from Google Finance and might not be accurate")
+    await bot.send_message(contx.message.channel, embed=em)
+
+
+@bot.command(pass_context=True)
 async def render(contx, page_link: str):
     """Returns an image of the site."""
     if check_level(contx.message.author.id) in ["2", "8", "9"]:
