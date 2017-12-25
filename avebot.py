@@ -658,7 +658,7 @@ async def _eval(ctx, *, code: str):
             if inspect.isawaitable(result):
                 result = await result
 
-            result = "Success! ```{}```".format(repr(result))
+            result = "Success! {}".format(repr(result))
             for msg in slice_message(result, 1994):
                 await bot.send_message(ctx.message.channel, "```{}```".format(msg))
         except:
@@ -860,12 +860,12 @@ async def btc(contx):
 
     btc_change_color = _get_change_color(btc_change_percentage)
 
-    link = "https://www.google.com/finance/chart?q=CURRENCY:BTCUSD&tkr=1&p=1M&chst=vkc&chs=500x300"
+    link = "https://bitcoincharts.com/charts/chart.png?width=600&m=bitstampUSD&r=30&c=0&e=&t=S&m1=10&m2=25&x=0&v=1&cv=0&ps=0&l=0&p=0"
     em = discord.Embed(color=btc_change_color)
 
     em.set_author(name="30 Day BTC Chart and Info", icon_url="https://bitcoin.org/img/icons/opengraph.png")
     em.set_image(url=link)
-    em.set_footer(text="Chart supplied by Google Finance. Price info supplied by CoinDesk.")
+    em.set_footer(text="Chart supplied by bitcoincharts.com under CC-BY-SA 3.0, price info supplied by CoinDesk.")
     em.add_field(name="Current Price", value=btc_currentprice_string, inline=True)
     em.add_field(name="Last Close Price", value=btc_lastclose_string, inline=True)
     em.add_field(name="Change", value=btc_change_percentage_string, inline=True)
