@@ -64,15 +64,16 @@ prefix = config['base']['prefix']
 locale.setlocale(locale.LC_ALL, '')
 
 def get_git_commit_text():
-    return str(subprocess.check_output(['git', 'log', '-1', '--pretty=%B']).strip())[2:-1]
+    return call_shell("git log -1 --pretty=%B")
 
+def call_shell(command):
+    return bytes.decode(subprocess.check_output(command, stderr=subprocess.STDOUT, shell=True)).strip()
 
 def git_pull():
-    subprocess.call(["git", "pull"])
-
+    return call_shell("git pull")
 
 def get_git_revision_short_hash():
-    return str(subprocess.check_output(['git', 'log', '-1', '--pretty=%h']).strip())[2:-1]
+    return call_shell("git log -1 --pretty=%h")
 
 
 description = 'AveBot Rewrite\nGit Hash: {}\nLast Commit: {}' \
@@ -544,9 +545,9 @@ async def pull(contx):
     """Does a git pull (Owner only)."""
     if check_level(contx.message.author.id) == "9":
         tmp = await bot.send_message(contx.message.channel, 'Pulling...')
-        git_pull()
-        await bot.edit_message(tmp, "Pull complete, exiting!")
-        await bot.logout()
+        git_output = git_pull()
+        await bot.edit_message(tmp, "Pull complete. Output: ```{}```".format(git_output))
+        # await bot.logout()
 
 
 @bot.command(pass_context=True)
@@ -918,6 +919,16 @@ async def log(contx, count: int):
         file.close()
         await bot.send_file(contx.message.channel, mlog_file_name,
                             content="{}: Here's the log file you requested.".format(contx.message.author.mention))
+
+
+@bot.command(pass_context=True)
+async def sh(contx, *, command: str):
+    """Runs a command on shell (owner only)."""
+    if check_level(contx.message.author.id) in ["9"]:
+        command = command.strip('`')
+        tmp = await bot.send_message(contx.message.channel, 'Running `{}`...'.format(command))
+        shell_output = call_shell(command)
+        await bot.edit_message(tmp, "Command `{}` completed. Output: ```{}```".format(command, shell_output))
 
 
 @bot.command()
