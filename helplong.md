@@ -76,3 +76,4 @@
 **ab!fetchlog:** replies with the log file (Owner only)<br>
 **ab!exit:** Quits the bot (Owner only).<br>
 **ab!pull:** Does a `git pull` (Owner only).<br>
+**ab!sh:** Runs a shell command, command can be wrapped in \` or \`\`\` (Owner only).<br>
