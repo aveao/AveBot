@@ -32,6 +32,7 @@
 **abddg!\<bang> \<query>:** Resolves a duckduckgo bang.<br>
 **ab!xkcd:** Returns info about the specified xkcd comic.<br>
 **ab!xkcdlatest:** Returns info about the latest xkcd comic.<br>
+**ab!tumblrgrab \<tumblr link>:** Gets images from a tumblr post.<br>
 
 ## Image Commands<br>
 **ab!sbahjify \<image link or uploaded image>:** Makes images hella and sweet.<br>
