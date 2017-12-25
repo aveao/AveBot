@@ -504,13 +504,39 @@ async def _duckduckgo():
     """Resolves a duckduckgo bang."""
     await bot.say("No bang supplied. Try giving a bang like abddg!wiki.")
 
+@bot.command(aliases=['fucksafemode'], pass_context=True)
+async def tumblrgrab(ctx, *, link: str):
+    reg = r'([a-z0-9.]{1,})\/post\/([0-9]{1,})'
+    m = re.search(reg, link)
+    if m:
+        site = m.group(1)
+        postid = m.group(2)
+        api_key = config['tumblr']['apikey']
+        tumblrapicall_link = "https://api.tumblr.com/v2/blog/{}/posts/photo?id={}&api_key={}".format(site, postid, api_key)
+        tumblr_request = await session.get(tumblrapicall_link)
+        tumblr_json = await tumblr_request.json()
+        tumblr_is_nsfw = ("x_tumblr_content_rating" in tumblr_json["meta"])
+        logging.info(tumblr_is_nsfw)
 
-@bot.command(hidden=True)
-async def unixtime():
-    await bot.say("Current epoch time is: **{}**.".format(str(int(time.time()))))
+        #if tumblr_json["meta"]["x_tumblr_content_rating"] and :
+        #    tumblr_is_nsfw = True
+
+        tumblr_image_base = "\n<{}> (NSFW!)" if tumblr_is_nsfw else "\n{}"
+
+        tumblr_json_images = tumblr_json["response"]["posts"][0]["photos"]
+        logging.info("tumblr json images: {}".format(repr(tumblr_json_images)))
+        tumblr_text = "{}, here are your requested image(s):".format(ctx.message.author.mention)
+        for image in tumblr_json_images:
+            current_count = len(tumblr_text)+1
+            total_count = len(tumblr_json_images)
+            tumblr_text += tumblr_image_base.format(image["original_size"]["url"])
+        logging.info(tumblr_text)
+        await bot.send_message(ctx.message.channel, tumblr_text)
+    else:
+        await bot.send_message(ctx.message.channel, "No tumblr link detected")
 
 
-@bot.command()
+@bot.command(aliases=["unixtime"])
 async def epoch():
     """Returns the Unix Time / Epoch."""
     await bot.say("Current epoch time is: **{}**.".format(str(int(time.time()))))

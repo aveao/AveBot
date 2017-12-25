@@ -18,6 +18,9 @@ your_discord_id_here = 9
 url = stats_add_url_goes_here
 key = stats_key_goes_here
 
+[tumblr]
+apikey = tumblr_api_key_goes_here
+
 [tagbox]
 url = tagbox_check_url_goes_here
 
