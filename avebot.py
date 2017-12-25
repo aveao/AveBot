@@ -492,12 +492,7 @@ async def uinfo(contx):
         await bot.send_message(contx.message.channel, embed=em)
 
 
-@bot.command(hidden=True)
-async def dig():
-    await bot.say("Please use >resolve")
-
-
-@bot.command()
+@bot.command(aliases=['dig'])
 async def resolve(domain: str):
     """Resolves a domain to a URL."""
     resolved = repr(socket.gethostbyname_ex(domain))
@@ -507,7 +502,7 @@ async def resolve(domain: str):
 @bot.command(name="!")
 async def _duckduckgo():
     """Resolves a duckduckgo bang."""
-    await bot.say("No bang supplied. Try giving a bang like >!wiki.")
+    await bot.say("No bang supplied. Try giving a bang like abddg!wiki.")
 
 
 @bot.command(hidden=True)
@@ -776,16 +771,6 @@ async def copypastasell(ticker: str):
     await bot.say(to_post)
 
 
-@bot.command(hidden=True)
-async def stockchart():
-    await bot.say("Please use >c")
-
-
-@bot.command(hidden=True)
-async def chart():
-    await bot.say("Please use >c")
-
-
 async def get_change_color(ticker: str):
     symbols = await session.get("https://api.robinhood.com/quotes/?symbols={}".format(ticker.upper()))
     if symbols.status != 200:
@@ -816,7 +801,7 @@ def _get_change_color(change_percentage):
         return colors[10 if int_perc > 10 else int_perc]
 
 
-@bot.command(pass_context=True)
+@bot.command(pass_context=True, aliases=['stockchart', 'chart'])
 async def c(contx, ticker: str):
     """Returns stock chart of the given ticker."""
     link = "https://finviz.com/chart.ashx?t={}&ty=c&ta=1&p=d&s=l".format(ticker.upper())
@@ -998,12 +983,7 @@ async def howold(contx):
             await bot.say("No face detected.")
 
 
-@bot.command(hidden=True)
-async def stock():
-    await bot.say("Please use >s")
-
-
-@bot.command(pass_context=True)
+@bot.command(pass_context=True, aliases=['stock'])
 async def s(contx, ticker: str):
     """Returns stock info about the given ticker."""
     symbols = await session.get(
