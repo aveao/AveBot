@@ -1103,12 +1103,6 @@ async def on_message(message):
             new_command += 1
             await bot.send_message(message.channel, 'Heya, AveBot changed prefixes! Please send your message again but use `ab!` instead of `>`. This message will stop being sent in 2018-01-01.\nThanks for supporting AveBot!')
 
-        if message.author.name == "GitHub" and message.channel.id == config['base']['main-channel'] and "new commit" in message.embeds[0]['title']:
-            tmp = await bot.send_message(message.channel, 'Pulling...')
-            git_pull()
-            await bot.edit_message(tmp, "Pull complete, exiting!")
-            await bot.logout()
-
         if check_level(str(message.author.id)) != "0":  # Banned users simply do not get a response
             if message.content.lower().startswith(config["advanced"]["voting-prefix"].lower()):
                 await bot.add_reaction(message, config["advanced"]["voting-emoji-y"])
