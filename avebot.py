@@ -14,7 +14,7 @@ from decimal import *
 from dateutil import parser
 
 import random
-import requests
+import aiohttp 
 
 import discord
 from discord.ext import commands
@@ -30,7 +30,8 @@ import logging.handlers
 import sys
 
 # TODO: COGS https://gist.github.com/leovoel/46cd89ed6a8f41fd09c5
-# TODO: >get >dget size and timeouts
+
+session = aiohttp.ClientSession()
 
 config_file_name = "avebot.ini"
 log_file_name = "avebot.log"
@@ -96,14 +97,11 @@ def save_config():
         config.write(configfile)
 
 
-def download_file(url,
-                  local_filename):  # This function is based on https://stackoverflow.com/a/16696317/3286892 by Poman Podlinov (https://stackoverflow.com/users/427457/roman-podlinov), modified by Avery (https://github.com/aveao), licensed CC-BY-SA 3.0
-    r = requests.get(url, stream=True)
-    with open(local_filename, 'wb') as f:
-        for chunk in r.iter_content(chunk_size=1024):
-            if chunk:  # filter out keep-alive new chunks
-                f.write(chunk)
-                # f.flush() commented by recommendation from J.F.Sebastian
+async def download_file(url, local_filename):  # This function is based on https://stackoverflow.com/a/35435419/3286892 by link2110 (https://stackoverflow.com/users/5890923/link2110), modified by Ave (https://github.com/aveao), licensed CC-BY-SA 3.0
+    file_resp = await session.get(url)
+    file = await file_resp.read()
+    with open(local_filename, "wb") as f:
+        f.write(file)
 
 
 @bot.event
@@ -180,18 +178,6 @@ async def govegan():
     await bot.say("https://zhangyijiang.github.io/puppies-and-chocolate/")
 
 
-@bot.command(hidden=True)
-async def trump():
-    """Reveals some stuff about my political leaning."""
-    await bot.say("**Did you mean:** `Misogynist`")
-
-
-@bot.command(hidden=True)
-async def erdogan():
-    """Reveals some stuff about my political leaning."""
-    await bot.say("**Did you mean:** `Dictator`")
-
-
 @bot.command()
 async def servercount():
     """Returns the amount of servers AveBot is in."""
@@ -225,7 +211,7 @@ async def get_images(contx, caller_command):
     for attach in contx.message.attachments:
         extension = os.path.splitext(attach['filename'])[1]
         filename = "files/powered-by-avebot-bot.ave.zone-{}att{}".format(contx.message.id, extension).split('?')[0]
-        download_file(attach['proxy_url'], filename)
+        await download_file(attach['proxy_url'], filename)
         if extension != ".jpg" or extension != ".jpeg":
             im = PIL.Image.open(filename)
             new_name = filename.replace(extension, ".jpg")
@@ -236,7 +222,7 @@ async def get_images(contx, caller_command):
     if stuff_after != "" and stuff_after.startswith("http"):
         extension = str(os.path.splitext(stuff_after)[1].split('?')[0])
         filename = "files/powered-by-avebot-bot.ave.zone-{}txt{}".format(contx.message.id, extension)
-        download_file(stuff_after, filename)
+        await download_file(stuff_after, filename)
         if extension != ".jpg" or extension != ".jpeg":
             im = PIL.Image.open(filename)
             new_name = filename.replace(extension, ".jpg")
@@ -441,7 +427,7 @@ async def ultrajoelify(contx):
 @bot.command()
 async def unfurl(link: str):
     """Finds where a URL redirects to."""
-    resolved = unfurl_b(link)
+    resolved = await unfurl_b(link)
     await bot.say("<{}> Unfurls to <{}>".format(link, resolved))
 
 
@@ -699,7 +685,7 @@ async def material(contx, filename: str):
         link = "https://storage.googleapis.com/material-icons/external-assets/v4/icons/svg/" + filename
         filename = "files/" + filename
         if not Path(filename).is_file():  # caching
-            download_file(link, filename)
+            await download_file(link, filename)
         await bot.send_file(contx.message.channel, filename,
                             content="Here's the file you requested.")
 
@@ -709,7 +695,7 @@ async def get(contx, link: str):
     """Gets a file from the internet (Privileged/Mod/Admin only)."""
     if check_level(contx.message.author.id) in ["2", "8", "9"]:
         filename = "files/" + link.split('/')[-1]
-        download_file(link, filename)
+        await download_file(link, filename)
         file_size = Path(filename).stat().st_size
         if file_size < 1024 * 1024 * 7:  # Limit of discord is 7MiB
             await bot.send_file(contx.message.channel, filename,
@@ -726,7 +712,7 @@ async def dget(contx, link: str):
     """Directly gets (doesn't care about name) a file from the internet (Privileged/Mod/Admin only)."""
     if check_level(contx.message.author.id) in ["2", "8", "9"]:
         filename = "files/requestedfile"
-        download_file(link, filename)
+        await download_file(link, filename)
         file_size = Path(filename).stat().st_size
         if file_size < 1024 * 1024 * 7:  # Limit of discord is 7MiB
             await bot.send_file(contx.message.channel, filename,
@@ -741,8 +727,8 @@ async def dget(contx, link: str):
 @bot.command()
 async def xkcd(xkcdcount: int):
     """Returns info about the specified xkcd comic."""
-    output = requests.get("https://xkcd.com/{}/info.0.json".format(str(xkcdcount)))
-    j = output.json()
+    output = await session.get("https://xkcd.com/{}/info.0.json".format(str(xkcdcount)))
+    j = await output.json()
     resolvedto = j["img"]
     if resolvedto:
         messagecont = "**XKCD {0}:** `{1}`, published on {2}-{3}-{4} (DMY)\n**Image:** {5}\n**Alt text:** `{6}`\n" \
@@ -754,8 +740,8 @@ async def xkcd(xkcdcount: int):
 @bot.command()
 async def xkcdlatest():
     """Returns info about the latest xkcd comic."""
-    output = requests.get("https://xkcd.com/info.0.json")
-    j = output.json()
+    output = await session.get("https://xkcd.com/info.0.json")
+    j = await output.json()
     resolvedto = j["img"]
     if resolvedto:
         messagecont = "**XKCD {0}:** `{1}`, published on {2}-{3}-{4} (DMY)\n**Image:** {5}\n**Alt text:** `{6}`\n" \
@@ -799,19 +785,18 @@ async def chart():
     await bot.say("Please use >c")
 
 
-def get_change_color(ticker: str):
-    symbols = requests.get(
-        "https://api.robinhood.com/quotes/?symbols={}".format(ticker.upper()))
-
-    if symbols.status_code != 200:
+async def get_change_color(ticker: str):
+    symbols = await session.get("https://api.robinhood.com/quotes/?symbols={}".format(ticker.upper()))
+    if symbols.status != 200:
         return 0x000000  # black
 
-    symbolsj = symbols.json()["results"][0]
+    symbolsj = await symbols.json()
+    symbols_results = symbolsj["results"][0]
 
     current_price = (
-        symbolsj["last_trade_price"] if symbolsj["last_extended_hours_trade_price"] is None else symbolsj[
+        symbols_results["last_trade_price"] if symbols_results["last_extended_hours_trade_price"] is None else symbols_results[
             "last_extended_hours_trade_price"])
-    diff = str(Decimal(current_price) - Decimal(symbolsj["previous_close"]))
+    diff = str(Decimal(current_price) - Decimal(symbols_results["previous_close"]))
     percentage = (100 * Decimal(diff) / Decimal(current_price))
     return _get_change_color(percentage)
     
@@ -834,8 +819,9 @@ def _get_change_color(change_percentage):
 async def c(contx, ticker: str):
     """Returns stock chart of the given ticker."""
     link = "https://finviz.com/chart.ashx?t={}&ty=c&ta=1&p=d&s=l".format(ticker.upper())
+    change_color = await get_change_color(ticker)
     em = discord.Embed(title='Chart for {0}'.format(ticker.upper()),
-                       colour=get_change_color(ticker))
+                       colour=change_color)
     em.set_image(url=link)
     em.set_footer(text='See https://finviz.com/quote.ashx?t={0} for more info.'.format(ticker.upper()))
     await bot.send_message(contx.message.channel, embed=em)
@@ -844,13 +830,13 @@ async def c(contx, ticker: str):
 @bot.command(pass_context=True)
 async def btc(contx):
     """Returns bitcoin chart and price info."""
-    btc_currentprice_req = requests.get("https://api.coindesk.com/v1/bpi/currentprice/USD.json")
-    btc_currentprice_json = btc_currentprice_req.json()
+    btc_currentprice_req = await session.get("https://api.coindesk.com/v1/bpi/currentprice/USD.json")
+    btc_currentprice_json = await btc_currentprice_req.json()
     btc_currentprice_rate = btc_currentprice_json["bpi"]["USD"]["rate_float"]
     btc_currentprice_string = locale.currency(btc_currentprice_rate, grouping=True)
 
-    btc_lastclose_req = requests.get("https://api.coindesk.com/v1/bpi/historical/close.json?for=yesterday")
-    btc_lastclose_json = btc_lastclose_req.json()
+    btc_lastclose_req = await session.get("https://api.coindesk.com/v1/bpi/historical/close.json?for=yesterday")
+    btc_lastclose_json = await btc_lastclose_req.json()
     btc_lastclose_rate = next(iter(btc_lastclose_json["bpi"].values()))
     btc_lastclose_string = locale.currency(btc_lastclose_rate, grouping=True)
 
@@ -936,9 +922,9 @@ async def log(contx, count: int):
 
 @bot.command()
 async def similar(*, word: str):
-    output = requests.get(
+    output = await session.get(
         "https://api.datamuse.com/words?ml={}".format(word.replace(" ", "+")))
-    j = output.json()
+    j = await output.json()
     await bot.say(
         "**Similar Word:** `{}`\n(more on <http://www.onelook.com/thesaurus/?s={}&loc=cbsim>)".format(j[0]["word"],
                                                                                                       word.replace(" ",
@@ -947,27 +933,27 @@ async def similar(*, word: str):
 
 @bot.command()
 async def typo(*, word: str):
-    output = requests.get(
+    output = await session.get(
         "https://api.datamuse.com/words?sp={}".format(word.replace(" ", "+")))
-    j = output.json()
+    j = await output.json()
     await bot.say("**Typo Fixed:** `{}`\n(more on <http://www.onelook.com/?w={}&ls=a>)".format(j[0]["word"],
                                                                                                word.replace(" ", "_")))
 
 
 @bot.command()
 async def soundslike(*, word: str):
-    output = requests.get(
+    output = await session.get(
         "https://api.datamuse.com/words?sl={}".format(word.replace(" ", "+")))
-    j = output.json()
+    j = await output.json()
     await bot.say("**Sounds like:** `{}`\n(more on <http://www.onelook.com/?w={}&ls=a>)".format(j[0]["word"],
                                                                                                 word.replace(" ", "_")))
 
 
 @bot.command()
 async def rhyme(*, word: str):
-    output = requests.get(
+    output = await session.get(
         "https://api.datamuse.com/words?rel_rhy={}".format(word.replace(" ", "+")))
-    j = output.json()
+    j = await output.json()
     await bot.say(
         "**Rhymes with:** `{}`\n(more on <http://www.rhymezone.com/r/rhyme.cgi?Word={}&typeofrhyme=adv&org1=syl&org2=l&org3=y>)".format(
             j[0]["word"], word.replace(" ", "_")))
@@ -989,9 +975,9 @@ async def howold(contx):
     }
     for url in urls:
         body = {'url': url}
-        response = requests.request('POST', uri_base + '/face/v1.0/detect', json=body, data=None, headers=headers, params=params)
+        response = await session.post(uri_base + '/face/v1.0/detect', json=body, data=None, headers=headers, params=params)
         logging.info("Howold response: {}".format(response.text))
-        parsed = response.json()
+        parsed = await response.json()
         try:
             age = parsed[0]["faceAttributes"]["age"]
             gender = parsed[0]["faceAttributes"]["gender"]
@@ -1009,28 +995,29 @@ async def stock():
 @bot.command(pass_context=True)
 async def s(contx, ticker: str):
     """Returns stock info about the given ticker."""
-    symbols = requests.get(
+    symbols = await session.get(
         "https://api.robinhood.com/quotes/?symbols={}".format(ticker.upper()))
-    if symbols.status_code != 200:
+    if symbols.status != 200:
         error_text = (
-            "Stock not found." if symbols.status_code == 400 else "HTTPError Code: {}".format(
-                str(symbols.status_code)))
+            "Stock not found." if symbols.status == 400 else "HTTP Error: {}".format(
+                str(symbols.status)))
         em = discord.Embed(title="HTTP Error",
                            description=error_text,
                            colour=0xab000d)
         await bot.send_message(contx.message.channel, embed=em)
         return
-    symbolsj = symbols.json()["results"][0]
-    instrument = requests.get(symbolsj["instrument"])
-    instrumentj = instrument.json()
-    fundamentals = requests.get(
+    symbolsj = await symbols.json()
+    symbols_result = symbolsj["results"][0]
+    instrument = await session.get(symbols_result["instrument"])
+    instrumentj = await instrument.json()
+    fundamentals = await session.get(
         "https://api.robinhood.com/fundamentals/{}/".format(ticker.upper()))
-    fundamentalsj = fundamentals.json()
+    fundamentalsj = await fundamentals.json()
 
     current_price = Decimal(
-        symbolsj["last_trade_price"] if symbolsj["last_extended_hours_trade_price"] is None else symbolsj[
+        symbols_result["last_trade_price"] if symbols_result["last_extended_hours_trade_price"] is None else symbols_result[
             "last_extended_hours_trade_price"])
-    diff = Decimal(Decimal(current_price) - Decimal(symbolsj["previous_close"]))
+    diff = Decimal(Decimal(current_price) - Decimal(symbols_result["previous_close"]))
     percentage = str(100 * diff / current_price)[:6]
 
     if not percentage.startswith("-"):
@@ -1038,19 +1025,22 @@ async def s(contx, ticker: str):
 
     current_price_string = locale.currency(current_price, grouping=True)
     diff_string = locale.currency(diff, grouping=True)
-    bid_price_string = locale.currency(Decimal(symbolsj["bid_price"]), grouping=True)
-    ask_price_string = locale.currency(Decimal(symbolsj["ask_price"]), grouping=True)
+    bid_price_string = locale.currency(Decimal(symbols_result["bid_price"]), grouping=True)
+    ask_price_string = locale.currency(Decimal(symbols_result["ask_price"]), grouping=True)
     tradeable_string = (":white_check_mark:" if instrumentj["tradeable"] else ":x:")
 
-    update_timestamp = parser.parse(symbolsj["updated_at"])
+    update_timestamp = parser.parse(symbols_result["updated_at"])
 
-    embed = discord.Embed(title="{}'s stocks info".format(symbolsj["symbol"]), color=get_change_color(symbolsj["symbol"]), timestamp=update_timestamp)
+    symbol = symbols_result["symbol"]
+    change_color = await get_change_color(symbol)
+
+    embed = discord.Embed(title="{}'s stocks info".format(symbol), color=change_color, timestamp=update_timestamp)
 
     embed.add_field(name="Name", value=instrumentj["name"])
     embed.add_field(name="Current Price", value=current_price_string)
     embed.add_field(name="Change from yesterday", value="{} ({}%)".format(diff_string, percentage))
-    embed.add_field(name="Bid size", value="{} ({})".format(symbolsj["bid_size"], bid_price_string), inline=True)
-    embed.add_field(name="Ask size", value="{} ({})".format(symbolsj["ask_size"], ask_price_string), inline=True)
+    embed.add_field(name="Bid size", value="{} ({})".format(symbols_result["bid_size"], bid_price_string), inline=True)
+    embed.add_field(name="Ask size", value="{} ({})".format(symbols_result["ask_size"], ask_price_string), inline=True)
     embed.add_field(name="Current Volume", value=fundamentalsj["volume"], inline=True)
     embed.add_field(name="Average Volume", value=fundamentalsj["average_volume"], inline=True)
     embed.add_field(name="Tradeable on Robinhood", value=tradeable_string, inline=True)
@@ -1059,7 +1049,7 @@ async def s(contx, ticker: str):
     await bot.send_message(contx.message.channel, embed=embed)
 
 
-def unfurl_b(link):
+async def unfurl_b(link):
     max_depth = int(config["advanced"]["unfurl-depth"])
     current_depth = 0
     prev_link = ""
@@ -1067,7 +1057,8 @@ def unfurl_b(link):
     try:
         while (prev_link != last_link) and (current_depth < max_depth):
             prev_link = last_link
-            last_link = requests.head(prev_link, allow_redirects=True).url
+            last_link_aio = await session.request('head', prev_link, allow_redirects=True)
+            last_link = last_link_aio.url
             current_depth += 1
         return last_link
     except Exception:
@@ -1114,12 +1105,13 @@ async def on_message(message):
 
             if message.content.startswith('abddg!'):  # implementing this here because ext.commands handle the bang name ugh
                 toduck = message.content.replace("+", "%2B").replace("abddg!", "!").replace(" ", "+")
-                output = requests.get(
+                output = await session.get(
                     "https://api.duckduckgo.com/?q={}&format=json&pretty=0&no_redirect=1".format(toduck))
-                j = output.json()
+                j = await output.json()
                 resolvedto = j["Redirect"]
                 if resolvedto:
-                    await bot.send_message(message.channel, "Bang resolved to: {}".format(unfurl_b(resolvedto)))
+                    unfurld = await unfurl_b(resolvedto)
+                    await bot.send_message(message.channel, "Bang resolved to: {}".format(unfurld))
 
             if message.content.startswith(prefix):
                 if message.channel.is_private:
@@ -1153,7 +1145,7 @@ async def update_stats():
             url_to_call = "{}?key={}&user_count={}&server_count={}&new_total_messages={}&new_addressed_messages={}".format(config['stats']['url'], config['stats']['key'], user_count, server_count, new_message, new_command)
             new_message = 0
             new_command = 0
-            requests.get(url_to_call)
+            await session.get(url_to_call)
         await asyncio.sleep(3)
 
 logging.info("AveBot started. Git hash: " + get_git_revision_short_hash())
