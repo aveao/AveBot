@@ -61,7 +61,6 @@ if not Path(config_file_name).is_file():
 config.read(config_file_name)
 
 prefix = config['base']['prefix']
-locale.setlocale(locale.LC_ALL, '')
 
 def get_git_commit_text():
     return call_shell("git log -1 --pretty=%B")
@@ -860,8 +859,9 @@ async def aiojson(url):
     except:
         logging.error("Error while getting {} on aiojson: {}".format(url, traceback.format_exc()))
 
-def format_currency(amount):
+def format_currency(amount, locale_to_use):
     try:
+        locale.setlocale(locale.LC_ALL, locale_to_use)
         amount = Decimal(amount)
         return locale.currency(amount, grouping=True)
     except:
@@ -871,22 +871,31 @@ def format_currency(amount):
 async def btc(contx):
     """Returns bitcoin chart and price info."""
     try:
+        currency_locale = "en_US.UTF-8"
         btc_bitstamp_json = await aiojson("https://www.bitstamp.net/api/ticker")
 
         btc_currentprice_rate = Decimal(btc_bitstamp_json["last"])
-        btc_currentprice_string = format_currency(btc_currentprice_rate)
+        btc_currentprice_string = format_currency(btc_currentprice_rate, currency_locale)
 
         btc_lastopen_rate = Decimal(btc_bitstamp_json["open"])
-        btc_lastopen_string = format_currency(btc_lastopen_rate)
+        btc_lastopen_string = format_currency(btc_lastopen_rate, currency_locale)
+
+        btc_high_string = format_currency(btc_bitstamp_json["high"], currency_locale)
+        btc_low_string = format_currency(btc_bitstamp_json["low"], currency_locale)
+        btc_bid_string = format_currency(btc_bitstamp_json["bid"], currency_locale)
+        btc_ask_string = format_currency(btc_bitstamp_json["ask"], currency_locale)
+        btc_volume_string = str(btc_bitstamp_json["volume"])
 
         btc_diff = btc_currentprice_rate - btc_lastopen_rate
         btc_change_percentage = (100 * Decimal(btc_diff) / Decimal(btc_currentprice_rate))
         btc_change_percentage_string = "{}%".format(str(btc_change_percentage)[:6])
 
         btc_change_color = _get_change_color(btc_change_percentage)
+        
+        btc_data_timestamp = datetime.datetime.utcfromtimestamp(int(btc_bitstamp_json["timestamp"]))
 
         link = "https://bitcoincharts.com/charts/chart.png?width=600&m=bitstampUSD&r=30&c=0&e=&t=S&m1=10&m2=25&x=0&v=1&cv=0&ps=0&l=0&p=0"
-        em = discord.Embed(color=btc_change_color)
+        em = discord.Embed(color=btc_change_color, timestamp=btc_data_timestamp)
 
         em.set_author(name="30 Day BTC Chart and Info", icon_url="https://bitcoin.org/img/icons/opengraph.png")
         em.set_image(url=link)
@@ -894,6 +903,11 @@ async def btc(contx):
         em.add_field(name="Current Price", value=btc_currentprice_string, inline=True)
         em.add_field(name="Opening Price", value=btc_lastopen_string, inline=True)
         em.add_field(name="Change", value=btc_change_percentage_string, inline=True)
+        em.add_field(name="High", value=btc_high_string)
+        em.add_field(name="Low", value=btc_low_string)
+        em.add_field(name="Bid", value=btc_bid_string)
+        em.add_field(name="Ask", value=btc_ask_string)
+        em.add_field(name="Volume", value=btc_volume_string)
 
         await bot.send_message(contx.message.channel, embed=em)
     except:
