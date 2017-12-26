@@ -900,15 +900,19 @@ async def btc(contx):
         em.set_author(name="30 Day BTC Chart and Info", icon_url="https://bitcoin.org/img/icons/opengraph.png")
         em.set_image(url=link)
         em.set_footer(text="Chart supplied by bitcoincharts.com under CC-BY-SA 3.0, price info supplied by BitStamp.")
-        em.add_field(name="Current Price", value=btc_currentprice_string, inline=True)
-        em.add_field(name="Opening Price", value=btc_lastopen_string, inline=True)
-        em.add_field(name="Change", value=btc_change_percentage_string, inline=True)
+        
+        em.add_field(name="Current Price", value=btc_currentprice_string)
+        em.add_field(name="Opening Price", value=btc_lastopen_string)
+        
+        em.add_field(name="Change", value=btc_change_percentage_string)
+        em.add_field(name="Volume", value=btc_volume_string)
+        
         em.add_field(name="High", value=btc_high_string)
         em.add_field(name="Low", value=btc_low_string)
+        
         em.add_field(name="Bid", value=btc_bid_string)
         em.add_field(name="Ask", value=btc_ask_string)
-        em.add_field(name="Volume", value=btc_volume_string)
-
+        
         await bot.send_message(contx.message.channel, embed=em)
     except:
         logging.error(traceback.format_exc())
