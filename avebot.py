@@ -842,34 +842,36 @@ async def c(contx, ticker: str):
 @bot.command(pass_context=True)
 async def btc(contx):
     """Returns bitcoin chart and price info."""
-    btc_currentprice_req = await session.get("https://api.coindesk.com/v1/bpi/currentprice/USD.json")
-    btc_currentprice_json = await btc_currentprice_req.json()
-    btc_currentprice_rate = btc_currentprice_json["bpi"]["USD"]["rate_float"]
-    btc_currentprice_string = locale.currency(btc_currentprice_rate, grouping=True)
+    try:
+        btc_currentprice_req = await session.get("https://api.coindesk.com/v1/bpi/currentprice/USD.json")
+        btc_currentprice_json = await btc_currentprice_req.json(content_type=btc_currentprice_req.headers['Content-Type'])
+        btc_currentprice_rate = btc_currentprice_json["bpi"]["USD"]["rate_float"]
+        btc_currentprice_string = locale.currency(btc_currentprice_rate, grouping=True)
 
-    btc_lastclose_req = await session.get("https://api.coindesk.com/v1/bpi/historical/close.json?for=yesterday")
-    btc_lastclose_json = await btc_lastclose_req.json()
-    btc_lastclose_rate = next(iter(btc_lastclose_json["bpi"].values()))
-    btc_lastclose_string = locale.currency(btc_lastclose_rate, grouping=True)
+        btc_lastclose_req = await session.get("https://api.coindesk.com/v1/bpi/historical/close.json?for=yesterday")
+        btc_lastclose_json = await btc_lastclose_req.json(content_type=btc_lastclose_req.headers['Content-Type'])
+        btc_lastclose_rate = next(iter(btc_lastclose_json["bpi"].values()))
+        btc_lastclose_string = locale.currency(btc_lastclose_rate, grouping=True)
 
-    btc_diff = btc_currentprice_rate - btc_lastclose_rate
-    btc_change_percentage = (100 * Decimal(btc_diff) / Decimal(btc_currentprice_rate))
-    btc_change_percentage_string = "{}%".format(str(btc_change_percentage)[:6])
+        btc_diff = btc_currentprice_rate - btc_lastclose_rate
+        btc_change_percentage = (100 * Decimal(btc_diff) / Decimal(btc_currentprice_rate))
+        btc_change_percentage_string = "{}%".format(str(btc_change_percentage)[:6])
 
-    btc_change_color = _get_change_color(btc_change_percentage)
+        btc_change_color = _get_change_color(btc_change_percentage)
 
-    link = "https://bitcoincharts.com/charts/chart.png?width=600&m=bitstampUSD&r=30&c=0&e=&t=S&m1=10&m2=25&x=0&v=1&cv=0&ps=0&l=0&p=0"
-    em = discord.Embed(color=btc_change_color)
+        link = "https://bitcoincharts.com/charts/chart.png?width=600&m=bitstampUSD&r=30&c=0&e=&t=S&m1=10&m2=25&x=0&v=1&cv=0&ps=0&l=0&p=0"
+        em = discord.Embed(color=btc_change_color)
 
-    em.set_author(name="30 Day BTC Chart and Info", icon_url="https://bitcoin.org/img/icons/opengraph.png")
-    em.set_image(url=link)
-    em.set_footer(text="Chart supplied by bitcoincharts.com under CC-BY-SA 3.0, price info supplied by CoinDesk.")
-    em.add_field(name="Current Price", value=btc_currentprice_string, inline=True)
-    em.add_field(name="Last Close Price", value=btc_lastclose_string, inline=True)
-    em.add_field(name="Change", value=btc_change_percentage_string, inline=True)
+        em.set_author(name="30 Day BTC Chart and Info", icon_url="https://bitcoin.org/img/icons/opengraph.png")
+        em.set_image(url=link)
+        em.set_footer(text="Chart supplied by bitcoincharts.com under CC-BY-SA 3.0, price info supplied by CoinDesk.")
+        em.add_field(name="Current Price", value=btc_currentprice_string, inline=True)
+        em.add_field(name="Last Close Price", value=btc_lastclose_string, inline=True)
+        em.add_field(name="Change", value=btc_change_percentage_string, inline=True)
 
-    await bot.send_message(contx.message.channel, embed=em)
-
+        await bot.send_message(contx.message.channel, embed=em)
+    except:
+        logging.error(traceback.format_exc())
 
 @bot.command(pass_context=True)
 async def render(contx, page_link: str):
