@@ -12,7 +12,7 @@
 **ab!info:** Returns bot's information.<br>
 **ab!uinfo:** Returns information about the user.<br>
 **ab!sinfo [mention people to get their info]:** Returns information about the server.<br>
-**ab!contact \<message>:** Contacts developers with a message.<br>
+**ab!feedback \<message>:** Sends feedback to developers.<br>
 **ab!ping:** Calculates the ping between the bot and the discord server.
 
 ## Server Commands:<br>

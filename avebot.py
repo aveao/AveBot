@@ -432,15 +432,15 @@ async def unfurl(link: str):
     await bot.say("<{}> Unfurls to <{}>".format(link, resolved))
 
 
-@bot.command()
+@bot.command(aliases=['addavebot'])
 async def invite():
     """Gives a link that can be used to add AveBot."""
     inviteurl = discord.utils.oauth_url(bot.user.id)
     await bot.say("You can use the following link to add AveBot to your server:\n<{}>".format(inviteurl))
 
 
-@bot.command(pass_context=True)
-async def contact(contx, *, contact_text: str):
+@bot.command(pass_context=True, aliases=['contact'])
+async def feedback(contx, *, contact_text: str):
     """Contacts developers with a message."""
     em = discord.Embed(description=contact_text,
                        colour=0xDEADBF)
@@ -450,7 +450,7 @@ async def contact(contx, *, contact_text: str):
                   icon_url=contx.message.author.avatar_url)
     await bot.send_message(discord.Object(id=config['base']['support-channel']), embed=em)
 
-    em = discord.Embed(title='Contact sent!',
+    em = discord.Embed(title='Feedback sent!',
                        description='Your message has been delivered to the developers.',
                        colour=0xDEADBF)
     await bot.send_message(contx.message.channel, embed=em)
@@ -839,21 +839,47 @@ async def c(contx, ticker: str):
     await bot.send_message(contx.message.channel, embed=em)
 
 
+async def aioget(url):
+    try:
+        data = await session.get(url)
+        if data.status == 200:
+            return await data.text()
+        else:
+            logging.error("HTTP Error {} while getting {}".format(data.status, url))
+    except:
+        logging.error("Error while getting {} on aioget: {}".format(url, traceback.format_exc()))
+
+
+async def aiojson(url):
+    try:
+        data = await session.get(url)
+        if data.status == 200:
+            return await data.json(content_type=data.headers['Content-Type'])
+        else:
+            logging.error("HTTP Error {} while getting {}".format(data.status, url))
+    except:
+        logging.error("Error while getting {} on aiojson: {}".format(url, traceback.format_exc()))
+
+def format_currency(amount):
+    try:
+        amount = Decimal(amount)
+        return locale.currency(amount, grouping=True)
+    except:
+        logging.error("Error while converting {} on format_currency: {}".format(amount, traceback.format_exc()))
+
 @bot.command(pass_context=True)
 async def btc(contx):
     """Returns bitcoin chart and price info."""
     try:
-        btc_currentprice_req = await session.get("https://api.coindesk.com/v1/bpi/currentprice/USD.json")
-        btc_currentprice_json = await btc_currentprice_req.json(content_type=btc_currentprice_req.headers['Content-Type'])
-        btc_currentprice_rate = btc_currentprice_json["bpi"]["USD"]["rate_float"]
-        btc_currentprice_string = locale.currency(btc_currentprice_rate, grouping=True)
+        btc_bitstamp_json = await aiojson("https://www.bitstamp.net/api/ticker")
 
-        btc_lastclose_req = await session.get("https://api.coindesk.com/v1/bpi/historical/close.json?for=yesterday")
-        btc_lastclose_json = await btc_lastclose_req.json(content_type=btc_lastclose_req.headers['Content-Type'])
-        btc_lastclose_rate = next(iter(btc_lastclose_json["bpi"].values()))
-        btc_lastclose_string = locale.currency(btc_lastclose_rate, grouping=True)
+        btc_currentprice_rate = Decimal(btc_bitstamp_json["last"])
+        btc_currentprice_string = format_currency(btc_currentprice_rate)
 
-        btc_diff = btc_currentprice_rate - btc_lastclose_rate
+        btc_lastopen_rate = Decimal(btc_bitstamp_json["open"])
+        btc_lastopen_string = format_currency(btc_lastopen_rate)
+
+        btc_diff = btc_currentprice_rate - btc_lastopen_rate
         btc_change_percentage = (100 * Decimal(btc_diff) / Decimal(btc_currentprice_rate))
         btc_change_percentage_string = "{}%".format(str(btc_change_percentage)[:6])
 
@@ -864,9 +890,9 @@ async def btc(contx):
 
         em.set_author(name="30 Day BTC Chart and Info", icon_url="https://bitcoin.org/img/icons/opengraph.png")
         em.set_image(url=link)
-        em.set_footer(text="Chart supplied by bitcoincharts.com under CC-BY-SA 3.0, price info supplied by CoinDesk.")
+        em.set_footer(text="Chart supplied by bitcoincharts.com under CC-BY-SA 3.0, price info supplied by BitStamp.")
         em.add_field(name="Current Price", value=btc_currentprice_string, inline=True)
-        em.add_field(name="Last Close Price", value=btc_lastclose_string, inline=True)
+        em.add_field(name="Opening Price", value=btc_lastopen_string, inline=True)
         em.add_field(name="Change", value=btc_change_percentage_string, inline=True)
 
         await bot.send_message(contx.message.channel, embed=em)
