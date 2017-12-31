@@ -44,8 +44,6 @@ file_handler = logging.handlers.RotatingFileHandler(filename=log_file_name, maxB
 stdout_handler = logging.StreamHandler(sys.stdout)
 handlers = [file_handler, stdout_handler]
 
-old_commands = [">roll", ">info", ">govegan", ">helplong", ">help", ">trump", ">erdogan", ">servercount", ">serverlist", ">whoami", ">sbahjify", ">jpegify", ">ultrajpegify", ">mazeify", ">ultramazeify", ">joelify", ">ultrajoelify", ">unfurl", ">addavebot", ">contact", ">sinfo", ">uinfo", ">dig", ">resolve", ">!", ">unixtime", ">epoch", ">ping", ">exit", ">pull", ">addpriv", ">rmpriv", ">addmod", ">rmmod", ">fetchlog", ">ban", ">unban", ">eval", ">say", ">material", ">get", ">dget", ">xkcd", ">xkcdlatest", ">copypasta", ">copypastasell", ">stockchart", ">chart", ">c", ">render", ">bigly", ">howmanymessages", ">log", ">logall", ">similar", ">typo", ">soundslike", ">rhyme", ">howold", ">stock", ">s", ">fetchlog"]
-
 logging.basicConfig(
     level=logging.INFO,
     format='[%(asctime)s] {%(filename)s:%(lineno)d} %(levelname)s - %(message)s',
@@ -1150,10 +1148,6 @@ async def on_message(message):
         new_message += 1
         if message.content.startswith(prefix):  # TODO: OK this is not reliable at all, find a better way to check this.
             new_command += 1
-
-        if message.content.startswith(">") and message.content.split(" ")[0] in old_commands:
-            new_command += 1
-            await bot.send_message(message.channel, 'Heya, AveBot changed prefixes! Please send your message again but use `ab!` instead of `>`. This message will stop being sent in 2018-01-01.\nThanks for supporting AveBot!')
 
         if check_level(str(message.author.id)) != "0":  # Banned users simply do not get a response
             if message.content.lower().startswith(config["advanced"]["voting-prefix"].lower()):
