@@ -15,7 +15,8 @@ Invite link: https://discordapp.com/oauth2/authorize?client_id=30570883636120781
 ### How can I set it up?
 - Install python3 (3.4+).
 - Install `imagemagick`
-- Install `discord.py` (`pip install -U discord.py`).
+- Install `discord.py` (`pip3 install -U discord.py`).
+- Install `python-dateutil` (`pip3 install python-dateutil`)
 - Install `pillow` ([See this for more info on how to install it](https://askubuntu.com/a/427359/511534))
 - Learn your bot token ([hint](https://discordapp.com/developers/applications/me)).
 - Set up a room for `ab!contact` messages and one for messages on launch time, note their IDs down (looks like `305715263951732737`). Developer mode will help with this one.

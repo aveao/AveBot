@@ -1238,7 +1238,8 @@ async def update_stats():
             url_to_call = "{}?key={}&user_count={}&server_count={}&new_total_messages={}&new_addressed_messages={}".format(config['stats']['url'], config['stats']['key'], user_count, server_count, new_message, new_command)
             new_message = 0
             new_command = 0
-            await session.get(url_to_call)
+            update_returned = await session.get(url_to_call)
+            logging.debug(await update_returned.text())
         await asyncio.sleep(3)
 
 logging.info("AveBot started. Git hash: " + get_git_revision_short_hash())
