@@ -42,6 +42,7 @@
 **ab!ultrajoelify \<image link or uploaded image>:** like joelify but more joel.<br>
 **ab!mazeify \<image link or uploaded image>:** mazeifies an image.<br>
 **ab!ultramazeify \<image link or uploaded image>:** makes images even more maze.<br>
+**ab!gifify \<text>:** turns images into gifs of 128x128 size, to turn into emojis.<br>
 **ab!howold <attach or link image>** Returns gender and age data based on Microsoft Cognitive Services' Face API. Pretty unreliable. <br>
 
 ## Linguistic Commands<br>

@@ -24,6 +24,8 @@ import configparser
 import PIL.Image
 import PIL.ImageFilter
 import PIL.ImageOps
+import PIL.ImageFont
+import PIL.ImageDraw
 
 import logging
 import logging.handlers
@@ -421,6 +423,44 @@ async def ultrajoelify(contx):
         await bot.delete_message(tmp)
     except Exception:
         await catch_error(traceback.format_exc())
+
+@bot.command(pass_context=True, aliases=['giffy', 'gif', 'gifit', 'owo'])
+async def gifify(ctx, *, text: str):
+    fontname = "MuktaMalar-Medium.ttf"
+
+    tsplit = text.split(" ")
+    tcount = len(tsplit)
+    tcurrent = 0
+    filenames = ""
+
+    for word in tsplit:
+        tcurrent += 1
+        imgsize = 128
+
+        im=PIL.Image.new("RGB", (imgsize, imgsize), color="#343A3B")
+
+        fsize = imgsize
+        f = PIL.ImageFont.truetype(fontname, fsize)
+
+        if f.getsize(word)[0] > imgsize:
+            fsize = int(fsize/(f.getsize(word)[0] / imgsize))
+        f = PIL.ImageFont.truetype(fontname, fsize)
+
+        txt=PIL.Image.new('L', f.getsize(word))
+        d = PIL.ImageDraw.Draw(txt)
+        d.text((0, 0), word, font=f, fill=255)
+        w=txt.rotate(0, expand=1)
+
+        horipos = int((imgsize-f.getsize(word)[0])/2)
+        vertpos = int(64-((f.getsize(word)[1]/1.5)))
+
+        im.paste(PIL.ImageOps.colorize(w, (0,0,0), (255,255,255)), (horipos, vertpos), w)
+        out_filename = "gifify/{}-{}.jpg".format(ctx.message.id, tcurrent)
+        filenames += "{} ".format(out_filename)
+        im.save(out_filename, quality=100, optimize=True)
+    gif_filename = "gifify/{}.gif".format(ctx.message.id)
+    call_shell("convert -delay 15 {}gifify/empty.jpg {}".format(filenames, gif_filename))
+    await bot.send_file(ctx.message.channel, gif_filename, content="{} here you go:".format(ctx.message.author.mention))
 
 @bot.command()
 async def unfurl(link: str):
