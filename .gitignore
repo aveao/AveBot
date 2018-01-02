@@ -95,3 +95,6 @@ files/*
 
 # pycharm
 .idea
+
+gifify/
+!gifify/empty.jpg
