@@ -426,6 +426,7 @@ async def ultrajoelify(contx):
 
 @bot.command(pass_context=True, aliases=['giffy', 'gif', 'gifit', 'owo'])
 async def gifify(ctx, *, text: str):
+    """Gives a gif image of the text supplied. Use _ to insert space."""
     fontname = "MuktaMalar-Medium.ttf"
 
     tsplit = text.split(" ")
@@ -434,6 +435,7 @@ async def gifify(ctx, *, text: str):
     filenames = ""
 
     for word in tsplit:
+        word = word.replace("_", " ")
         tcurrent += 1
         imgsize = 128
 
