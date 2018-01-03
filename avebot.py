@@ -862,12 +862,14 @@ def _get_change_color(change_percentage):
 @bot.command(pass_context=True, aliases=['stockchart', 'chart'])
 async def c(contx, ticker: str):
     """Returns stock chart of the given ticker."""
-    link = "https://finviz.com/chart.ashx?t={}&ty=c&ta=1&p=d&s=l".format(ticker.upper())
+    image_link = "https://finviz.com/chart.ashx?t={}&ty=c&ta=1&p=d&s=l".format(ticker.upper())
+    title_link = "https://finviz.com/quote.ashx?t={}".format(ticker.upper())
     change_color = await get_change_color(ticker)
-    em = discord.Embed(title='Chart for {0}'.format(ticker.upper()),
-                       colour=change_color)
-    em.set_image(url=link)
-    em.set_footer(text='See https://finviz.com/quote.ashx?t={0} for more info.'.format(ticker.upper()))
+    em = discord.Embed(title='Chart for {}'.format(ticker.upper()),
+                       colour=change_color,
+                       url=title_link)
+    em.set_image(url=image_link)
+    em.set_footer(text='Powered by finviz.com'.format(ticker.upper()))
     await bot.send_message(contx.message.channel, embed=em)
 
 
@@ -1089,8 +1091,8 @@ async def s(contx, ticker: str):
     symbols = await aiojson(
         "https://api.robinhood.com/quotes/?symbols={}".format(ticker.upper()))
     if symbols == None:
-        error_text = ("Stock not found.")
-        em = discord.Embed(title="HTTP Error",
+        error_text = "Stock not found. This stock is probably not tradeable on robinhood."
+        em = discord.Embed(title="Error",
                            description=error_text,
                            colour=0xab000d)
         await bot.send_message(contx.message.channel, embed=em)
