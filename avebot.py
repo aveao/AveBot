@@ -552,13 +552,9 @@ async def tumblrgrab(ctx, *, link: str):
         postid = m.group(2)
         api_key = config['tumblr']['apikey']
         tumblrapicall_link = "https://api.tumblr.com/v2/blog/{}/posts/photo?id={}&api_key={}".format(site, postid, api_key)
-        tumblr_request = await session.get(tumblrapicall_link)
-        tumblr_json = await tumblr_request.json()
+        tumblr_json = await aiojson(tumblrapicall_link)
         tumblr_is_nsfw = ("x_tumblr_content_rating" in tumblr_json["meta"])
         logging.info(tumblr_is_nsfw)
-
-        #if tumblr_json["meta"]["x_tumblr_content_rating"] and :
-        #    tumblr_is_nsfw = True
 
         tumblr_image_base = "\n<{}> (NSFW!)" if tumblr_is_nsfw else "\n{}"
 
@@ -788,8 +784,7 @@ async def dget(contx, link: str):
 @bot.command()
 async def xkcd(xkcdcount: int):
     """Returns info about the specified xkcd comic."""
-    output = await session.get("https://xkcd.com/{}/info.0.json".format(str(xkcdcount)))
-    j = await output.json()
+    j = await aiojson("https://xkcd.com/{}/info.0.json".format(str(xkcdcount)))
     resolvedto = j["img"]
     if resolvedto:
         messagecont = "**XKCD {0}:** `{1}`, published on {2}-{3}-{4} (DMY)\n**Image:** {5}\n**Alt text:** `{6}`\n" \
@@ -801,8 +796,7 @@ async def xkcd(xkcdcount: int):
 @bot.command()
 async def xkcdlatest():
     """Returns info about the latest xkcd comic."""
-    output = await session.get("https://xkcd.com/info.0.json")
-    j = await output.json()
+    j = await aiojson("https://xkcd.com/info.0.json")
     resolvedto = j["img"]
     if resolvedto:
         messagecont = "**XKCD {0}:** `{1}`, published on {2}-{3}-{4} (DMY)\n**Image:** {5}\n**Alt text:** `{6}`\n" \
@@ -837,12 +831,11 @@ async def copypastasell(ticker: str):
 
 
 async def get_change_color(ticker: str):
-    symbols = await session.get("https://api.robinhood.com/quotes/?symbols={}".format(ticker.upper()))
-    if symbols.status != 200:
+    symbols = await aiojson("https://api.robinhood.com/quotes/?symbols={}".format(ticker.upper()))
+    if symbols == None:
         return 0x000000  # black
 
-    symbolsj = await symbols.json()
-    symbols_results = symbolsj["results"][0]
+    symbols_results = symbols["results"][0]
 
     current_price = (
         symbols_results["last_trade_price"] if symbols_results["last_extended_hours_trade_price"] is None else symbols_results[
@@ -1030,41 +1023,35 @@ async def sh(contx, *, command: str):
 
 @bot.command()
 async def similar(*, word: str):
-    output = await session.get(
+    output = await aiojson(
         "https://api.datamuse.com/words?ml={}".format(word.replace(" ", "+")))
-    j = await output.json()
     await bot.say(
-        "**Similar Word:** `{}`\n(more on <http://www.onelook.com/thesaurus/?s={}&loc=cbsim>)".format(j[0]["word"],
-                                                                                                      word.replace(" ",
-                                                                                                                   "_")))
+        "**Similar Word:** `{}`\n(more on <http://www.onelook.com/thesaurus/?s={}&loc=cbsim>)".format(output[0]["word"], word.replace(" ", "_")))
 
 
 @bot.command()
 async def typo(*, word: str):
-    output = await session.get(
+    output = await aiojson(
         "https://api.datamuse.com/words?sp={}".format(word.replace(" ", "+")))
-    j = await output.json()
-    await bot.say("**Typo Fixed:** `{}`\n(more on <http://www.onelook.com/?w={}&ls=a>)".format(j[0]["word"],
+    await bot.say("**Typo Fixed:** `{}`\n(more on <http://www.onelook.com/?w={}&ls=a>)".format(output[0]["word"],
                                                                                                word.replace(" ", "_")))
 
 
 @bot.command()
 async def soundslike(*, word: str):
-    output = await session.get(
+    output = await aiojson(
         "https://api.datamuse.com/words?sl={}".format(word.replace(" ", "+")))
-    j = await output.json()
-    await bot.say("**Sounds like:** `{}`\n(more on <http://www.onelook.com/?w={}&ls=a>)".format(j[0]["word"],
+    await bot.say("**Sounds like:** `{}`\n(more on <http://www.onelook.com/?w={}&ls=a>)".format(output[0]["word"],
                                                                                                 word.replace(" ", "_")))
 
 
 @bot.command()
 async def rhyme(*, word: str):
-    output = await session.get(
+    output = await aiojson(
         "https://api.datamuse.com/words?rel_rhy={}".format(word.replace(" ", "+")))
-    j = await output.json()
     await bot.say(
         "**Rhymes with:** `{}`\n(more on <http://www.rhymezone.com/r/rhyme.cgi?Word={}&typeofrhyme=adv&org1=syl&org2=l&org3=y>)".format(
-            j[0]["word"], word.replace(" ", "_")))
+            output[0]["word"], word.replace(" ", "_")))
 
 
 @bot.command(pass_context=True)
@@ -1099,24 +1086,19 @@ async def howold(contx):
 async def s(contx, ticker: str):
     """Returns stock info about the given ticker."""
     currency_locale = "en_US.UTF-8"
-    symbols = await session.get(
+    symbols = await aiojson(
         "https://api.robinhood.com/quotes/?symbols={}".format(ticker.upper()))
-    if symbols.status != 200:
-        error_text = (
-            "Stock not found." if symbols.status == 400 else "HTTP Error: {}".format(
-                str(symbols.status)))
+    if symbols == None:
+        error_text = ("Stock not found.")
         em = discord.Embed(title="HTTP Error",
                            description=error_text,
                            colour=0xab000d)
         await bot.send_message(contx.message.channel, embed=em)
         return
-    symbolsj = await symbols.json()
-    symbols_result = symbolsj["results"][0]
-    instrument = await session.get(symbols_result["instrument"])
-    instrumentj = await instrument.json()
-    fundamentals = await session.get(
+    symbols_result = symbols["results"][0]
+    instrument = await aiojson(symbols_result["instrument"])
+    fundamentals = await aiojson(
         "https://api.robinhood.com/fundamentals/{}/".format(ticker.upper()))
-    fundamentalsj = await fundamentals.json()
 
     current_price = Decimal(
         symbols_result["last_trade_price"] if symbols_result["last_extended_hours_trade_price"] is None else symbols_result[
@@ -1131,7 +1113,7 @@ async def s(contx, ticker: str):
     diff_string = format_currency(diff, currency_locale)
     bid_price_string = format_currency(Decimal(symbols_result["bid_price"]), currency_locale)
     ask_price_string = format_currency(Decimal(symbols_result["ask_price"]), currency_locale)
-    tradeable_string = (":white_check_mark:" if instrumentj["tradeable"] else ":x:")
+    tradeable_string = (":white_check_mark:" if instrument["tradeable"] else ":x:")
 
     update_timestamp = parser.parse(symbols_result["updated_at"])
 
@@ -1140,15 +1122,15 @@ async def s(contx, ticker: str):
 
     embed = discord.Embed(title="{}'s stocks info".format(symbol), color=change_color, timestamp=update_timestamp)
 
-    embed.add_field(name="Name", value=instrumentj["name"])
+    embed.add_field(name="Name", value=instrument["name"])
     embed.add_field(name="Current Price", value=current_price_string)
     embed.add_field(name="Change from yesterday", value="{} ({}%)".format(diff_string, percentage))
     embed.add_field(name="Bid size", value="{} ({})".format(symbols_result["bid_size"], bid_price_string), inline=True)
     embed.add_field(name="Ask size", value="{} ({})".format(symbols_result["ask_size"], ask_price_string), inline=True)
-    embed.add_field(name="Current Volume", value=fundamentalsj["volume"], inline=True)
-    embed.add_field(name="Average Volume", value=fundamentalsj["average_volume"], inline=True)
+    embed.add_field(name="Current Volume", value=fundamentals["volume"], inline=True)
+    embed.add_field(name="Average Volume", value=fundamentals["average_volume"], inline=True)
     embed.add_field(name="Tradeable on Robinhood", value=tradeable_string, inline=True)
-    embed.add_field(name="Country", value=":flag_{}:".format(instrumentj["country"].lower()), inline=True)
+    embed.add_field(name="Country", value=":flag_{}:".format(instrument["country"].lower()), inline=True)
 
     await bot.send_message(contx.message.channel, embed=embed)
 
@@ -1199,9 +1181,8 @@ async def on_message(message):
 
             if message.content.startswith('abddg!'):  # implementing this here because ext.commands handle the bang name ugh
                 toduck = message.content.replace("+", "%2B").replace("abddg!", "!").replace(" ", "+")
-                output = await session.get(
+                j = await aiojson(
                     "https://api.duckduckgo.com/?q={}&format=json&pretty=0&no_redirect=1".format(toduck))
-                j = await output.json()
                 resolvedto = j["Redirect"]
                 if resolvedto:
                     unfurld = await unfurl_b(resolvedto)
@@ -1239,8 +1220,7 @@ async def update_stats():
             url_to_call = "{}?key={}&user_count={}&server_count={}&new_total_messages={}&new_addressed_messages={}".format(config['stats']['url'], config['stats']['key'], user_count, server_count, new_message, new_command)
             new_message = 0
             new_command = 0
-            update_returned = await session.get(url_to_call)
-            logging.debug(await update_returned.text())
+            await aioget(url_to_call)
         await asyncio.sleep(3)
 
 logging.info("AveBot started. Git hash: " + get_git_revision_short_hash())
