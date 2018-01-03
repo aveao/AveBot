@@ -4,6 +4,10 @@ A discord bot that does a ton of weird (and neat) stuff.
 
 Please check out `help.md` to see the command list.
 
+
+# THIS INFO IS OUT OF DATE FOR THIS BRANCH
+AveBot v3 will use discord.py rewrite and make use of COGS, however, it's not working yet, so the setup stuff etc are outdated. However, they'll be updated when v3 is stable.
+
 ---
 
 Thanks to Discord ToS, I am required to tell you that AveBot DOES log messages that start with AveBot's prefix (`ab!`), and you shouldn't add it to your server or use it if you don't agree with that.
