@@ -1098,6 +1098,7 @@ async def howold(contx):
 @bot.command(pass_context=True, aliases=['stock'])
 async def s(contx, ticker: str):
     """Returns stock info about the given ticker."""
+    currency_locale = "en_US.UTF-8"
     symbols = await session.get(
         "https://api.robinhood.com/quotes/?symbols={}".format(ticker.upper()))
     if symbols.status != 200:
@@ -1126,10 +1127,10 @@ async def s(contx, ticker: str):
     if not percentage.startswith("-"):
         percentage = "+" + percentage
 
-    current_price_string = locale.currency(current_price, grouping=True)
-    diff_string = locale.currency(diff, grouping=True)
-    bid_price_string = locale.currency(Decimal(symbols_result["bid_price"]), grouping=True)
-    ask_price_string = locale.currency(Decimal(symbols_result["ask_price"]), grouping=True)
+    current_price_string = format_currency(current_price, currency_locale)
+    diff_string = format_currency(diff, currency_locale)
+    bid_price_string = format_currency(Decimal(symbols_result["bid_price"]), currency_locale)
+    ask_price_string = format_currency(Decimal(symbols_result["ask_price"]), currency_locale)
     tradeable_string = (":white_check_mark:" if instrumentj["tradeable"] else ":x:")
 
     update_timestamp = parser.parse(symbols_result["updated_at"])
