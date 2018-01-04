@@ -18,6 +18,7 @@ Invite link: https://discordapp.com/oauth2/authorize?client_id=30570883636120781
 - Install `discord.py` (`pip3 install -U discord.py`).
 - Install `python-dateutil` (`pip3 install python-dateutil`)
 - Install `pillow` ([See this for more info on how to install it](https://askubuntu.com/a/427359/511534))
+- Update `aiohttp` (`pip3 install --upgrade aiohttp`)
 - Learn your bot token ([hint](https://discordapp.com/developers/applications/me)).
 - Set up a room for `ab!contact` messages and one for messages on launch time, note their IDs down (looks like `305715263951732737`). Developer mode will help with this one.
 - Learn your Discord ID (looks like `137584770145058817`). Developer mode will help with this one.
