@@ -914,6 +914,7 @@ async def aveheat(contx):
         em = discord.Embed(title="Heat Inside Ave's House", timestamp=btc_data_timestamp)
 
         em.set_image(url=config['homeheat']['charturl'])
+        em.set_footer(text="Chart data is UTC")
         
         em.add_field(name="Inside", value=f"{heat_json['inside']}°C")
         em.add_field(name="Outside", value=f"{heat_json['outside']}°C")
