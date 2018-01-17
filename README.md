@@ -13,7 +13,7 @@ Invite link: https://discordapp.com/oauth2/authorize?client_id=30570883636120781
 ---
 
 ### How can I set it up?
-- Install python3 (3.4+).
+- Install python3 (3.6+).
 - Install `imagemagick`
 - Install `discord.py` (`pip3 install -U discord.py`).
 - Install `python-dateutil` (`pip3 install python-dateutil`)

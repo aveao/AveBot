@@ -902,6 +902,27 @@ def format_currency(amount, locale_to_use):
     except:
         logging.error("Error while converting {} on format_currency: {}".format(amount, traceback.format_exc()))
 
+
+@bot.command(pass_context=True)
+async def aveheat(contx):
+    """Returns heat info from ave's home."""
+    try:
+        heat_json = await aiojson(config['homeheat']['dataurl'])
+        
+        btc_data_timestamp = datetime.datetime.utcfromtimestamp(int(heat_json["timestamp"]))
+
+        em = discord.Embed(title="Heat Inside Ave's House", timestamp=btc_data_timestamp)
+
+        em.set_image(url=config['homeheat']['charturl'])
+        
+        em.add_field(name="Inside", value=f"{heat_json['inside']}°C")
+        em.add_field(name="Outside", value=f"{heat_json['outside']}°C")
+        
+        await bot.send_message(contx.message.channel, embed=em)
+    except:
+        logging.error(traceback.format_exc())
+
+
 @bot.command(pass_context=True)
 async def btc(contx):
     """Returns bitcoin chart and price info."""
