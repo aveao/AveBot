@@ -903,7 +903,7 @@ def format_currency(amount, locale_to_use):
         logging.error("Error while converting {} on format_currency: {}".format(amount, traceback.format_exc()))
 
 
-@bot.command(pass_context=True)
+@bot.command(pass_context=True, aliases=['aveishot', 'home'])
 async def aveheat(contx):
     """Returns heat info from ave's home."""
     try:
