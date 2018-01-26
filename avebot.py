@@ -134,7 +134,9 @@ async def catch_error(text):
 
 @bot.command(pass_context=True)
 async def roll(contx, dice: str):
-    """Rolls a dice in NdN format."""
+    """Rolls a dice in NdN format.
+    Example: ab!roll 1d20
+    Example with modifier: ab!roll 1d20 + 2"""
 
     modification = 0
     try:
@@ -243,7 +245,9 @@ async def get_image_links(contx, caller_command):
 
 @bot.command(pass_context=True)
 async def sbahjify(contx):
-    """Makes images hella and sweet."""
+    """Makes images hella and sweet.
+
+    Usage: ab!sbahjify <link, if you're not uploading an image to discord>"""
     images_to_process = await get_images(contx, "sbahjify")
     msg_to_send = 'Processing image(s).' if len(
         images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'.format(contx.message.author.mention)
@@ -275,7 +279,9 @@ async def sbahjify(contx):
 
 @bot.command(pass_context=True)
 async def jpegify(contx):
-    """Makes images jaypeg."""
+    """Makes images jpeg. Also check out ab!ultrajpegify.
+
+    Usage: ab!jpegify <link, if you're not uploading an image to discord>"""
     images_to_process = await get_images(contx, "jpegify")
     msg_to_send = 'Processing image(s).' if len(
         images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'.format(contx.message.author.mention)
@@ -296,7 +302,9 @@ async def jpegify(contx):
 
 @bot.command(pass_context=True)
 async def ultrajpegify(contx):
-    """Makes images ultra jaypeg."""
+    """Makes images ultra jpeg.
+
+    Usage: ab!ultrajpegify <link, if you're not uploading an image to discord>"""
     images_to_process = await get_images(contx, "ultrajpegify")
     msg_to_send = 'Processing image(s).' if len(
         images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'.format(contx.message.author.mention)
@@ -324,7 +332,9 @@ async def ultrajpegify(contx):
 
 @bot.command(pass_context=True)
 async def mazeify(contx):
-    """Makes images ultra jaypeg."""
+    """Makes images maze-like, with sharpen filter and jpeg abuse.
+
+    Usage: ab!mazeify <link, if you're not uploading an image to discord>"""
     images_to_process = await get_images(contx, "mazeify")
     msg_to_send = 'Processing image(s).' if len(
         images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'.format(contx.message.author.mention)
@@ -346,7 +356,9 @@ async def mazeify(contx):
 
 @bot.command(pass_context=True)
 async def ultramazeify(contx):
-    """Makes images maze."""
+    """Makes images ultra maze.
+
+    Usage: ab!ultramazeify <link, if you're not uploading an image to discord>"""
     images_to_process = await get_images(contx, "ultramazeify")
     msg_to_send = 'Processing image(s).' if len(
         images_to_process) != 0 else '{}: No images found. Try linking them or uploading them directly through discord.'.format(contx.message.author.mention)
@@ -545,7 +557,7 @@ async def _duckduckgo():
 
 @bot.command(aliases=['fucksafemode'], pass_context=True)
 async def tumblrgrab(ctx, *, link: str):
-    reg = r'([a-z0-9.]{1,})\/post\/([0-9]{1,})'
+    reg = r'([a-z0-9-.]{1,})\/post\/([0-9]{1,})'
     m = re.search(reg, link)
     if m:
         site = m.group(1)
