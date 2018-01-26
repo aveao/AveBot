@@ -924,8 +924,8 @@ async def aveheat(contx):
         btc_data_timestamp = datetime.datetime.utcfromtimestamp(int(heat_json["timestamp"]))
 
         em = discord.Embed(title="Heat Inside Ave's House", timestamp=btc_data_timestamp)
-
-        em.set_image(url=config['homeheat']['charturl'])
+        charturl = f"{config['homeheat']['charturl']}?t={str(time.time())}"
+        em.set_image(url=charturl)
         em.set_footer(text="Chart data is UTC")
         
         em.add_field(name="Inside", value=f"{heat_json['inside']}°C")
