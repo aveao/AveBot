@@ -137,7 +137,7 @@ class Basic:
         embed.set_footer(text=f"UserID: {user.id}")
 
         embed.add_field(name="Joined Discord", value=str(user.created_at))
-        if maybe_member:
+        if ctx.guild and maybe_member:
             embed.add_field(name="Joined Server", value=str(user.joined_at))
             embed.add_field(name="Status", value=str(user.status))
         if user.game:
