@@ -15,7 +15,7 @@ class NSFW:
             site = m.group(1)
             postid = m.group(2)
             api_key = self.bot.config['tumblr']['apikey']
-            channel_is_nsfw = ctx.channel.is_nsfw() if ctx guild else True
+            channel_is_nsfw = ctx.channel.is_nsfw() if ctx.guild else True
             channel_allows_nsfw = (("no_nsfw" not in ctx.channel.topic) if ctx.channel.topic else True) if ctx.guild else True # oh god why
 
             tumblrapicall_link = f"https://api.tumblr.com/v2/blog/{site}/posts/photo?id={postid}&api_key={api_key}"
