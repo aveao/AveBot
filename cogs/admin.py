@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import traceback
 import inspect
+import re
 
 class AdminCog:
     def __init__(self, bot):
@@ -114,6 +115,25 @@ class AdminCog:
         tmp = await ctx.send('Pulling...')
         git_output = self.bot.call_shell("git pull")
         await tmp.edit(content=f"Pull complete. Output: ```{git_output}```")
+
+
+    @commands.is_owner()
+    @commands.command(hidden=True)
+    async def autopull(self, ctx):
+        """Does a git pull and reloads updated cogs automatically (Owner only)."""
+        tmp = await ctx.send('Pulling...')
+        git_output = self.bot.call_shell("git pull")
+        cogs_to_reload = re.findall('cogs/([a-z]*).py', git_output)
+        await tmp.edit(content=f"Pull complete. Output: ```{git_output}```")
+        for cog in cogs_to_reload:
+            try:
+                self.bot.unload_extension("cogs." + cog)
+                self.bot.load_extension("cogs." + cog)
+                self.bot.log.info(f'Reloaded ext {ext}')
+                await ctx.send(f':white_check_mark: `{ext}` successfully reloaded.')
+            except:
+                await ctx.send(f':x: Cog reloading failed, traceback: ```\n{traceback.format_exc()}\n```')
+                return
 
 
     @commands.is_owner()
