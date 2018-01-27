@@ -77,10 +77,13 @@ class Fun:
         result = ', '.join(str(random.randint(1, limit)+modification) for r in range(rolls))
         await ctx.send(f"{result} (Modifier: {modifier if modifier else '0'})")
 
-    @commands.command()
-    async def xkcd(self, ctx, xkcdcount: int):
-        """Returns info about the specified xkcd comic."""
-        j = await self.bot.aiojson("https://xkcd.com/{}/info.0.json".format(str(xkcdcount)))
+    @commands.command(aliases=['xkcdlatest'])
+    async def xkcd(self, ctx, xkcdcount=0):
+        """Returns info about the specified xkcd comic.
+
+        If no value is supplied, it gives the last one instead."""
+        xkcdcount = f"{xkcdcount}/" if xkcdcount != 0 else ""
+        j = await self.bot.aiojson(f"https://xkcd.com/{xkcdcount}info.0.json")
         resolvedto = j["img"]
         if resolvedto:
             messagecont = "**XKCD {0}:** `{1}`, published on {2}-{3}-{4} (DMY)\n**Image:** {5}\n**Alt text:** `{6}`\n" \
@@ -88,17 +91,6 @@ class Fun:
                 .format(str(j["num"]), j["safe_title"], j["day"], j["month"], j["year"], resolvedto, j["alt"])
             await ctx.send(messagecont)
 
-
-    @commands.command()
-    async def xkcdlatest(self, ctx):
-        """Returns info about the latest xkcd comic."""
-        j = await self.bot.aiojson("https://xkcd.com/info.0.json")
-        resolvedto = j["img"]
-        if resolvedto:
-            messagecont = "**XKCD {0}:** `{1}`, published on {2}-{3}-{4} (DMY)\n**Image:** {5}\n**Alt text:** `{6}`\n" \
-                          "Explain xkcd: <http://www.explainxkcd.com/wiki/index.php/{0}>" \
-                .format(str(j["num"]), j["safe_title"], j["day"], j["month"], j["year"], resolvedto, j["alt"])
-            await ctx.send(messagecont)
 
 def setup(bot):
     bot.add_cog(Fun(bot))
