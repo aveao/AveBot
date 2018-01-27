@@ -8,6 +8,10 @@ import sys
 import traceback
 
 import configparser
+import subprocess
+
+import datetime
+import socket
 
 """AveBot is a bot that does some neat and some dumb stuff."""
 
@@ -37,8 +41,20 @@ initial_extensions = ['cogs.common', 'cogs.basic', 'cogs.admin', 'cogs.nsfw', 'c
 
 bot = commands.Bot(command_prefix=get_prefix, description=config['base']['description'], pm_help=None)
 
+def get_git_commit_text():
+    return call_shell("git log -1 --pretty=%B")
+
+def call_shell(command):
+    return bytes.decode(subprocess.check_output(command, stderr=subprocess.STDOUT, shell=True)).strip()
+
+def get_git_revision_short_hash():
+    return call_shell("git log -1 --pretty=%h")
+
 bot.log = log
 bot.config = config
+bot.call_shell = call_shell
+bot.get_git_revision_short_hash = get_git_revision_short_hash
+bot.get_git_commit_text = get_git_commit_text
 
 if __name__ == '__main__':
     for extension in initial_extensions:
@@ -55,8 +71,22 @@ async def on_ready():
     log.info(f'\nLogged in as: {bot.user.name} - {bot.user.id}\ndpy version: {discord.__version__}\n')
 
     # Changes our bots Playing Status. type=1(streaming) for a standard game you could remove type and url.
-    await bot.change_presence(game=discord.Game(name='rewriting in dpy rewrite qwq'))
+    await bot.change_presence(game=discord.Game(name=f'ab!help | {get_git_revision_short_hash()}'))
+
+    local_time = str(datetime.datetime.now()).split('.')[0]
+    total_guild_count = len(bot.guilds)
+    total_user_count = len(list(bot.get_all_members()))
+    total_unique_user_count = len(list(set(bot.get_all_members())))
+
     em = discord.Embed(title='AveBot initialized!')
+    em.add_field(name="Git Hash", value=get_git_revision_short_hash())
+    em.add_field(name="Last git message", value=get_git_commit_text())
+    em.add_field(name="Hostname", value=socket.gethostname())
+    em.add_field(name="Local Time", value=local_time)
+    em.add_field(name="Guild count", value=total_guild_count)
+    em.add_field(name="Users", value=total_user_count)
+    em.add_field(name="Unique users", value=total_unique_user_count)
+
     channel = bot.get_channel(int(config['base']['main-channel']))
     await channel.send(embed=em, file=discord.File(log_file_name))
 

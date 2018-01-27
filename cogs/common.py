@@ -2,7 +2,6 @@ import discord
 from discord.ext import commands
 import re
 import aiohttp
-import subprocess
 
 class Common:
     def __init__(self, bot):
@@ -11,10 +10,7 @@ class Common:
         self.bot.aiojson = self.aiojson
         self.bot.aioget = self.aioget
         self.bot.slice_message = self.slice_message
-        self.bot.get_git_commit_text = self.get_git_commit_text
-        self.bot.call_shell = self.call_shell
         self.bot.git_pull = self.git_pull
-        self.bot.get_git_revision_short_hash = self.get_git_revision_short_hash
         self.bot.download_file = self.download_file
 
 
@@ -57,17 +53,8 @@ class Common:
         reply_list.append(text)
         return reply_list
 
-    def get_git_commit_text(self):
-        return self.call_shell("git log -1 --pretty=%B")
-
-    def call_shell(self, command):
-        return bytes.decode(subprocess.check_output(command, stderr=subprocess.STDOUT, shell=True)).strip()
-
     def git_pull(self):
-        return self.call_shell("git pull")
-
-    def get_git_revision_short_hash(self):
-        return self.call_shell("git log -1 --pretty=%h")
+        return self.bot.call_shell("git pull")
 
 def setup(bot):
     bot.add_cog(Common(bot))
