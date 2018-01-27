@@ -22,10 +22,12 @@ max_file_size = 1000 * 1000 * 8 # Limit of discord (non-nitro) is 8MB (not MiB)
 backup_count = 10000 # random big number
 file_handler = logging.handlers.RotatingFileHandler(filename=log_file_name, maxBytes=max_file_size, backupCount=backup_count)
 stdout_handler = logging.StreamHandler(sys.stdout)
+
 log_format = logging.Formatter('[%(asctime)s] {%(filename)s:%(lineno)d} %(levelname)s - %(message)s')
+file_handler.setFormatter(log_format)
+stdout_handler.setFormatter(log_format)
 
 log = logging.getLogger('discord')
-log.setFormatter(log_format)
 log.setLevel(logging.INFO)
 log.addHandler(file_handler)
 log.addHandler(stdout_handler)
