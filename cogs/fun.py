@@ -75,7 +75,7 @@ class Fun:
             return
 
         result = ', '.join(str(random.randint(1, limit)+modification) for r in range(rolls))
-        await ctx.send(f"{result} (Modifier: {modifier if modifier else "0"})")
+        await ctx.send(f"{result} (Modifier: {modifier if modifier else '0'})")
 
     @commands.command()
     async def xkcd(self, ctx, xkcdcount: int):
