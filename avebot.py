@@ -69,10 +69,8 @@ if __name__ == '__main__':
 
 @bot.event
 async def on_ready():
-    """http://discordpy.readthedocs.io/en/rewrite/api.html#discord.on_ready"""
     log.info(f'\nLogged in as: {bot.user.name} - {bot.user.id}\ndpy version: {discord.__version__}\n')
 
-    # Changes our bots Playing Status. type=1(streaming) for a standard game you could remove type and url.
     await bot.change_presence(game=discord.Game(name=f'ab!help | {get_git_revision_short_hash()}'))
 
     local_time = str(datetime.datetime.now()).split('.')[0]
