@@ -2,11 +2,10 @@
 
 A discord bot that does a ton of weird (and neat) stuff.
 
-Please check out `help.md` to see the command list.
+This is v3, which uses Discord.py rewrite and is finally on COGS.
 
+Please check out `helplong.md` to see the command list.
 
-# THIS INFO IS OUT OF DATE FOR THIS BRANCH
-**AveBot v3 will use discord.py rewrite and make use of COGS, however, it's not working yet, so the setup stuff etc are outdated. However, they'll be updated when v3 is stable.**
 
 ---
 
@@ -17,8 +16,8 @@ Invite link: https://discordapp.com/oauth2/authorize?client_id=30570883636120781
 ---
 
 ### How can I set it up?
-- Install python3 (3.4+).
-- Install `imagemagick`
+- Install python3.6 or higher.
+- Install `imagemagick` if you plan to enable `imagemanip` cog
 - Install `discord.py` (`pip3 install -U discord.py`).
 - Install `python-dateutil` (`pip3 install python-dateutil`)
 - Install `pillow` ([See this for more info on how to install it](https://askubuntu.com/a/427359/511534))
@@ -28,5 +27,5 @@ Invite link: https://discordapp.com/oauth2/authorize?client_id=30570883636120781
 - Copy `avebot.ini.example` to `avebot.ini`.
 - Put the token, Room IDs and your Discord ID on the `avebot.ini` file.
 - Add your bot to your server. (Find the Client ID on same place as the one you found out the bot token, replace it with BOT_TOKEN on this link: https://discordapp.com/oauth2/authorize?client_id=BOT_TOKEN&scope=bot)
-- Run `run.sh` if you want it to be restarted automatically if it crashes, or just `python3 avebot.py` if you aren't worried about that.
+- Run `run.sh` if you want it to be restarted automatically if it crashes, or just `python3 avebot.py` if you aren't worried about that. I recommend using pm2 and just running `pm2 start avebot.py --interpreter python3.6`, though.
 - Enjoy.

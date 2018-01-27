@@ -4,10 +4,9 @@
 - A `<>` after a command will state a required variable
 - A `[]` after a command will state an optional variable
 
-## Bot Help Commands:<br>
-**ab!help:** Gives a link to this and warns about ToS.<br>
+## Basic Bot Commands:<br>
+**ab!help:** Shows help and links to this.<br>
 **ab!servercount:** Returns the amount of servers AveBot is in.<br>
-**ab!serverlist:** Returns the list of servers AveBot is in.<br>
 **ab!whoami:** Returns your information.<br>
 **ab!info:** Returns bot's information.<br>
 **ab!uinfo:** Returns information about the user.<br>
