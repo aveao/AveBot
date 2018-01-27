@@ -242,18 +242,21 @@ class ImageManipulation:
         await asyncio.sleep(5)
         await tmp.delete()
 
+
     @commands.command(aliases=['giffy', 'gif', 'gifit', 'owo'])
-    async def gifify(self, ctx, *, text: str):
-        """Gives a gif image of the text supplied. Use _ to insert space."""
+    async def gifify(self, ctx, *, *the_text: str):
+        """Gives a gif image of the text supplied. 
+
+        Example: ab!gifify owo wats this
+        Get a specific part in " to have as one image (for example, ab!gifify hi "hi all" heyo will have 3 frames)."""
         mention = ctx.message.author.mention
         fontname = "MuktaMalar-Medium.ttf"
 
-        tsplit = text.split(" ")
-        tcount = len(tsplit)
+        tcount = len(the_text)
         tcurrent = 0
         filenames = ""
 
-        for word in tsplit:
+        for word in the_text:
             word = word.replace("_", " ")
             tcurrent += 1
             imgsize = 128
@@ -283,8 +286,10 @@ class ImageManipulation:
         self.bot.call_shell(f"convert -delay 15 {filenames}gifify/empty.jpg {gif_filename}")
         await ctx.send(content=f"{mention}: here you go", file=discord.File(gif_filename))
 
+
     @commands.command()
     async def howold(self, ctx):
+        """Guesses age and gender (based on how-old.net)"""
         uri_base = self.bot.config['howold']['uribase']
         subscription_key = self.bot.config['howold']['subkey']
         urls = await self.get_image_links(ctx, "howold")
