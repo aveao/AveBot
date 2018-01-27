@@ -101,16 +101,16 @@ class Basic:
         """Contacts developers with a message."""
         em = discord.Embed(description=contact_text)
 
-        em.set_author(name=f"{ctx.message.author} ({ctx.message.author.id}) on "
-                    f"\"{ctx.channel.name}\" at \"{ctx.guild.name}\"",
-                    icon_url=ctx.message.author.avatar_url)
+        author_name = f"{ctx.message.author} ({ctx.message.author.id}) "
+        author_name += f"on \"{ctx.channel.name}\" at \"{ctx.guild.name}\"" if ctx.guild else "through DMs"
+
+        em.set_author(name=author_name, icon_url=ctx.message.author.avatar_url)
 
         support_channel = self.bot.get_channel(int(self.bot.config['base']['support-channel']))
         await support_channel.send(embed=em)
 
         em = discord.Embed(title='Feedback sent!',
-                           description='Your message has been delivered to the developers.',
-                           colour=0xDEADBF)
+                           description='Your message has been delivered to the developers.')
         await ctx.send(embed=em)
 
 

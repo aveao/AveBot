@@ -46,7 +46,7 @@ class AdminCog:
 
 
     @commands.is_owner()
-    @commands.command(name='eval')
+    @commands.command(name='eval', hidden=True)
     async def _eval(self, ctx, *, code: str):
         """Evaluates some code (Owner only)"""
         try:
