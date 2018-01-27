@@ -113,7 +113,7 @@ class AdminCog:
         """Does a git pull (Owner only)."""
         tmp = await ctx.send('Pulling...')
         git_output = self.bot.call_shell("git pull")
-        await tmp.edit(f"Pull complete. Output: ```{git_output}```")
+        await tmp.edit(content=f"Pull complete. Output: ```{git_output}```")
 
 
     @commands.is_owner()
