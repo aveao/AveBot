@@ -67,6 +67,7 @@ class Basic:
         await tmp.edit(content=message_text)
 
 
+    @commands.guild_only()
     @commands.command(aliases=['serverinfo'])
     async def sinfo(self, ctx):
         """Shows info about the current server."""
@@ -124,9 +125,10 @@ class Basic:
         if user is None:
             user = ctx.author
 
-        maybe_member = ctx.guild.get_member(user.id)
-        if maybe_member:
-            user = maybe_member
+        if ctx.guild:
+            maybe_member = ctx.guild.get_member(user.id)
+            if maybe_member:
+                user = maybe_member
 
         embed = discord.Embed(title=f"User Info of {str(user)}")
 
