@@ -129,8 +129,8 @@ class AdminCog:
             try:
                 self.bot.unload_extension("cogs." + cog)
                 self.bot.load_extension("cogs." + cog)
-                self.bot.log.info(f'Reloaded ext {ext}')
-                await ctx.send(f':white_check_mark: `{ext}` successfully reloaded.')
+                self.bot.log.info(f'Reloaded ext {cog}')
+                await ctx.send(f':white_check_mark: `{cog}` successfully reloaded.')
             except:
                 await ctx.send(f':x: Cog reloading failed, traceback: ```\n{traceback.format_exc()}\n```')
                 return
