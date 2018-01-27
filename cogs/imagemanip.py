@@ -244,7 +244,7 @@ class ImageManipulation:
 
 
     @commands.command(aliases=['giffy', 'gif', 'gifit', 'owo'])
-    async def gifify(self, ctx, *, *the_text: str):
+    async def gifify(self, ctx, *the_text: str):
         """Gives a gif image of the text supplied. 
 
         Example: ab!gifify owo wats this
