@@ -40,7 +40,7 @@ class NSFW:
                 total_count = len(tumblr_json_images)
                 tumblr_text += tumblr_image_base.format(image["original_size"]["url"])
             if tumblr_is_nsfw:
-                tumblr_text += "\nDon't want NSFW posts on this channel? Add `no_nsfw` on any part of the topic and AveBot will no longer allow NSFW cogs to run here."
+                tumblr_text += "\nDon't want NSFW posts on this channel? Add `no_nsfw` on any part of the topic and AveBot will no longer allow NSFW commands to run here."
             self.bot.log.info(tumblr_text)
             await ctx.send(tumblr_text)
         else:
