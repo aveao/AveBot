@@ -4,27 +4,43 @@ import time
 import datetime
 import socket
 
+import os
+import psutil
+
 class Basic:
     def __init__(self, bot):
         self.bot = bot
+        self.process = psutil.Process(os.getpid())
 
-    @commands.command()
+    @commands.command(aliases=['about'])
     async def info(self, ctx):
         """Returns bot's info."""
         local_time = str(datetime.datetime.now()).split('.')[0]
         total_guild_count = len(self.bot.guilds)
         total_user_count = len(list(self.bot.get_all_members()))
         total_unique_user_count = len(list(set(self.bot.get_all_members())))
+        owner = str(bot.application_info().owner)
+
+        mem_bytes = self.process.memory_full_info().rss
+        mem_mb = round(mem_bytes / 1024 / 1024, 2)
+        cpu_usage = round(self.process.cpu_percent() / psutil.cpu_count(), 2)
+
+        secs_since_boot = int(time.time()) - self.bot.start_time
+        uptime = str(datetime.timedelta(seconds=secs_since_boot))
 
         em = discord.Embed()
 
         em.add_field(name="Git Hash", value=self.bot.get_git_revision_short_hash())
         em.add_field(name="Last git message", value=self.bot.get_git_commit_text())
         em.add_field(name="Hostname", value=socket.gethostname())
-        em.add_field(name="Local Time", value=local_time)
         em.add_field(name="Guild count", value=total_guild_count)
-        em.add_field(name="Users", value=total_user_count)
+        em.add_field(name="Local Time", value=local_time)
         em.add_field(name="Unique users", value=total_unique_user_count)
+        em.add_field(name="Owner", value=owner)
+        em.add_field(name="RAM Usage", value=f"{mem_mb}MiB")
+        em.add_field(name="CPU Percentage", value=f"{cpu_usage}%")
+        em.add_field(name="Invite", value="https://bot.ave.zone/add")
+        em.add_field(name="Uptime", value=uptime)
 
         em.set_author(name='AveBot v3', icon_url='https://s.ave.zone/c7d.png')
         await ctx.send(embed=em)
