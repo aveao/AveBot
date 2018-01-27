@@ -17,7 +17,8 @@ Invite link: https://discordapp.com/oauth2/authorize?client_id=30570883636120781
 
 ### How can I set it up?
 - Install python3.6 or higher.
-- Install `imagemagick` if you plan to enable `imagemanip` cog
+- Install `imagemagick` on pip if you plan to enable `imagemanip` cog
+- Install `psutil` on pip if you plan to enable `basic` cog
 - Install `discord.py` (`pip3 install -U discord.py`).
 - Install `python-dateutil` (`pip3 install python-dateutil`)
 - Install `pillow` ([See this for more info on how to install it](https://askubuntu.com/a/427359/511534))
