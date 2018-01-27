@@ -26,7 +26,7 @@ class NSFW:
                 await ctx.send("The contents of this post are marked NSFW, and this isn't an NSFW channel.")
                 return
             elif (channel_is_nsfw and tumblr_is_nsfw and not channel_allows_nsfw):
-                await ctx.send("The contents of this post are marked NSFW,"
+                await ctx.send("The contents of this post are marked NSFW, "
                     "and this channel does not allow NSFW posts (has `no_nsfw` on channel topic).")
                 return
 
@@ -40,8 +40,7 @@ class NSFW:
                 total_count = len(tumblr_json_images)
                 tumblr_text += tumblr_image_base.format(image["original_size"]["url"])
             if tumblr_is_nsfw:
-                tumblr_text += "\nDon't want NSFW posts on this channel? Add `no_nsfw` on any part of the topic,"
-                "and AveBot will no longer allow NSFW cogs to run here."
+                tumblr_text += "\nDon't want NSFW posts on this channel? Add `no_nsfw` on any part of the topic and AveBot will no longer allow NSFW cogs to run here."
             self.bot.log.info(tumblr_text)
             await ctx.send(tumblr_text)
         else:
