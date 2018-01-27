@@ -21,8 +21,7 @@ class Fun:
             if log.author == ctx.message.author:
                 counter += 1
         percentage_of_messages = str(100 * (counter / allcounter))[:6]
-        message_text = f"{ctx.message.author.mention}:"
-        f"You have sent {counter} messages out of the last {allcounter} in this channel (%{percentage_of_messages})."
+        message_text = f"{ctx.message.author.mention}: You have sent {counter} messages out of the last {allcounter} in this channel (%{percentage_of_messages})."
         await tmp.edit(content=message_text)
 
 
