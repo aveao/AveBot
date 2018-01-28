@@ -150,7 +150,7 @@ class Basic:
         embed = discord.Embed(title=f"User Info of {str(user)}")
 
         if (ctx.message.author.avatar != ""):
-            embed.set_thumbnail(url=ctx.message.author.avatar_url)
+            embed.set_thumbnail(url=user.avatar_url)
         embed.set_footer(text=f"UserID: {user.id}")
 
         embed.add_field(name="Joined Discord", value=str(user.created_at))
