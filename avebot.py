@@ -95,5 +95,19 @@ async def on_ready():
     channel = bot.get_channel(int(config['base']['main-channel']))
     await channel.send(embed=em, file=discord.File(log_file_name))
 
+@bot.event
+async def on_command(ctx):
+    log_text = f"{ctx.message.author} ({ctx.message.author.id}): \"{ctx.message.content}\""
+    if ctx.guild: # was too long for tertiary if
+        log_text += f"on \"{ctx.channel.name}\" ({ctx.channel.id}) at \"{ctx.guild.name}\" ({ctx.guild.id})" 
+    else: 
+        log_text += f"on DMs ({ctx.channel.id})"
+    log.info(log_text)
+
+@bot.event
+async def on_message(message):
+    if not message.author.bot:
+        await bot.process_commands(message)
+
 
 bot.run(config['base']['token'], bot=True, reconnect=True)
