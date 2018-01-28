@@ -149,7 +149,7 @@ class Basic:
 
         embed = discord.Embed(title=f"User Info of {str(user)}")
 
-        if (ctx.message.author.avatar != ""):
+        if (user.avatar != ""):
             embed.set_thumbnail(url=user.avatar_url)
         embed.set_footer(text=f"UserID: {user.id}")
 
