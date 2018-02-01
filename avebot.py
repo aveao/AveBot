@@ -106,6 +106,14 @@ async def on_command(ctx):
     log.info(log_text)
 
 @bot.event
+async def on_error(event_method, *args, **kwargs):
+    log.error(f"Error on {event_method}: {sys.exc_info()}")
+
+@bot.event
+async def on_command_error(ctx, error):
+    log.error(f"Error with \"{ctx.message.content}\" from \"{ctx.message.author}\" ({ctx.message.author.id}): {error}")
+
+@bot.event
 async def on_message(message):
     if not message.author.bot:
         await bot.process_commands(message)
