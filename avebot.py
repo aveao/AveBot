@@ -90,6 +90,7 @@ async def on_ready():
     em.add_field(name="Users", value=total_user_count)
     em.add_field(name="Unique users", value=total_unique_user_count)
 
+    bot.bot_info = await bot.application_info()
     bot.start_time = int(time.time())
 
     channel = bot.get_channel(int(config['base']['main-channel']))

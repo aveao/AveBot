@@ -53,15 +53,16 @@ class Technical:
     @commands.command()
     async def render(self, ctx, page_link: str):
         """Returns an image of the site."""
-        if ctx.guild and not ctx.channel.is_nsfw():
+        if ctx.guild and not ctx.channel.is_nsfw() and not (ctx.message.author == self.bot.bot_info.owner):
             await ctx.send("This command can only be ran on nsfw channels "
-            "(because I don't want people to do `ab!render http://yourfaveadultsite.example` and get the bot kicked)")
+            "(because I don't want people to render nsfw sites and get the bot kicked)")
             return
-        link = f"http://http2pic.haschek.at/api.php?url={page_link}"
-        em = discord.Embed(title=f'Page render for {page_link}, as requested by {ctx.message.author}')
-        em.set_image(url=link)
-        em.set_footer(text='Powered by http2pic.haschek.at.')
-        await ctx.send(embed=em)
+        link = f"{self.bot.config['render']['splashhost']}/render.png?render_all=1&wait=1&url={page_link}"
+        # TODO: The line above is not very safe. Let's improve that later.
+        local_filename = f"files/{ctx.message.id}render.png"
+        await self.bot.download_file(link, local_filename)
+        text = (f"Page render for {page_link}, as requested by {ctx.message.author}:")
+        await ctx.send(content=text, file=discord.File(local_filename))
 
 
     @commands.command()
