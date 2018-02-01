@@ -40,6 +40,35 @@ class AdminCog:
 
 
     @commands.is_owner()
+    @commands.command(hidden=True, aliases=['writeconfig'])
+    async def saveconfig(self, ctx):
+        with open("avebot.ini", 'w') as configfile:
+            self.bot.config.write(configfile)
+        ctx.send("Successfully wrote config file.")
+
+
+    @commands.is_owner()
+    @commands.command(hidden=True, aliases=['reloadconfig', 'readconfig'])
+    async def loadconfig(self, ctx):
+        self.bot.config.read("avebot.ini")
+        ctx.send("Successfully read config file.")
+
+
+    @commands.is_owner()
+    @commands.command(hidden=True)
+    async def setconfig(self, ctx, section: str, key: str, value: str):
+        self.bot.config[section][key] = value
+        ctx.send("Successfully set value.")
+
+
+    @commands.is_owner()
+    @commands.command(hidden=True)
+    async def getconfig(self, ctx, section: str, key: str):
+        value = self.bot.config[section][key]
+        ctx.send("Config value for [{section}]->\"{key}\" is \"{value}\".")
+
+
+    @commands.is_owner()
     @commands.command(hidden=True)
     async def fetchlog(self, ctx):
         """Returns log"""
