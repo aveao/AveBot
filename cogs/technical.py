@@ -61,7 +61,7 @@ class Technical:
         # TODO: The line above is not very safe. Let's improve that later.
         local_filename = f"files/{ctx.message.id}render.png"
         await self.bot.download_file(link, local_filename)
-        text = (f"Page render for {page_link}, as requested by {ctx.message.author}:")
+        text = (f"Page render for {page_link}, as requested by {ctx.message.author.mention}:")
         await ctx.send(content=text, file=discord.File(local_filename))
 
 
