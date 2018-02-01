@@ -1,9 +1,9 @@
 import discord
 from discord.ext import commands
+
 import time
 import datetime
 import socket
-
 import os
 import psutil
 
@@ -52,6 +52,12 @@ class Basic:
         """Gives a link that can be used to add AveBot."""
         inviteurl = discord.utils.oauth_url(self.bot.user.id)
         await ctx.send(f"You can use the following link to add AveBot to your server:\n<{inviteurl}>")
+
+
+    @commands.command()
+    async def hello(self, ctx):
+        """Says hello. Duh."""
+        await ctx.send(f"Hello {ctx.message.author.mention}!")
 
 
     @commands.command()
