@@ -25,8 +25,7 @@ class Basic:
         mem_mb = round(mem_bytes / 1024 / 1024, 2)
         cpu_usage = round(self.process.cpu_percent() / psutil.cpu_count(), 2)
 
-        secs_since_boot = int(time.time()) - self.bot.start_time
-        uptime = str(datetime.timedelta(seconds=secs_since_boot))
+        uptime = self.bot.get_relative_timestamp(time_from=datetime.datetime.utcfromtimestamp(self.bot.start_time))
 
         em = discord.Embed()
 
@@ -113,7 +112,8 @@ class Basic:
         em.add_field(name="Region", value=region_text)
         em.add_field(name="Owner", value=current_guild.owner)
         em.add_field(name="Verification Level", value=current_guild.verification_level)
-        em.add_field(name="Created at", value=current_guild.created_at)
+        humanized_created = self.bot.get_relative_timestamp(time_from=current_guild.created_at, humanized=True, include_from=True)
+        em.add_field(name="Created at", value=humanized_created)
 
         em.set_thumbnail(url=current_guild.icon_url)
         await ctx.send(embed=em)
@@ -157,9 +157,11 @@ class Basic:
             embed.set_thumbnail(url=user.avatar_url)
         embed.set_footer(text=f"UserID: {user.id}")
 
-        embed.add_field(name="Joined Discord", value=str(user.created_at))
+        humanized_discord = self.bot.get_relative_timestamp(time_from=user.created_at, humanized=True, include_from=True)
+        embed.add_field(name="Joined Discord", value=humanized_discord)
         if ctx.guild and maybe_member:
-            embed.add_field(name="Joined Server", value=str(user.joined_at))
+            humanized_guild = self.bot.get_relative_timestamp(time_from=user.joined_at, humanized=True, include_from=True)
+            embed.add_field(name="Joined Guild", value=humanized_guild)
             embed.add_field(name="Status", value=str(user.status))
         if user.game:
             embed.add_field(name="Game", value=user.game.name)

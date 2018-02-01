@@ -2,6 +2,8 @@ import discord
 from discord.ext import commands
 import re
 import aiohttp
+import datetime
+import humanize
 
 class Common:
     def __init__(self, bot):
@@ -13,6 +15,7 @@ class Common:
         self.bot.git_pull = self.git_pull
         self.bot.download_file = self.download_file
         self.bot.aiogetbytes = self.aiogetbytes
+        self.bot.get_relative_timestamp = self.get_relative_timestamp
 
 
     async def download_file(self, url, local_filename):  # This function is based on https://stackoverflow.com/a/35435419/3286892 by link2110 (https://stackoverflow.com/users/5890923/link2110), modified by Ave (https://github.com/aveao), licensed CC-BY-SA 3.0
@@ -20,6 +23,32 @@ class Common:
         file = await file_resp.read()
         with open(local_filename, "wb") as f:
             f.write(file)
+
+
+    def get_relative_timestamp(self, time_from=None, time_to=None, humanized=False, include_from=False, include_to=False):
+        if time_from == None: # Setting default value to utcnow() makes it show time from cog load, which is not what we want
+            time_from = datetime.datetime.utcnow()
+        if time_to == None:
+            time_to = datetime.datetime.utcnow()
+        if humanized:
+            humanized_string = humanize.naturaltime(time_to - time_from)
+            if include_from and include_to:
+                str_with_from_and_to = f"{humanized_string} ({str(time_from).split('.')[0]} - {str(time_to).split('.')[0]})"
+                return str_with_from_and_to
+            elif include_from:
+                str_with_from = f"{humanized_string} ({str(time_from).split('.')[0]})"
+                return str_with_from
+            elif include_to:
+                str_with_to = f"{humanized_string} ({str(time_to).split('.')[0]})"
+                return str_with_to
+            return humanized_string
+        else:
+            epoch = datetime.datetime.utcfromtimestamp(0)
+            epoch_from = (time_from - epoch).total_seconds()
+            epoch_to = (time_to - epoch).total_seconds()
+            second_diff = epoch_to - epoch_from
+            result_string = str(datetime.timedelta(seconds=second_diff)).split('.')[0]
+            return result_string
 
 
     async def aioget(self, url):
