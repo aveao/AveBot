@@ -129,8 +129,7 @@ class Basic:
 
         em.set_author(name=author_name, icon_url=ctx.message.author.avatar_url)
 
-        support_channel = self.bot.get_channel(int(self.bot.config['base']['support-channel']))
-        await support_channel.send(embed=em)
+        await self.bot.support_channel.send(embed=em)
 
         em = discord.Embed(title='Feedback sent!',
                            description='Your message has been delivered to the developers.')

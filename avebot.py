@@ -92,9 +92,10 @@ async def on_ready():
 
     bot.bot_info = await bot.application_info()
     bot.start_time = int(time.time())
+    bot.main_channel = bot.get_channel(int(config['base']['main-channel']))
+    bot.support_channel = bot.get_channel(int(config['base']['support-channel']))
 
-    channel = bot.get_channel(int(config['base']['main-channel']))
-    await channel.send(embed=em, file=discord.File(log_file_name))
+    await bot.main_channel.send(embed=em, file=discord.File(log_file_name))
 
 @bot.event
 async def on_command(ctx):
@@ -105,13 +106,38 @@ async def on_command(ctx):
         log_text += f"on DMs ({ctx.channel.id})"
     log.info(log_text)
 
+
 @bot.event
 async def on_error(event_method, *args, **kwargs):
     log.error(f"Error on {event_method}: {sys.exc_info()}")
 
+
 @bot.event
 async def on_command_error(ctx, error):
     log.error(f"Error with \"{ctx.message.content}\" from \"{ctx.message.author}\" ({ctx.message.author.id}): {error}")
+
+
+@bot.event
+async def on_guild_join(guild):
+    em = discord.Embed(title='Joined server')
+    em.add_field(name="Name", value=guild.name)
+    em.add_field(name="ID", value=guild.id)
+    em.add_field(name="User Count", value=guild.member_count)
+    em.add_field(name="Region", value=guild.region)
+    em.add_field(name="Owner", value=guild.owner)
+    em.add_field(name="Verification Level", value=guild.verification_level)
+    em.add_field(name="Created at", value=guild.created_at)
+    em.set_thumbnail(url=guild.icon_url)
+
+    await bot.main_channel.send(embed=em, file=discord.File(log_file_name))
+    await guild.owner.send("Hello and welcome to AveBot!\n"
+        "If you don't know why you're getting this message, it's because someone added AveBot to your server\n"
+        "Due to Discord API ToS, I am required to inform you that **I log command usages and errors**.\n"
+        "**I don't log *anything* else**.\nLogging code can be found at <https://github.com/aveao/AveBot/blob/"
+        "fea15e7973fb55fc0b2471254182a591370491d2/avebot.py#L99-L119>, please feel free to check it out "
+        "if you have any concerns.\n\nIf you do not agree to be logged, stop using AveBot and remove it from your "
+        "server as soon as possible.")
+
 
 @bot.event
 async def on_message(message):
