@@ -1,0 +1,46 @@
+Basic:
+  feedback        Contacts developers with a message.
+  ginvite         Generates a discord invite link.
+  info            Returns bot's info.
+  invite          Gives a link that can be used to add AveBot.
+  ping            Shows ping values to discord.
+  servercount     Returns the amount of servers AveBot is in.
+  uinfo           Shows info about the user.
+Finance:
+  btc             Returns 30 day bitcoin chart and price info.
+  chart           Returns stock chart of the given ticker.
+  stock           Returns stock info about the given ticker.
+Fun:
+  bigly           Makes a piece of text as big as the hands of the god emperor.
+  howmanymessages Counts how many messages you sent in this channel in last 1...
+  roll            Rolls a dice in NdN format.
+  xkcd            Returns info about the specified xkcd comic.
+ImageManipulation:
+  gifify          Gives a gif image of the text supplied. 
+  howold          Guesses age and gender (based on how-old.net)
+  joelify         A tribute to joel (of vinesauce).
+  jpegify         Makes images jpeg. Also check out ab!ultrajpegify.
+  mazeify         Makes images maze-like, with sharpen filter and jpeg abuse.
+  sbahjify        Makes images hella and sweet.
+  ultrajoelify    A tribute to joel (of vinesauce).
+  ultrajpegify    Makes images ultra jpeg.
+  ultramazeify    Makes images ultra maze.
+Linguistics:
+  rhyme           Gets a word that rhymes with the one specified.
+  similar         Gets a word similar to the one specified.
+  soundslike      Gets a similar sounding word to the one specified.
+  typo            Fixes a typo in the given word.
+NSFW:
+  tumblrgrab      Returns images from the specified tumblr link.
+Stockstream:
+  copypasta       Generates a copypasta for StockStream using the given ticker.
+  copypastasell   Generates a copypasta for StockStream using the given ticker.
+Technical:
+  aveheat         Returns heat info from ave's home.
+  epoch           Returns the Unix Time / Epoch.
+  get             Gets a file from the internet (owner only for limited time).
+  render          Returns an image of the site.
+  resolve         Resolves a domain to its IP values.
+  unfurl          Finds where a URL points at.
+​No Category:
+  help            Shows help message.

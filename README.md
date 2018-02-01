@@ -4,7 +4,7 @@ A discord bot that does a ton of weird (and neat) stuff.
 
 This is v3, which uses Discord.py rewrite and is finally on COGS.
 
-Please check out `helplong.md` to see the command list.
+Please check out `COMMANDS` to see the command list.
 
 
 ---
@@ -28,5 +28,5 @@ Invite link: https://discordapp.com/oauth2/authorize?client_id=30570883636120781
 - Copy `avebot.ini.example` to `avebot.ini`.
 - Put the token, Room IDs and your Discord ID on the `avebot.ini` file.
 - Add your bot to your server. (Find the Client ID on same place as the one you found out the bot token, replace it with BOT_TOKEN on this link: https://discordapp.com/oauth2/authorize?client_id=BOT_TOKEN&scope=bot)
-- Run `run.sh` if you want it to be restarted automatically if it crashes, or just `python3 avebot.py` if you aren't worried about that. I recommend using pm2 and just running `pm2 start avebot.py --interpreter python3.6`, though.
+- Run `python3.6 avebot.py`. I recommend using pm2 and just running `pm2 start avebot.py --interpreter python3.6` if you want it to be restarted automatically after system restarts and crashes.
 - Enjoy.

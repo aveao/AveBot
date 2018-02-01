@@ -140,7 +140,7 @@ class AdminCog:
 
     @commands.is_owner()
     @commands.command(hidden=True)
-    async def reload(self, ctx, ext: str):
+    async def reload(self, ctx, ext="_"):
         """Reloads a cog, owner only."""
         if ext == "_":
             ext = self.lastreload

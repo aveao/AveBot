@@ -160,14 +160,6 @@ async def on_message(message):
                 if resolvedto:
                     unfurld = await unfurl_b(resolvedto)
                     await bot.send_message(message.channel, "Bang resolved to: {}".format(unfurld))
-
-            if message.content.startswith(prefix):
-                if message.channel.is_private:
-                    logging.info(
-                        "{} ({}) said \"{}\" on PMs ({}).".format(message.author.name, message.author.id, message.content, message.channel.id))
-                else:
-                    logging.info("{} ({}) said \"{}\" on \"{}\" ({}) at \"{}\" ({})."
-                           .format(message.author.name, message.author.id, message.content, message.channel.name, message.channel.id, message.server.name, message.server.id))
             if message.content.lower() == "{}help".format(prefix):
                 help_text = open("help.md", "r").read()
                 em = discord.Embed(title="Welcome to AveBot Rewrite",

@@ -4,6 +4,7 @@ token = token_goes_here
 description = AveBot is a bot that does some neat and some dumb stuff
 main-channel = main_channel_id_goes_here
 support-channel = support_channel_id_goes_here
+emoji-guild = emoji_guild_id_goes_here
 
 [advanced]
 add-reactions = True

@@ -42,7 +42,7 @@ def get_prefix(bot, message):
     return commands.when_mentioned_or(*prefixes)(bot, message)
 
 initial_extensions = ['cogs.common', 'cogs.basic', 'cogs.admin', 'cogs.nsfw', 'cogs.technical',
-'cogs.finance', 'cogs.imagemanip', 'cogs.fun', 'cogs.linguistics', 'cogs.stockstream']
+'cogs.finance', 'cogs.imagemanip', 'cogs.fun', 'cogs.emojis', 'cogs.linguistics', 'cogs.stockstream']
 
 bot = commands.Bot(command_prefix=get_prefix, description=config['base']['description'], pm_help=None)
 
@@ -97,7 +97,7 @@ async def on_ready():
 
 @bot.event
 async def on_command(ctx):
-    log_text = f"{ctx.message.author} ({ctx.message.author.id}): \"{ctx.message.content}\""
+    log_text = f"{ctx.message.author} ({ctx.message.author.id}): \"{ctx.message.content}\" "
     if ctx.guild: # was too long for tertiary if
         log_text += f"on \"{ctx.channel.name}\" ({ctx.channel.id}) at \"{ctx.guild.name}\" ({ctx.guild.id})" 
     else: 

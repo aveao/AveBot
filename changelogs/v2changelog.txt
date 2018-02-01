@@ -1,4 +1,4 @@
-This is the changelog between old AveBot and AveBot Rewrite.
+This is the changelog between old AveBot (AveBot v1) and AveBot Rewrite (AveBot v2).
 
 Scraped:
 >geninvite -> Was going to be problematic to some servers probably.

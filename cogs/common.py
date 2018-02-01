@@ -12,6 +12,7 @@ class Common:
         self.bot.slice_message = self.slice_message
         self.bot.git_pull = self.git_pull
         self.bot.download_file = self.download_file
+        self.bot.aiogetbytes = self.aiogetbytes
 
 
     async def download_file(self, url, local_filename):  # This function is based on https://stackoverflow.com/a/35435419/3286892 by link2110 (https://stackoverflow.com/users/5890923/link2110), modified by Ave (https://github.com/aveao), licensed CC-BY-SA 3.0
@@ -33,6 +34,19 @@ class Common:
         except:
             self.bot.log.error(f"Error while getting {url} on aioget: {traceback.format_exc()}")
 
+    async def aiogetbytes(self, url):
+        try:
+            data = await self.bot.aiosession.get(url)
+            if data.status == 200:
+                byte_data = await data.read()
+                self.bot.log.debug(f"Data from {url}: {byte_data}")
+                return byte_data
+            else:
+                self.bot.log.error(f"HTTP Error {data.status} while getting {url}")
+        except:
+            self.bot.log.error(f"Error while getting {url} on aiogetbytes: {traceback.format_exc()}")
+
+
     async def aiojson(self, url):
         try:
             data = await self.bot.aiosession.get(url)
@@ -43,7 +57,7 @@ class Common:
             else:
                 self.bot.log.error(f"HTTP Error {data.status} while getting {url}")
         except:
-            self.bot.log.error(f"Error while getting {url} on aioget: {traceback.format_exc()}")
+            self.bot.log.error(f"Error while getting {url} on aiojson: {traceback.format_exc()}")
 
     def slice_message(self, text, size):
         reply_list = []
