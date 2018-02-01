@@ -19,8 +19,7 @@ class Basic:
         total_guild_count = len(self.bot.guilds)
         total_user_count = len(list(self.bot.get_all_members()))
         total_unique_user_count = len(list(set(self.bot.get_all_members())))
-        bot_info = await self.bot.application_info()
-        owner = str(bot_info.owner)
+        owner = str(self.bot.bot_info.owner)
 
         mem_bytes = self.process.memory_full_info().rss
         mem_mb = round(mem_bytes / 1024 / 1024, 2)
