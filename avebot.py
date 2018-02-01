@@ -14,9 +14,11 @@ import time
 import datetime
 import socket
 
+import psycopg2
+from pathlib import Path
+
 """AveBot is a bot that does some neat and some dumb stuff."""
 
-config_file_name = "avebot.ini"
 log_file_name = "avebot.log"
 
 max_file_size = 1000 * 1000 * 8 # Limit of discord (non-nitro) is 8MB (not MiB)
@@ -34,14 +36,16 @@ log.addHandler(file_handler)
 log.addHandler(stdout_handler)
 
 config = configparser.ConfigParser()
-config.read(config_file_name)
+config.read("avebot.ini")
+
+postgres_connection = psycopg2.connect(config['base']['postgres-connection-string'])
 
 def get_prefix(bot, message):
     prefixes = [config['base']['prefix']]
 
     return commands.when_mentioned_or(*prefixes)(bot, message)
 
-initial_extensions = ['cogs.common', 'cogs.basic', 'cogs.admin', 'cogs.nsfw', 'cogs.technical',
+initial_extensions = ['cogs.common', 'cogs.permissionmanage', 'cogs.basic', 'cogs.admin', 'cogs.nsfw', 'cogs.technical',
 'cogs.finance', 'cogs.imagemanip', 'cogs.fun', 'cogs.emojis', 'cogs.linguistics', 'cogs.stockstream']
 
 bot = commands.Bot(command_prefix=get_prefix, description=config['base']['description'], pm_help=None)
@@ -60,6 +64,7 @@ bot.config = config
 bot.call_shell = call_shell
 bot.get_git_revision_short_hash = get_git_revision_short_hash
 bot.get_git_commit_text = get_git_commit_text
+bot.postgres_connection = postgres_connection
 
 if __name__ == '__main__':
     for extension in initial_extensions:
@@ -144,5 +149,8 @@ async def on_message(message):
     if not message.author.bot:
         await bot.process_commands(message)
 
+if not Path("avebot.ini").is_file():
+    log.warning("No config file (avebot.ini) found, please create one from avebot.ini.example file.")
+    exit(3)
 
 bot.run(config['base']['token'], bot=True, reconnect=True)

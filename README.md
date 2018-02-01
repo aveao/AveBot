@@ -19,14 +19,15 @@ Invite link: https://discordapp.com/oauth2/authorize?client_id=30570883636120781
 - Install python3.6 or higher.
 - Install `imagemagick` on pip if you plan to enable `imagemanip` cog
 - Install `psutil` and `humanize` on pip
+- Install `psycopg2` 
+- Install postgres, create a user, a database and whatnot, then execute this: `CREATE TABLE permissions (id bigint, permlevel int);`. Note down the database name, username and password.
 - Install `discord.py` (`pip3 install -U discord.py`).
 - Install `python-dateutil` (`pip3 install python-dateutil`)
 - Install `pillow` ([See this for more info on how to install it](https://askubuntu.com/a/427359/511534))
 - Learn your bot token ([hint](https://discordapp.com/developers/applications/me)).
 - Set up a room for `ab!contact` messages and one for messages on launch time, note their IDs down (looks like `305715263951732737`). Developer mode will help with this one.
-- Learn your Discord ID (looks like `137584770145058817`). Developer mode will help with this one.
 - Copy `avebot.ini.example` to `avebot.ini`.
-- Put the token, Room IDs and your Discord ID on the `avebot.ini` file.
+- Put the token, Room IDs and postgres info on the `avebot.ini` file.
 - Add your bot to your server. (Find the Client ID on same place as the one you found out the bot token, replace it with BOT_TOKEN on this link: https://discordapp.com/oauth2/authorize?client_id=BOT_TOKEN&scope=bot)
 - Run `python3.6 avebot.py`. I recommend using pm2 and just running `pm2 start avebot.py --interpreter python3.6` if you want it to be restarted automatically after system restarts and crashes.
 - Enjoy.

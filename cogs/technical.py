@@ -85,12 +85,14 @@ class Technical:
         await ctx.send(f"Current epoch time is: **{int(time.time())}**.")
 
 
-    @commands.is_owner()
-    @commands.command(pass_context=True)
-    async def get(self, ctx, link: str, direct=True):
-        """Gets a file from the internet (owner only for limited time)."""
+    @commands.command()
+    async def get(self, ctx, link: str, filename=None):
+        """Gets a file from the internet (privileged, mod and owner only)."""
+        author_level = await self.bot.get_permission(ctx.author.id)
+        if author_level < 2:
+            return
         mention = ctx.message.author.mention
-        filename = ("files/" + link.split('/')[-1]) if direct else "files/directfile"
+        filename = ("files/" + link.split('/')[-1]) if filename == None else f"files/{filename}"
         await self.bot.download_file(link, filename)
         file_size = Path(filename).stat().st_size
         if file_size < 1024 * 1024 * 8:  # Limit of discord is 8MiB
