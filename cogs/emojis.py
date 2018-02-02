@@ -53,9 +53,11 @@ class Emoji:
         return added_emoji
 
 
-    @commands.is_owner()
     @commands.command(hidden=True)
     async def addemoji(self, ctx, url: str, emoji_name: str):
+        author_level = await self.bot.get_permission(ctx.author.id)
+        if author_level < 8:
+            return
         added_emoji = await self.download_and_add_emoji(self.emoji_guild_id, emoji_name, url)
         result_str = f"Added {str(added_emoji)}" if added_emoji else "This emoji is too big."
         await ctx.send(f"{ctx.message.author.mention}: {result_str}")
