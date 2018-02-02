@@ -1,5 +1,5 @@
 [base]
-prefix = >
+prefix = ab!
 token = token_goes_here
 description = AveBot is a bot that does some neat and some dumb stuff
 postgres-connection-string = dbname=avebot user=avebot password=something
@@ -8,24 +8,20 @@ support-channel = support_channel_id_goes_here
 emoji-guild = emoji_guild_id_goes_here
 
 [advanced]
-add-reactions = True
-voting-prefix = Vote:
-voting-emoji-y = 🇾
-voting-emoji-n = 🇳
 unfurl-depth = 5
-
-[permissions]
-your_discord_id_here = 9
-
-[stats]
-url = stats_add_url_goes_here
-key = stats_key_goes_here
 
 [tumblr]
 apikey = tumblr_api_key_goes_here
 
-[tagbox]
-url = tagbox_check_url_goes_here
+[homeheat]
+dataurl = data_url_here
+charturl = chart_url_here
+
+[wakatime]
+url = wakatime_png_link_goes_here
+
+[render]
+splashhost = splash_host_here
 
 [howold]
 uribase = https://eastus.api.cognitive.microsoft.com
