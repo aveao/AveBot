@@ -16,6 +16,7 @@ class Common:
         self.bot.download_file = self.download_file
         self.bot.aiogetbytes = self.aiogetbytes
         self.bot.get_relative_timestamp = self.get_relative_timestamp
+        self.bot.haste = self.haste
 
 
     async def download_file(self, url, local_filename):  # This function is based on https://stackoverflow.com/a/35435419/3286892 by link2110 (https://stackoverflow.com/users/5890923/link2110), modified by Ave (https://github.com/aveao), licensed CC-BY-SA 3.0
@@ -23,6 +24,13 @@ class Common:
         file = await file_resp.read()
         with open(local_filename, "wb") as f:
             f.write(file)
+
+
+    async def haste(self, text):
+        response = await self.bot.aiosession.post('https://hastebin.com/documents', data=text)
+        if response.status == 200:
+            result_json = await response.json()
+            return f"https://hastebin.com/{result_json['key']}"
 
 
     def get_relative_timestamp(self, time_from=None, time_to=None, humanized=False, include_from=False, include_to=False):
