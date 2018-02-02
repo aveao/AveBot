@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+import traceback
 
 class PermManage:
     def __init__(self, bot):
@@ -10,21 +11,29 @@ class PermManage:
     async def get_permission(self, id):
         if id == self.bot.bot_info.owner.id:
             return 99  # Bot owner's level is locked to 99
-        perm_sql = f"SELECT permlevel FROM permissions WHERE discord_id = {id};"
-        cursor = self.bot.postgres_connection.cursor()
-        cursor.execute(perm_sql)
-        result = cursor.fetchone()
-        cursor.close()
-        return result[0] if result else 1
+        try:
+            perm_sql = f"SELECT permlevel FROM permissions WHERE discord_id = {id};"
+            cursor = self.bot.postgres_connection.cursor()
+            cursor.execute(perm_sql)
+            result = cursor.fetchone()
+            cursor.close()
+            return result[0] if result else 1
+        except:
+            self.bot.log.error(f"Error on get_permission: {traceback.format_exc()}")
+            cursor.close()
+            return 1
 
 
     async def set_permission(self, id, permlevel):
         cursor = self.bot.postgres_connection.cursor()
-        cursor.execute(f"DELETE FROM permissions WHERE discord_id = {id}")
-        if permlevel != 1:  # Just remove regular users from database 
-            cursor.execute("INSERT INTO permissions (discord_id, permlevel) VALUES (%s, %s)",
-                      (id, permlevel))
-        self.bot.postgres_connection.commit()
+        try:
+            cursor.execute(f"DELETE FROM permissions WHERE discord_id = {id}")
+            if permlevel != 1:  # Just remove regular users from database 
+                cursor.execute("INSERT INTO permissions (discord_id, permlevel) VALUES (%s, %s)",
+                          (id, permlevel))
+            self.bot.postgres_connection.commit()
+        except:
+            self.bot.log.error(f"Error on set_permission: {traceback.format_exc()}")
         cursor.close()
 
 
