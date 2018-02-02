@@ -52,7 +52,7 @@ class Technical:
         """Shows wakatime stats of dev."""
         current_time = datetime.datetime.utcnow()
 
-        em = discord.Embed(title="Coding Activity over Last 7 Days", timestamp=aveheat_data_timestamp)
+        em = discord.Embed(title="Coding Activity over Last 7 Days", timestamp=current_time)
 
         charturl = f"{self.bot.config['wakatime']['url']}?t={time.time()}"
         em.set_image(url=charturl)
