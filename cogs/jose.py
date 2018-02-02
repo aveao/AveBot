@@ -12,7 +12,7 @@ class Jose:
 
 
     @commands.command(hidden=True)
-    async def josemax(self, ctx, jccount: str):
+    async def josemax(self, ctx, jccount: int):
         maxfifty = (jccount / 4.58) * 0.42
         await ctx.send(f"Maximum amount that gives 5 probability: {maxfifty}")
 
