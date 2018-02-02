@@ -51,7 +51,7 @@ class Finance:
         """Returns stock chart of the given ticker.
 
         Usage example: ab!c seb"""
-        image_link = f"https://finviz.com/chart.ashx?t={ticker.upper()}&ty=c&ta=1&p=d&s=l"
+        image_link = f"https://finviz.com/chart.ashx?t={ticker.upper()}&ty=c&ta=1&p=d&s=l&cacheshit={time.time()}"
         title_link = f"https://finviz.com/quote.ashx?t={ticker.upper()}"
         change_color = await self.get_stock_change_color(ticker)
         em = discord.Embed(title=f'Chart for {ticker.upper()}',
@@ -137,7 +137,7 @@ class Finance:
             
             btc_data_timestamp = datetime.datetime.utcfromtimestamp(int(btc_bitstamp_json["timestamp"]))
 
-            link = "https://bitcoincharts.com/charts/chart.png?width=600&m=bitstampUSD&r=30&c=0&e=&t=S&m1=10&m2=25&x=0&v=1&cv=0&ps=0&l=0&p=0"
+            link = f"https://bitcoincharts.com/charts/chart.png?width=600&m=bitstampUSD&r=30&c=0&e=&t=S&m1=10&m2=25&x=0&v=1&cv=0&ps=0&l=0&p=0&cacheshit={time.time()}"
             em = discord.Embed(color=btc_change_color, timestamp=btc_data_timestamp)
 
             em.set_author(name="30 Day BTC Chart and Info", icon_url="https://bitcoin.org/img/icons/opengraph.png")
