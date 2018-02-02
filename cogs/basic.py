@@ -74,7 +74,7 @@ class Basic:
         await ctx.send(f"AveBot is in {total_guild_count} servers with {total_user_count} total users ({total_unique_user_count} unique).")
 
 
-    @commands.command()
+    @commands.command(aliases=['p'])
     async def ping(self, ctx):
         """Shows ping values to discord."""
         before = time.monotonic()
@@ -83,7 +83,7 @@ class Basic:
         rtt_ms = (after - before) * 1000
         gw_ms = self.bot.latency * 1000
 
-        message_text = f":ping_pong: rtt: {rtt_ms:.1f}ms, gw: {gw_ms:.1f}ms"
+        message_text = f":ping_pong: rtt: `{rtt_ms:.1f}ms`, `gw: {gw_ms:.1f}ms`"
         self.bot.log.info(message_text)
         await tmp.edit(content=message_text)
 
