@@ -68,5 +68,8 @@ Technical:
   render          Returns an image of the site.
   resolve         Resolves a domain to its IP values.
   unfurl          Finds where a URL points at.
+Jose (see github.com/lnmds/jose):
+ joseprob         Calculates probability for stealing JoseCoins
+ josemax          Calculates max amount to steal that gives 5 probability for given JC count
 ​No Category:
   help            Shows help message.

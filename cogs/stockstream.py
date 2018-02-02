@@ -14,7 +14,7 @@ class Stockstream:
                           "Clappy Lemme buy a {0} before I send you a {0} Clappy",
                           "GivePLZ TRAIN TO PROFIT TOWN TakeNRG BUY {}! GivePLZ BUY {} TakeNRG",
                           "PogChamp {} PogChamp IS PogChamp OUR PogChamp LAST PogChamp HOPE PogChamp"]
-        to_post = "Copypasta ready: `{}`".format(secrets.choice(copypasta_list).format(ticker.upper()))
+        to_post = f"Copypasta ready: `{secrets.choice(copypasta_list).format(ticker.upper())}`"
         await ctx.send(to_post)
 
 
@@ -27,7 +27,7 @@ class Stockstream:
                           "Clappy Lemme sell a {0} before I send you a {0} Clappy",
                           "GivePLZ TRAIN TO PROFIT TOWN TakeNRG SELL {}! GivePLZ SELL {} TakeNRG",
                           "SELLING PogChamp {} PogChamp IS PogChamp OUR PogChamp LAST PogChamp HOPE PogChamp"]
-        to_post = "Copypasta ready: `{}`".format(secrets.choice(copypasta_list).format(ticker.upper()))
+        to_post = f"Copypasta ready: `{secrets.choice(copypasta_list).format(ticker.upper())}`"
         await ctx.send(to_post)
 
 def setup(bot):

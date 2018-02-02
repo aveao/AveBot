@@ -27,6 +27,8 @@ class Emoji:
     async def download_and_add_emoji(self, guild_id: int, emoji_name: str, url: str):
         emoji_guild = self.bot.get_guild(guild_id)
         emoji_bytes = await self.bot.aiogetbytes(url)
+        if len(emoji_bytes) > 256 * 1024:
+            return None
         added_emoji = await emoji_guild.create_custom_emoji(name=emoji_name, image=emoji_bytes)
         return added_emoji
 
@@ -35,7 +37,8 @@ class Emoji:
     @commands.command(hidden=True)
     async def addemoji(self, ctx, url: str, emoji_name: str):
         added_emoji = await self.download_and_add_emoji(self.emoji_guild_id, emoji_name, url)
-        await ctx.send(f"{ctx.message.author.mention}: Added {str(added_emoji)}")
+        result_str = f"Added {str(added_emoji)}" if added_emoji else "This emoji is too big."
+        await ctx.send(f"{ctx.message.author.mention}: {result_str}")
 
 
     @commands.is_owner()
@@ -48,7 +51,8 @@ class Emoji:
             emoji_url = f"https://cdn.discordapp.com/emojis/{emoji[3]}.{emoji_format}?v=1"
 
             added_emoji = await self.download_and_add_emoji(self.emoji_guild_id, emoji_name, emoji_url)
-            await ctx.send(f"{ctx.message.author.mention}: Added {str(added_emoji)}")
+            result_str = f"Added {str(added_emoji)}" if added_emoji else "This emoji is too big."
+            await ctx.send(f"{ctx.message.author.mention}: {result_str}")
 
 
     @commands.command(aliases=['emoji', 'einfo', 'emojiinfo', 'jumbo'])
@@ -57,6 +61,9 @@ class Emoji:
         emojis = self.extract_emojis(emoji_string, True)
         if len(emojis) > self.max_jumbo:
             await ctx.send(f"{ctx.message.author.mention}: that's a little too many emojis. Max is {self.max_jumbo}.")
+            return
+        elif len(emojis) == 0:
+            await ctx.send(f"{ctx.message.author.mention}: you didn't send any emojis.")
             return
         emoji_text = f"{ctx.message.author.mention}: "
         for emoji in emojis:
