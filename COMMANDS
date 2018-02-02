@@ -1,11 +1,37 @@
+Admin (all commands here are owner-only):
+  say             Repeats a text.
+  exit            Exits bot.
+  load            Loads a cog.
+  unload          Unloads a cog.
+  reload          Reloads a cog.
+  saveconfig      Saves config file.
+  loadconfig      Loads config file.
+  setconfig       Sets something in config.
+  getconfig       Gets something from config.
+  fetchlog        Returns bot logs.
+  eval            Evaluates a piece of code.
+  sh              Runs something in shell.
+  pull            Does git pull.
+  log             Returns a file out of the last N messages submitted in a channel.
+PermManage:
+  setperm         Sets permissions of a user to a specified permission (owner only)
+  setmod          Sets a user as mod (owner only)
+  setpriv         Sets a user as privileged user (mod and owner only)
+  setregular      Sets a user as a regular user (this command is also used to unban or demote - mod and owner only)
+  ban             Bans a user (mod and owner only)
 Basic:
   feedback        Contacts developers with a message.
   ginvite         Generates a discord invite link.
+  hello           Says hello. Duh.
   info            Returns bot's info.
   invite          Gives a link that can be used to add AveBot.
   ping            Shows ping values to discord.
   servercount     Returns the amount of servers AveBot is in.
   uinfo           Shows info about the user.
+Emoji:
+  jumbomoji       Jumboifies an emoji.
+  addemoji        Adds an emoji from link (owner only).
+  stealemoji      Steals an emoji (owner only).
 Finance:
   btc             Returns 30 day bitcoin chart and price info.
   chart           Returns stock chart of the given ticker.
@@ -38,7 +64,7 @@ Stockstream:
 Technical:
   aveheat         Returns heat info from ave's home.
   epoch           Returns the Unix Time / Epoch.
-  get             Gets a file from the internet (owner only for limited time).
+  get             Gets a file from the internet (privileged, mod and owner only)
   render          Returns an image of the site.
   resolve         Resolves a domain to its IP values.
   unfurl          Finds where a URL points at.
