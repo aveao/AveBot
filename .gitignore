@@ -99,3 +99,4 @@ files/*
 gifify/*.jpg
 gifify/*.gif
 !gifify/empty.jpg
+*.ttf
