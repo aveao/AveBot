@@ -36,7 +36,7 @@ class Technical:
 
         em = discord.Embed(title="Heat Inside Ave's House", timestamp=aveheat_data_timestamp)
 
-        charturl = f"{self.bot.config['homeheat']['charturl']}?t={time.time()}"
+        charturl = f"{self.bot.config['homeheat']['charturl']}?t={int(time.time())}"
 
         em.set_image(url=charturl)
         em.set_footer(text="Chart data is UTC")
