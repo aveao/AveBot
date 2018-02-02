@@ -27,7 +27,7 @@ class Basic:
 
         uptime = self.bot.get_relative_timestamp(time_from=datetime.datetime.utcfromtimestamp(self.bot.start_time))
 
-        em = discord.Embed()
+        em = discord.Embed(color=0xDAB420)
 
         em.add_field(name="Git Hash", value=self.bot.get_git_revision_short_hash())
         em.add_field(name="Last git message", value=self.bot.get_git_commit_text())
