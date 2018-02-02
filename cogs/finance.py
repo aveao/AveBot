@@ -46,6 +46,16 @@ class Finance:
         percentage = (100 * Decimal(diff) / Decimal(current_price))
         return get_change_color(percentage)
 
+    async def get_crypto_name(self, ticker: str, include_ticker=True):
+        ticker = ticker.upper()
+        json_data = await self.bot.aiojson("https://www.cryptopia.co.nz/api/GetCurrencies")
+        if not ("Success" in json_data and json_data["Success"] == True):
+            return ticker if include_ticker else None
+        name_list = [data["Name"] for data in json_data["Data"] if data["Symbol"] == ticker]
+        if len(name_list) == 0:
+            return ticker if include_ticker else None
+        return f"{name_list[0]} ({ticker})" if include_ticker else name_list[0]
+
     @commands.command(aliases=['stockchart', 'c'])
     async def chart(self, ctx, ticker: str):
         """Returns stock chart of the given ticker.
@@ -180,9 +190,11 @@ class Finance:
         
         data_timestamp = datetime.datetime.utcfromtimestamp(raw_data["LASTUPDATE"])
 
+        coin_name = await self.get_crypto_name(ticker)
+
         em = discord.Embed(color=change_color, timestamp=data_timestamp)
 
-        em.set_author(name=f"Price info for {ticker} from {stylized_data['MARKET']}")
+        em.set_author(name=f"Price info for {coin_name} from {stylized_data['MARKET']}")
         em.set_footer(text="Price info supplied by CryptoCompare. Data is not guaranteed to be accurate, I am not responsible for your losses.")
         
         em.add_field(name="Current Price", value=stylized_data["PRICE"])
