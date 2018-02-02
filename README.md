@@ -20,7 +20,7 @@ Invite link: https://discordapp.com/oauth2/authorize?client_id=30570883636120781
 - Install `imagemagick` on pip if you plan to enable `imagemanip` cog
 - Install `psutil` and `humanize` on pip
 - Install `psycopg2` 
-- Install postgres, create a user, a database and whatnot, then execute this: `CREATE TABLE permissions (id bigint, permlevel int);`. Note down the database name, username and password.
+- Install postgres, create a user, a database and whatnot, then execute this: `CREATE TABLE permissions (discord_id bigint UNIQUE, permlevel int);`. Note down the database name, username and password.
 - Install `discord.py` (`pip3 install -U discord.py`).
 - Install `python-dateutil` (`pip3 install python-dateutil`)
 - Install `pillow` ([See this for more info on how to install it](https://askubuntu.com/a/427359/511534))

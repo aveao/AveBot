@@ -16,7 +16,7 @@ class PermManage:
         result = cursor.fetchone()
         cursor.close()
         return result[0] if result else 1
-        
+
 
     async def set_permission(self, id, permlevel):
         cursor = self.bot.postgres_connection.cursor()
@@ -45,7 +45,7 @@ class PermManage:
 
 
     @commands.is_owner()
-    @commands.command(hidden=True)
+    @commands.command(hidden=True, aliases=['addmod'])
     async def setmod(self, ctx, user: discord.User, check: bool = True):
         await self.set_permission(user.id, 8)
         return_message = f"Successfully added {user} as mod"
@@ -60,11 +60,11 @@ class PermManage:
             await ctx.send(f"{return_message} (blind)")
 
 
-    @commands.command(hidden=True)
+    @commands.command(hidden=True, aliases=['addpriv'])
     async def setpriv(self, ctx, user: discord.User, check: bool = True):
         author_level = await self.get_permission(ctx.author.id)
         user_level = await self.get_permission(user.id)
-        if author_level < 8 or user_level >= author_level:
+        if author_level < 8 or (user_level >= author_level and ctx.author != user):
             return
         await self.set_permission(user.id, 2)
         return_message = f"Successfully set {user} as privileged user"
@@ -83,7 +83,7 @@ class PermManage:
     async def setregular(self, ctx, user: discord.User, check: bool = True):
         author_level = await self.get_permission(ctx.author.id)
         user_level = await self.get_permission(user.id)
-        if author_level < 8 or user_level >= author_level:
+        if author_level < 8 or (user_level >= author_level and ctx.author != user):
             return
         await self.set_permission(user.id, 1)
         return_message = f"Successfully set {user} as regular user"
@@ -102,7 +102,7 @@ class PermManage:
     async def ban(self, ctx, user: discord.User, check: bool = True):
         author_level = await self.get_permission(ctx.author.id)
         user_level = await self.get_permission(user.id)
-        if author_level < 8 or user_level >= author_level:
+        if author_level < 8 or user_level >= author_level or ctx.author == user:
             return
         await self.set_permission(user.id, 0)
         return_message = f"Successfully banned {user}"

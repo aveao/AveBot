@@ -146,8 +146,15 @@ async def on_guild_join(guild):
 
 @bot.event
 async def on_message(message):
-    if not message.author.bot:
-        await bot.process_commands(message)
+    if message.author.bot:
+        return
+
+    user_perm = await bot.get_permission(message.author.id)
+    if user_perm == 0:
+        return
+
+    ctx = await bot.get_context(message)
+    await bot.invoke(ctx)
 
 if not Path("avebot.ini").is_file():
     log.warning("No config file (avebot.ini) found, please create one from avebot.ini.example file.")
