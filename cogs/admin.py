@@ -115,21 +115,13 @@ class AdminCog:
 
             self.previous_eval_code = code
 
-            sliced_msg = self.bot.slice_message(repr(result), 1994)
-            if len(sliced_msg) > 3:
-                haste_result = await self.bot.haste(repr(result))
-                await ctx.send(f"Result too long, go to haste: <{haste_result}>")
-                return
-            for msg in sliced_msg:
-                await ctx.send(f"```{msg}```")
+            sliced_message = await self.bot.slice_message(repr(result), 2000, prefix="```", suffix="```")
+            for msg in sliced_message:
+                await ctx.send(msg)
         except:
-            sliced_msg = self.bot.slice_message(traceback.format_exc(), 1994)
-            if len(sliced_msg) > 3:
-                haste_result = await self.bot.haste(traceback.format_exc())
-                await ctx.send(f"Error too long, go to haste: <{haste_result}>")
-                return
-            for msg in sliced_msg:
-                await ctx.send(f"```{msg}```")
+            sliced_message = await self.bot.slice_message(traceback.format_exc(), 2000, prefix="```", suffix="```")
+            for msg in sliced_message:
+                await ctx.send(msg)
 
 
     @commands.is_owner()
@@ -143,13 +135,9 @@ class AdminCog:
         shell_output = f"\"{command}\" output:\n{shell_output}"
         self.bot.log.info(shell_output)
         await tmp.delete()
-        sliced_msg = self.bot.slice_message(shell_output, 1994)
-        if len(sliced_msg) > 3:
-            haste_result = await self.bot.haste(shell_output)
-            await ctx.send(f"Result too long, go to haste: <{haste_result}>")
-            return
-        for msg in sliced_msg:
-            await ctx.send(f"```{msg}```")
+        sliced_message = await self.bot.slice_message(shell_output, 2000, prefix="```", suffix="```")
+        for msg in sliced_message:
+            await ctx.send(msg)
 
 
     @commands.is_owner()

@@ -17,6 +17,7 @@ class Common:
         self.bot.aiogetbytes = self.aiogetbytes
         self.bot.get_relative_timestamp = self.get_relative_timestamp
         self.bot.haste = self.haste
+        self.max_split_length = 3
 
 
     async def download_file(self, url, local_filename):  # This function is based on https://stackoverflow.com/a/35435419/3286892 by link2110 (https://stackoverflow.com/users/5890923/link2110), modified by Ave (https://github.com/aveao), licensed CC-BY-SA 3.0
@@ -96,12 +97,16 @@ class Common:
         except:
             self.bot.log.error(f"Error while getting {url} on aiojson: {traceback.format_exc()}")
 
-    def slice_message(self, text, size):
+    async def slice_message(self, text, size, prefix="", suffix=""):
+        if len(text) > size * self.max_split_length:
+            haste_url = await self.haste(text)
+            return [f"Message is too long ({len(text)} > {size * self.max_split_length} ({size} * {self.max_split_length})), go to haste: <{haste_url}>"]
         reply_list = []
-        while len(text) > size:
-            reply_list.append(text[:size])
-            text = text[size:]
-        reply_list.append(text)
+        size_wo_fix = size - len(prefix) - len(suffix)
+        while len(text) > size_wo_fix:
+            reply_list.append(f"{prefix}{text[:size_wo_fix]}{suffix}")
+            text = text[size_wo_fix:]
+        reply_list.append(f"{prefix}{text}{suffix}")
         return reply_list
 
     def git_pull(self):
