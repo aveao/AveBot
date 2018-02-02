@@ -4,6 +4,7 @@ import re
 import aiohttp
 import datetime
 import humanize
+import traceback
 
 class Common:
     def __init__(self, bot):

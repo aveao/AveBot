@@ -110,6 +110,7 @@ class Finance:
 
         await ctx.send(embed=em)
 
+
     @commands.command()
     async def btc(self, ctx):
         """Returns 30 day bitcoin chart and price info."""
@@ -127,7 +128,7 @@ class Finance:
             btc_low_string = format_currency(btc_bitstamp_json["low"], currency_locale)
             btc_bid_string = format_currency(btc_bitstamp_json["bid"], currency_locale)
             btc_ask_string = format_currency(btc_bitstamp_json["ask"], currency_locale)
-            btc_volume_string = str(btc_bitstamp_json["volume"])
+            btc_volume_string = str(btc_bitstamp_json["volume"]) + " BTC"
 
             btc_diff = btc_currentprice_rate - btc_lastopen_rate
             btc_change_percentage = (100 * Decimal(btc_diff) / Decimal(btc_currentprice_rate))
@@ -142,7 +143,7 @@ class Finance:
 
             em.set_author(name="30 Day BTC Chart and Info", icon_url="https://bitcoin.org/img/icons/opengraph.png")
             em.set_image(url=link)
-            em.set_footer(text="Chart supplied by bitcoincharts.com under CC-BY-SA 3.0, price info supplied by BitStamp.")
+            em.set_footer(text="Chart supplied by bitcoincharts.com under CC-BY-SA 3.0, price info supplied by BitStamp. Data is not guaranteed to be accurate, I am not responsible for your losses.")
             
             em.add_field(name="Current Price", value=btc_currentprice_string)
             em.add_field(name="Opening Price", value=btc_lastopen_string)
@@ -160,6 +161,40 @@ class Finance:
         except:
             await ctx.send("Error while fetching BTC data.")
             self.bot.log.error(traceback.format_exc())
+
+
+    @commands.command(aliases=["cryptocoin", "cryptoprice", "cc"])
+    async def crypto(self, ctx, ticker: str):
+        """Returns price info about the specified cryptocoin."""
+        ticker = ticker.upper()
+        api_endpoint = f"https://min-api.cryptocompare.com/data/pricemultifull?tsyms=USD&fsyms={ticker}"
+        api_json = await self.bot.aiojson(api_endpoint)
+        if "Message" in api_json:
+            await ctx.send(f"Error from API: `{api_json['Message']}`")
+            return
+
+        raw_data = api_json["RAW"][ticker]["USD"]
+        stylized_data = api_json["DISPLAY"][ticker]["USD"]
+
+        change_color = get_change_color(raw_data["CHANGEPCTDAY"])
+        
+        data_timestamp = datetime.datetime.utcfromtimestamp(raw_data["LASTUPDATE"])
+
+        em = discord.Embed(color=change_color, timestamp=data_timestamp)
+
+        em.set_author(name=f"Price info for {ticker} from {stylized_data['MARKET']}")
+        em.set_footer(text="Price info supplied by CryptoCompare. Data is not guaranteed to be accurate, I am not responsible for your losses.")
+        
+        em.add_field(name="Current Price", value=stylized_data["PRICE"])
+        em.add_field(name="Opening Price", value=stylized_data["OPENDAY"])
+        
+        em.add_field(name="Change", value=f"{stylized_data['CHANGEDAY']} ({stylized_data['CHANGEPCTDAY']}%)")
+        em.add_field(name="Volume", value=stylized_data["VOLUMEDAY"])
+        
+        em.add_field(name="High", value=stylized_data["HIGHDAY"])
+        em.add_field(name="Low", value=stylized_data["LOWDAY"])
+        
+        await ctx.send(embed=em)
 
 
 def setup(bot):
