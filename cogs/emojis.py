@@ -2,7 +2,8 @@ import discord
 from discord.ext import commands
 
 import re
-
+import io
+import PIL.Image
 
 class Emoji:
     def __init__(self, bot):
@@ -13,6 +14,8 @@ class Emoji:
         self.bot.download_and_add_emoji = self.download_and_add_emoji
         self.emoji_guild_id = int(self.bot.config['base']['emoji-guild'])
         self.max_jumbo = 3
+        self.max_emoji_size = 256 * 1024
+        self.emoji_dim_max = 128
 
 
     def extract_emojis(self, text: str, raw=False):
@@ -27,8 +30,25 @@ class Emoji:
     async def download_and_add_emoji(self, guild_id: int, emoji_name: str, url: str):
         emoji_guild = self.bot.get_guild(guild_id)
         emoji_bytes = await self.bot.aiogetbytes(url)
-        if len(emoji_bytes) > 256 * 1024:
-            return None
+        if len(emoji_bytes) > self.max_emoji_size:
+            im = PIL.Image.open(io.BytesIO(emoji_bytes))
+            w, h = im.size
+            if w < self.emoji_dim_max and h < self.emoji_dim_max:
+                return None
+            elif w > h:
+                ratio = w / self.emoji_dim_max
+                new_h = int(h / ratio)
+                im = im.resize((self.emoji_dim_max, new_h))
+            else:
+                ratio = h / self.emoji_dim_max
+                new_w = int(w / ratio)
+                im = im.resize((new_w, self.emoji_dim_max))
+
+            emoji_bytes = io.BytesIO()
+            im.save(emoji_bytes, format='PNG')
+            emoji_bytes = emoji_bytes.getvalue()
+            if len(emoji_bytes) > self.max_emoji_size:
+                return None
         added_emoji = await emoji_guild.create_custom_emoji(name=emoji_name, image=emoji_bytes)
         return added_emoji
 

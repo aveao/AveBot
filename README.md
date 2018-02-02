@@ -17,7 +17,7 @@ Invite link: https://discordapp.com/oauth2/authorize?client_id=30570883636120781
 
 ### How can I set it up?
 - Install python3.6 or higher.
-- Install `imagemagick` on pip if you plan to enable `imagemanip` cog
+- Install `imagemagick` on pip if you plan to enable `imagemanip` or `emojis` cog
 - Install `psutil` and `humanize` on pip
 - Install `psycopg2` 
 - Install postgres, create a user, a database and whatnot, then execute this: `CREATE TABLE permissions (discord_id bigint UNIQUE, permlevel int);`. Note down the database name, username and password.
