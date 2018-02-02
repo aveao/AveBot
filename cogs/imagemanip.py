@@ -250,7 +250,7 @@ class ImageManipulation:
         Example: ab!gifify owo wats this
         Get a specific part in " to have as one image (for example, ab!gifify hi "hi all" heyo will have 3 frames)."""
         mention = ctx.message.author.mention
-        fontname = "MuktaMalar-Medium.ttf"
+        fontname = self.bot.config["gifify"]["font"]
 
         tcount = len(the_text)
         tcurrent = 0

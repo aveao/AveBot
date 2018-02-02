@@ -26,3 +26,6 @@ splashhost = splash_host_here
 [howold]
 uribase = https://eastus.api.cognitive.microsoft.com
 subkey = SUBKEY goes here
+
+[gifify]
+font = MuktaMalar-Medium.ttf
