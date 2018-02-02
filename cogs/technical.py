@@ -30,24 +30,34 @@ class Technical:
     @commands.command(aliases=['aveishot', 'home'])
     async def aveheat(self, ctx):
         """Returns heat info from ave's home."""
-        try:
-            heat_json = await self.bot.aiojson(self.bot.config['homeheat']['dataurl'])
-            
-            aveheat_data_timestamp = datetime.datetime.utcfromtimestamp(int(heat_json["timestamp"]))
+        heat_json = await self.bot.aiojson(self.bot.config['homeheat']['dataurl'])
+        
+        aveheat_data_timestamp = datetime.datetime.utcfromtimestamp(int(heat_json["timestamp"]))
 
-            em = discord.Embed(title="Heat Inside Ave's House", timestamp=aveheat_data_timestamp)
+        em = discord.Embed(title="Heat Inside Ave's House", timestamp=aveheat_data_timestamp)
 
-            charturl = f"{self.bot.config['homeheat']['charturl']}?t={time.time()}"
+        charturl = f"{self.bot.config['homeheat']['charturl']}?t={time.time()}"
 
-            em.set_image(url=charturl)
-            em.set_footer(text="Chart data is UTC")
+        em.set_image(url=charturl)
+        em.set_footer(text="Chart data is UTC")
+        
+        em.add_field(name="Inside", value=f"{heat_json['inside']}°C")
+        em.add_field(name="Outside", value=f"{heat_json['outside']}°C")
+        
+        await ctx.send(embed=em)
+
+
+    @commands.command(aliases=['codetime', 'programmingtime'])
+    async def wakatime(self, ctx):
+        """Shows wakatime stats of dev."""
+        current_time = datetime.datetime.utcnow()
+
+        em = discord.Embed(title="Coding Activity over Last 7 Days", timestamp=aveheat_data_timestamp)
+
+        charturl = f"{self.bot.config['wakatime']['url']}?t={time.time()}"
+        em.set_image(url=charturl)
             
-            em.add_field(name="Inside", value=f"{heat_json['inside']}°C")
-            em.add_field(name="Outside", value=f"{heat_json['outside']}°C")
-            
-            await ctx.send(embed=em)
-        except:
-            self.bot.log.error(traceback.format_exc())
+        await ctx.send(embed=em)
 
 
     @commands.command()
