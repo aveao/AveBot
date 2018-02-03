@@ -26,6 +26,7 @@ class ImageManipulation:
             await self.bot.download_file(attach['proxy_url'], filename)
             if extension != ".jpg" or extension != ".jpeg":
                 im = PIL.Image.open(filename)
+                im = im.convert("RGB")
                 new_name = filename.replace(extension, ".jpg")
                 im.save(new_name, "JPEG")
                 filename = new_name
@@ -37,6 +38,7 @@ class ImageManipulation:
             await self.bot.download_file(stuff_after, filename)
             if extension != ".jpg" or extension != ".jpeg":
                 im = PIL.Image.open(filename)
+                im = im.convert("RGB")
                 new_name = filename.replace(extension, ".jpg")
                 im.save(new_name, "JPEG")
                 filename = new_name
