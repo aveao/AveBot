@@ -53,6 +53,12 @@ class Emoji:
         return added_emoji
 
 
+    @commands.command(aliases=['avemoji', 'avemojiinvite', 'avemojisinvite', 'ainvite'])
+    async def avemojis(self, ctx):
+        """Gives an invite link to Avemojis. """
+        await ctx.send(f"{ctx.message.author.mention}: {self.bot.config["emojis"]["emojiinvite"]}")
+
+
     @commands.command(hidden=True)
     async def addemoji(self, ctx, url: str, emoji_name: str):
         author_level = await self.bot.get_permission(ctx.author.id)
