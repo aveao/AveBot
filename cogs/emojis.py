@@ -56,7 +56,7 @@ class Emoji:
     @commands.command(aliases=['avemoji', 'avemojiinvite', 'avemojisinvite', 'ainvite'])
     async def avemojis(self, ctx):
         """Gives an invite link to Avemojis. """
-        await ctx.send(f"{ctx.message.author.mention}: {self.bot.config["emojis"]["emojiinvite"]}")
+        await ctx.send(f"{ctx.message.author.mention}: {self.bot.config['emojis']['emojiinvite']}")
 
 
     @commands.command(hidden=True)
