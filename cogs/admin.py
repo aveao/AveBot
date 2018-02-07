@@ -57,15 +57,24 @@ class AdminCog:
     @commands.is_owner()
     @commands.command(hidden=True)
     async def setconfig(self, ctx, section: str, key: str, value: str):
-        self.bot.config[section][key] = value
-        await ctx.send("Successfully set value.")
+        botconfig = self.bot.config
+        if not section in botconfig:
+            botconfig[section] = {} 
+        botconfig[section][key] = value
+        await ctx.send("Successfully set value, don't forget to `ab!saveconfig`.")
 
 
     @commands.is_owner()
     @commands.command(hidden=True)
     async def getconfig(self, ctx, section: str, key: str):
-        value = self.bot.config[section][key]
-        await ctx.send("Config value for [{section}]->\"{key}\" is \"{value}\".")
+        botconfig = self.bot.config
+        if section in botconfig and key in botconfig:
+            value = botconfig[section][key]
+            await ctx.send(f"Config value for [{section}]->\"{key}\" is \"{value}\".")
+        elif section in botconfig:
+            await ctx.send(f"Section \"{section}\" does exist, but \"{key}\" doesn't.")
+        else:
+            await ctx.send(f"Section \"{section}\" does not exist.")
 
 
     @commands.is_owner()
