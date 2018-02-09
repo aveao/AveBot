@@ -20,7 +20,7 @@ class Common:
         self.bot.get_relative_timestamp = self.get_relative_timestamp
         self.bot.async_call_shell = self.async_call_shell
         self.bot.haste = self.haste
-        self.max_split_length = 3
+        self.max_split_length = int(bot.config["advanced"]["max-slice"])
 
 
     async def async_call_shell(self, shell_command: str, inc_stdout=True, inc_stderr=True):
@@ -126,7 +126,7 @@ class Common:
         except:
             self.bot.log.error(f"Error while getting {url} on aiojson: {traceback.format_exc()}")
 
-    async def slice_message(self, text, size, prefix="", suffix=""):
+    async def slice_message(self, text, size=2000, prefix="", suffix=""): # 2000 is maximum limit of discord
         if len(text) > size * self.max_split_length:
             haste_url = await self.haste(text)
             return [f"Message is too long ({len(text)} > {size * self.max_split_length} ({size} * {self.max_split_length})), go to haste: <{haste_url}>"]

@@ -61,6 +61,7 @@ class AdminCog:
         if not section in botconfig:
             botconfig[section] = {} 
         botconfig[section][key] = value
+        self.bot.config = botconfig
         await ctx.send("Successfully set value, don't forget to `ab!saveconfig`.")
 
 
@@ -124,11 +125,11 @@ class AdminCog:
 
             self.previous_eval_code = code
 
-            sliced_message = await self.bot.slice_message(repr(result), 2000, prefix="```", suffix="```")
+            sliced_message = await self.bot.slice_message(repr(result), prefix="```", suffix="```")
             for msg in sliced_message:
                 await ctx.send(msg)
         except:
-            sliced_message = await self.bot.slice_message(traceback.format_exc(), 2000, prefix="```", suffix="```")
+            sliced_message = await self.bot.slice_message(traceback.format_exc(), prefix="```", suffix="```")
             for msg in sliced_message:
                 await ctx.send(msg)
 
@@ -143,8 +144,11 @@ class AdminCog:
         shell_output = await self.bot.async_call_shell(command)
         shell_output = f"\"{command}\" output:\n\n{shell_output}"
         self.bot.log.info(shell_output)
+        sliced_message = await self.bot.slice_message(shell_output, prefix="```", suffix="```")
+        if len(sliced_message) == 1:
+            await tmp.edit(sliced_message[0])
+            return
         await tmp.delete()
-        sliced_message = await self.bot.slice_message(shell_output, 2000, prefix="```", suffix="```")
         for msg in sliced_message:
             await ctx.send(msg)
 
