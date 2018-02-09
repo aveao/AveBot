@@ -40,7 +40,7 @@ class Common:
             return stderr_str
 
         if stdout_str and stderr_str:
-            return f"stdout:\n\n{stdout_str}\n======\n\nstderr:\n\n{stderr_str}"
+            return f"stdout:\n\n{stdout_str}\n\n======\n\nstderr:\n\n{stderr_str}"
         elif stdout_str:
             return f"stdout:\n\n{stdout_str}"
         elif stderr_str:
