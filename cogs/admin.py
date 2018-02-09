@@ -140,8 +140,8 @@ class AdminCog:
         command = command.strip('`')
         tmp = await ctx.send(f'Running `{command}`...')
         self.bot.log.info(f"Running {command}")
-        shell_output = self.bot.call_shell(command)
-        shell_output = f"\"{command}\" output:\n{shell_output}"
+        shell_output = await self.bot.async_call_shell(command)
+        shell_output = f"\"{command}\" output:\n\n{shell_output}"
         self.bot.log.info(shell_output)
         await tmp.delete()
         sliced_message = await self.bot.slice_message(shell_output, 2000, prefix="```", suffix="```")

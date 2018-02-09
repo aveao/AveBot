@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 import re
+import asyncio
 import aiohttp
 import datetime
 import humanize
@@ -17,8 +18,35 @@ class Common:
         self.bot.download_file = self.download_file
         self.bot.aiogetbytes = self.aiogetbytes
         self.bot.get_relative_timestamp = self.get_relative_timestamp
+        self.bot.async_call_shell = self.async_call_shell
         self.bot.haste = self.haste
         self.max_split_length = 3
+
+
+    async def async_call_shell(self, shell_command: str, inc_stdout=True, inc_stderr=True):
+        p = await asyncio.create_subprocess_shell(str(shell_command), stdout=asyncio.subprocess.PIPE, stderr = asyncio.subprocess.PIPE)
+        # await p.wait()
+        # God I hate having to account for a fuckton of different shit
+        if not (inc_stdout or inc_stderr):
+            return "??? you set both stdout and stderr to False????"
+
+        proc_result = await p.communicate()
+        stdout_str = proc_result[0].decode('utf-8').strip()
+        stderr_str = proc_result[1].decode('utf-8').strip()
+
+        if inc_stdout and not inc_stderr:
+            return stdout_str
+        elif inc_stderr and not inc_stdout:
+            return stderr_str
+
+        if stdout_str and stderr_str:
+            return f"stdout:\n\n{stdout_str}\n======\n\nstderr:\n\n{stderr_str}"
+        elif stdout_str:
+            return f"stdout:\n\n{stdout_str}"
+        elif stderr_str:
+            return f"stderr:\n\n{stderr_str}"
+        else:
+            return "No output."
 
 
     async def download_file(self, url, local_filename):  # This function is based on https://stackoverflow.com/a/35435419/3286892 by link2110 (https://stackoverflow.com/users/5890923/link2110), modified by Ave (https://github.com/aveao), licensed CC-BY-SA 3.0
