@@ -69,7 +69,7 @@ class AdminCog:
     @commands.command(hidden=True)
     async def getconfig(self, ctx, section: str, key: str):
         botconfig = self.bot.config
-        if section in botconfig and key in botconfig:
+        if section in botconfig and key in botconfig[section]:
             value = botconfig[section][key]
             await ctx.send(f"Config value for [{section}]->\"{key}\" is \"{value}\".")
         elif section in botconfig:
