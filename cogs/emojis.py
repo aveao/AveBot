@@ -26,31 +26,79 @@ class Emoji:
         emojis = list(dict(regex_results).keys())
         return emojis
 
+    async def resize_emoji_png(self, image_bytes, no_none=False, check_size=True):
+        """Resizes a given emoji to the hardcoded max emoji dimensions of discord. 
+        
+        If no_none (default: False) is set to True, function return old image data if it fails to resize and stay under size limitations. If it is set to false, function return None.
+        
+        If check_size (default: True) is set to True, function will return None or emoji data depending on no_none if emoji is bigger than discord's maximum size, which is currently hardcoded to 256kb. If it is set to false, function will return the image no matter the size (to ensure that you never get None, even when image is smaller than discord dimensions yet too big, set no_none to True)."""
+
+        bigger_than_max = len(image_bytes) > self.max_emoji_size
+        # Prepare fail result so that we can use tertiary if in
+        # other palces and not have terrible code
+        fail_return = image_bytes if no_one else None
+
+        # Load image from bytes
+        im = PIL.Image.open(io.BytesIO(image_bytes))
+        w, h = im.size
+        
+        # Check if dimensions are smaller or equal to hardcoded max size
+        if w <= self.emoji_dim_max and h <= self.emoji_dim_max:
+            # Return fail result (image bytes or None) if image is bigger
+            # than limit, otherwise return image_bytes, as it's smaller
+            # than size and dimension limit
+            return fail_return if check_size else image_bytes
+        elif w > h:
+            # Get height to hardcoded discord max size ratio
+            # so we can we scale down height
+            ratio = w / self.emoji_dim_max
+            # Scale down height by ratio determined on prev step
+            # and turn it to int so that PIL doesn't complain
+            new_h = int(h / ratio)
+            im = im.resize((self.emoji_dim_max, new_h))
+        # If both dimensions are equal or height is bigger than width
+        # resize based on height
+        else:
+            ratio = h / self.emoji_dim_max
+            new_w = int(w / ratio)
+            im = im.resize((new_w, self.emoji_dim_max))
+
+        # Create a BytesIO storage to store image
+        emoji_bytes = io.BytesIO()
+        im.save(emoji_bytes, format='PNG')
+        emoji_bytes = emoji_bytes.getvalue()
+        
+        # If check_size and emoji size is bigger than discord limit
+        # Return fail_return (None or base byte data, based on no_none)
+        # if it is not, return resized emoji
+        if check_size and (len(emoji_bytes) > self.max_emoji_size):
+            return fail_return
+        return emoji_bytes
+
+
+    async def resize_emoji_gif(self, image_bytes):
+        """INCOMPLETE: Currently checks if a gif is smaller than max limit and returns image bytes back, and if it is not, returns None."""
+        bigger_than_max = len(image_bytes) > self.max_emoji_size
+        return None if bigger_than_max else image_bytes
+
 
     async def download_and_add_emoji(self, guild_id: int, emoji_name: str, url: str):
         emoji_guild = self.bot.get_guild(guild_id)
         emoji_bytes = await self.bot.aiogetbytes(url)
-        if len(emoji_bytes) > self.max_emoji_size:
-            im = PIL.Image.open(io.BytesIO(emoji_bytes))
-            w, h = im.size
-            if w < self.emoji_dim_max and h < self.emoji_dim_max:
-                return None
-            elif w > h:
-                ratio = w / self.emoji_dim_max
-                new_h = int(h / ratio)
-                im = im.resize((self.emoji_dim_max, new_h))
-            else:
-                ratio = h / self.emoji_dim_max
-                new_w = int(w / ratio)
-                im = im.resize((new_w, self.emoji_dim_max))
+        result_bytes = None
 
-            emoji_bytes = io.BytesIO()
-            im.save(emoji_bytes, format='PNG')
-            emoji_bytes = emoji_bytes.getvalue()
-            if len(emoji_bytes) > self.max_emoji_size:
-                return None
-        added_emoji = await emoji_guild.create_custom_emoji(name=emoji_name, image=emoji_bytes)
-        return added_emoji
+        # TODO: Find a better way to check this
+        if url[:-3].lower() == "gif":
+            result_bytes = await resize_emoji_gif(emoji_bytes)
+        else:
+            result_bytes = await resize_emoji_png(emoji_bytes)
+
+        # Check if result is None or not, returns None if it is
+        # If it is not, adds emoji and returns that
+        if result_bytes:
+            added_emoji = await emoji_guild.create_custom_emoji(name=emoji_name, image=emoji_bytes)
+            return added_emoji
+        return None
 
 
     @commands.command(aliases=['avemoji', 'avemojiinvite', 'avemojisinvite', 'ainvite'])
@@ -61,6 +109,9 @@ class Emoji:
 
     @commands.command(hidden=True)
     async def addemoji(self, ctx, url: str, emoji_name: str):
+        """Adds an emoji to avemojis. Mod only.
+        
+        Automatically resizes images down to discord limits."""
         author_level = await self.bot.get_permission(ctx.author.id)
         if author_level < 8:
             return
