@@ -47,7 +47,7 @@ class Emoji:
             # Return fail result (image bytes or None) if image is bigger
             # than limit, otherwise return image_bytes, as it's smaller
             # than size and dimension limit
-            return fail_return if check_size else image_bytes
+            return fail_return if (check_size and bigger_than_max) else image_bytes
         elif w > h:
             # Get height to hardcoded discord max size ratio
             # so we can we scale down height
