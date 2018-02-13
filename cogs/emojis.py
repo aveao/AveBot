@@ -89,9 +89,9 @@ class Emoji:
 
         # TODO: Find a better way to check this
         if url[:-3].lower() == "gif":
-            result_bytes = await resize_emoji_gif(emoji_bytes)
+            result_bytes = await self.resize_emoji_gif(emoji_bytes)
         else:
-            result_bytes = await resize_emoji_png(emoji_bytes)
+            result_bytes = await self.resize_emoji_png(emoji_bytes)
 
         # Check if result is None or not, returns None if it is
         # If it is not, adds emoji and returns that
