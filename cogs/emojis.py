@@ -13,7 +13,7 @@ class Emoji:
         self.bot.extract_emojis = self.extract_emojis
         self.bot.download_and_add_emoji = self.download_and_add_emoji
         self.emoji_guild_id = int(self.bot.config['base']['emoji-guild'])
-        self.max_jumbo = 3
+        self.max_jumbo = 5
         self.max_emoji_size = 256 * 1024
         self.emoji_dim_max = 128
 
@@ -100,6 +100,9 @@ class Emoji:
             return added_emoji
         return None
 
+    def construct_emoji_url(self, emoji_id, emoji_format):
+        return f"https://cdn.discordapp.com/emojis/{emoji_id}.{emoji_format}?v=1"
+
 
     @commands.command(aliases=['avemoji', 'avemojiinvite', 'avemojisinvite', 'ainvite'])
     async def avemojis(self, ctx):
@@ -127,7 +130,7 @@ class Emoji:
         for emoji in emojis:
             emoji_format = "gif" if emoji[1] == "a" else "png"
             emoji_name = emoji[2]
-            emoji_url = f"https://cdn.discordapp.com/emojis/{emoji[3]}.{emoji_format}?v=1"
+            emoji_url = construct_emoji_url(emoji[3], emoji_format)
 
             added_emoji = await self.download_and_add_emoji(self.emoji_guild_id, emoji_name, emoji_url)
             result_str = f"Added {str(added_emoji)}" if added_emoji else "This emoji is too big."
@@ -147,7 +150,7 @@ class Emoji:
         emoji_text = f"{ctx.message.author.mention}: "
         for emoji in emojis:
             emoji_format = "gif" if emoji[1] == "a" else "png"
-            emoji_url = f"https://cdn.discordapp.com/emojis/{emoji[3]}.{emoji_format}?v=1"
+            emoji_url = construct_emoji_url(emoji[3], emoji_format)
             emoji_text += f"\n{emoji_url}"
         await ctx.send(emoji_text)
     
