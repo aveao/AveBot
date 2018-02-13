@@ -36,7 +36,7 @@ class Emoji:
         bigger_than_max = len(image_bytes) > self.max_emoji_size
         # Prepare fail result so that we can use tertiary if in
         # other palces and not have terrible code
-        fail_return = image_bytes if no_one else None
+        fail_return = image_bytes if no_none else None
 
         # Load image from bytes
         im = PIL.Image.open(io.BytesIO(image_bytes))
