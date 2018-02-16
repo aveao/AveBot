@@ -102,6 +102,7 @@ class Emoji:
             return added_emoji
         return None
 
+
     def construct_emoji_url(self, emoji_id, emoji_format):
         return f"https://cdn.discordapp.com/emojis/{emoji_id}.{emoji_format}?v=1"
 
@@ -175,6 +176,30 @@ class Emoji:
         await announcements_channel.send(str(added_emoji))
 
 
+    @commands.command(hidden=True)
+    async def editavemoji(self, ctx, emoji_string: str, name: str):
+        """Renames an emoji, mod+ only.
+        
+        This only works if the emoji is added by avebot."""
+        
+        author_level = await self.bot.get_permission(ctx.author.id)
+        if author_level < 8:
+            return
+
+        emojis = self.extract_emojis(emoji_string, True)
+        if not emojis:
+            await ctx.send(f"{ctx.author.mention}: no emojis found in specified thingy")
+            return
+        initial_emoji_name = emojis[0][2]
+        emoji = self.bot.get_emoji(emojis[0][3])
+
+        await emoji.edit(name, reason=f"requested by {ctx.author} / {ctx.author.id}")
+        await ctx.send(f"{ctx.author.mention}: Successfully renamed - {emoji}")
+
+        announcements_channel = self.bot.get_channel(int(self.bot.config['base']['emoji-announcements-channel']))
+        await announcements_channel.send(f"Emoji `:{initial_emoji_name}:` {emoji} renamed to `:{name}:` by {ctx.author.mention} ({ctx.author})")
+
+
     @commands.is_owner()
     @commands.command(hidden=True)
     async def stealavemoji(self, ctx, *, emoji_string: str):
@@ -186,7 +211,7 @@ class Emoji:
 
             added_emoji = await self.download_and_add_emoji(self.emoji_guild_id, emoji_name, emoji_url)
             result_str = f"Added {str(added_emoji)}" if added_emoji else "This emoji is too big."
-            await ctx.send(f"{ctx.message.author.mention}: {result_str}")
+            await ctx.send(f"{ctx.author.mention}: {result_str}")
 
 
     @commands.command(aliases=['emoji', 'einfo', 'emojiinfo', 'jumbo'])
