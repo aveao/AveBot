@@ -87,8 +87,10 @@ class Emoji:
         emoji_bytes = await self.bot.aiogetbytes(url)
         result_bytes = None
 
-        # TODO: Find a better way to check this
-        if url[:-3].lower() == "gif" or url[:-7].lower() == "gif?v=1":
+        filename = await self.bot.url_get_filename(url)
+        file_ext = await self.bot.filename_get_ext(filename)
+
+        if file_ext.lower() == "gif":
             result_bytes = await self.resize_emoji_gif(emoji_bytes)
         else:
             result_bytes = await self.resize_emoji_png(emoji_bytes)
@@ -111,17 +113,28 @@ class Emoji:
 
 
     @commands.command(hidden=True)
-    async def addavemoji(self, ctx, emoji_name: str, url: str = ""):
+    async def addavemoji(self, ctx, url: str = "", emoji_name: str = ""):
         """Adds an emoji to avemojis. Mod only.
         
         Automatically resizes images down to discord limits.
 
-        You can use attachments, but only first image will be used."""
+        You can use attachments, but only first image will be used.
+
+        If you don't specify emoji name, then filename will be used."""
 
         # Permission checks
         author_level = await self.bot.get_permission(ctx.author.id)
         if author_level < 8:
             return
+
+        # If there's no emoji name, then pick the filename from url, or from the attachment.
+        if not emoji_name:
+            url_filename = ""
+            if url:
+                url_filename = await self.bot.url_get_filename(url)
+            else:
+                url_filename = ctx.message.attachments[0].filename
+            emoji_name = await self.bot.filename_get_woext(url_filename)
 
         # If there's no URL, then pick the first attachment and use its url.
         if not url and ctx.message.attachments:
