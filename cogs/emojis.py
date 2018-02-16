@@ -177,6 +177,27 @@ class Emoji:
 
 
     @commands.command(hidden=True)
+    async def deleteavemoji(self, ctx, emoji_string: str)
+        """Deletes one or more avemoji(s), mod+ only"""
+
+        author_level = await self.bot.get_permission(ctx.author.id)
+        if author_level < 8:
+            return
+
+        emojis = self.extract_emojis(emoji_string, True)
+        for i_emoji in emojis:
+            emoji_name = i_emoji[2]
+            emoji_id = int(i_emoji[3])
+            the_emoji = self.bot.get_emoji(emoji_id)
+
+            await the_emoji.delete(reason=f"delete requested by {ctx.author} / {ctx.author.id}")
+            await ctx.send(f"{ctx.author.mention}: Emoji `:{emoji_name}:` deleted.")
+            
+            announcements_channel = self.bot.get_channel(int(self.bot.config['base']['emoji-announcements-channel']))
+            await announcements_channel.send(f"Emoji deletion: `:{emoji_name}:` got removed by {ctx.author.mention} ({ctx.author})")
+
+
+    @commands.command(hidden=True)
     async def editavemoji(self, ctx, emoji_string: str, new_name: str):
         """Renames an emoji, mod+ only.
         
