@@ -45,7 +45,7 @@ def get_prefix(bot, message):
 
     return commands.when_mentioned_or(*prefixes)(bot, message)
 
-initial_extensions = ['cogs.common', 'cogs.permissionmanage', 'cogs.basic', 'cogs.admin', 'cogs.nsfw', 'cogs.technical',
+initial_extensions = ['cogs.common', 'cogs.permissionmanage', 'cogs.emergency', 'cogs.basic', 'cogs.admin', 'cogs.nsfw', 'cogs.technical',
 'cogs.finance', 'cogs.imagemanip', 'cogs.fun', 'cogs.emojis', 'cogs.linguistics', 'cogs.stockstream', 'cogs.jose']
 
 bot = commands.Bot(command_prefix=get_prefix, description=config['base']['description'], pm_help=None)
