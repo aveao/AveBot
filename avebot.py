@@ -134,7 +134,7 @@ async def on_guild_join(guild):
     em.add_field(name="Created at", value=guild.created_at)
     em.set_thumbnail(url=guild.icon_url)
 
-    await bot.main_channel.send(embed=em, file=discord.File(log_file_name))
+    await bot.main_channel.send(embed=em)
     await guild.owner.send("Hello and welcome to AveBot!\n"
         "If you don't know why you're getting this message, it's because someone added AveBot to your server\n"
         "Due to Discord API ToS, I am required to inform you that **I log command usages and errors**.\n"
