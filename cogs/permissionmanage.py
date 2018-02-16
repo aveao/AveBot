@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 import traceback
+import psycopg2
 
 class PermManage:
     def __init__(self, bot):
@@ -8,10 +9,35 @@ class PermManage:
         self.bot.get_permission = self.get_permission
         self.bot.set_permission = self.set_permission
 
+
+    async def dummy_pgsql(self): # Based on https://stackoverflow.com/a/18708605/3286892 by Jaymon (https://stackoverflow.com/users/5006/jaymon)
+        try:
+            cur = self.bot.postgres_connection.cursor()
+            cur.execute('SELECT 1')
+            cur.close()
+        except psycopg2.OperationalError:
+            pass
+
+
+    async def ensure_pgsql(self): # Based on https://stackoverflow.com/a/18708605/3286892 by Jaymon (https://stackoverflow.com/users/5006/jaymon)
+        # TODO: improve code repetition here
+        # I'm doing this because I want to reduce db calls
+        # as much as possible if they're not needed.
+        await reconnect_pgsql(True)
+        await dummy_pgsql()
+        await reconnect_pgsql(True)
+
+
+    async def reconnect_pgsql(self, only_if_closed=False):
+        if (only_if_closed and (self.bot.postgres_connection.closed != 0)) or not only_if_closed:
+            self.bot.postgres_connection = psycopg2.connect(self.bot.config['base']['postgres-connection-string'])
+
+
     async def get_permission(self, id):
         if id == self.bot.bot_info.owner.id:
             return 99  # Bot owner's level is locked to 99
         try:
+            await ensure_pgsql()
             perm_sql = f"SELECT permlevel FROM permissions WHERE discord_id = {id};"
             cursor = self.bot.postgres_connection.cursor()
             cursor.execute(perm_sql)
@@ -27,6 +53,7 @@ class PermManage:
     async def set_permission(self, id, permlevel):
         cursor = self.bot.postgres_connection.cursor()
         try:
+            await ensure_pgsql()
             cursor.execute(f"DELETE FROM permissions WHERE discord_id = {id}")
             if permlevel != 1:  # Just remove regular users from database 
                 cursor.execute("INSERT INTO permissions (discord_id, permlevel) VALUES (%s, %s)",
