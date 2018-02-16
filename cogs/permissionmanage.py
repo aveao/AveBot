@@ -23,9 +23,9 @@ class PermManage:
         # TODO: improve code repetition here
         # I'm doing this because I want to reduce db calls
         # as much as possible if they're not needed.
-        await reconnect_pgsql(True)
-        await dummy_pgsql()
-        await reconnect_pgsql(True)
+        await self.reconnect_pgsql(True)
+        await self.dummy_pgsql()
+        await self.reconnect_pgsql(True)
 
 
     async def reconnect_pgsql(self, only_if_closed=False):
@@ -37,7 +37,7 @@ class PermManage:
         if id == self.bot.bot_info.owner.id:
             return 99  # Bot owner's level is locked to 99
         try:
-            await ensure_pgsql()
+            await self.ensure_pgsql()
             perm_sql = f"SELECT permlevel FROM permissions WHERE discord_id = {id};"
             cursor = self.bot.postgres_connection.cursor()
             cursor.execute(perm_sql)
@@ -53,7 +53,7 @@ class PermManage:
     async def set_permission(self, id, permlevel):
         cursor = self.bot.postgres_connection.cursor()
         try:
-            await ensure_pgsql()
+            await self.ensure_pgsql()
             cursor.execute(f"DELETE FROM permissions WHERE discord_id = {id}")
             if permlevel != 1:  # Just remove regular users from database 
                 cursor.execute("INSERT INTO permissions (discord_id, permlevel) VALUES (%s, %s)",
