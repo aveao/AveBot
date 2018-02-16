@@ -6,6 +6,8 @@ import aiohttp
 import datetime
 import humanize
 import traceback
+from urllib.parse import urlparse
+import os
 
 class Common:
     def __init__(self, bot):
@@ -20,6 +22,9 @@ class Common:
         self.bot.get_relative_timestamp = self.get_relative_timestamp
         self.bot.async_call_shell = self.async_call_shell
         self.bot.haste = self.haste
+        self.bot.filename_get_woext = self.filename_get_woext
+        self.bot.url_get_filename = self.url_get_filename
+        self.bot.filename_get_ext = self.filename_get_ext
         self.max_split_length = int(bot.config["advanced"]["max-slice"])
 
 
@@ -47,6 +52,31 @@ class Common:
             return f"stderr:\n\n{stderr_str}"
         else:
             return "No output."
+
+
+    async def url_get_filename(self, url): # based on https://stackoverflow.com/a/18727481/3286892 by Ofir Israel (https://stackoverflow.com/users/2713087/ofir-israel)
+        a = urlparse(url)
+        return os.path.basename(a.path)
+
+
+    async def filename_get_ext(self, filename):
+        # if no ext, return empty
+        modded_filename = ""
+        if "?" in filename:
+            modded_filename = filename.split('?')[0]
+
+        if "." in modded_filename:
+            modded_filename = modded_filename.split('.')[-1]
+
+        return modded_filename
+
+
+    async def filename_get_woext(self, filename):
+        if "." in filename:
+            filename = filename.split('.')[0]
+
+        return filename
+
 
 
     async def download_file(self, url, local_filename):  # This function is based on https://stackoverflow.com/a/35435419/3286892 by link2110 (https://stackoverflow.com/users/5890923/link2110), modified by Ave (https://github.com/aveao), licensed CC-BY-SA 3.0
