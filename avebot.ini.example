@@ -6,6 +6,7 @@ postgres-connection-string = dbname=avebot user=avebot password=something
 main-channel = main channel id goes here
 support-channel = support channel id goes here
 emoji-guild = emoji guild id goes here
+emoji-announcements-channel = emoji announcements channel id goes here
 
 [advanced]
 unfurl-depth = 5

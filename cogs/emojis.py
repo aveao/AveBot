@@ -116,7 +116,7 @@ class Emoji:
         
         Automatically resizes images down to discord limits.
 
-        You can use embeds, but only first image will be used."""
+        You can use attachments, but only first image will be used."""
 
         # Permission checks
         author_level = await self.bot.get_permission(ctx.author.id)
@@ -130,6 +130,10 @@ class Emoji:
         added_emoji = await self.download_and_add_emoji(self.emoji_guild_id, emoji_name, url)
         result_str = f"Added {str(added_emoji)}" if added_emoji else "This emoji is too big or there aren't emoji slots left."
         await ctx.send(f"{ctx.message.author.mention}: {result_str}")
+
+        announcements_channel = self.bot.get_channel(int(self.bot.config['base']['emoji-announcements-channel']))
+        await announcements_channel.send(f"New emoji! {str(added_emoji)}, added by {ctx.author.mention} ({ctx.author})".)
+        await announcements_channel.send(str(added_emoji))
 
 
     @commands.is_owner()
