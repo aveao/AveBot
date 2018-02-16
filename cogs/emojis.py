@@ -191,9 +191,10 @@ class Emoji:
             await ctx.send(f"{ctx.author.mention}: no emojis found in specified thingy")
             return
         initial_emoji_name = emojis[0][2]
-        emoji = self.bot.get_emoji(emojis[0][3])
+        emoji_id = int(emojis[0][3])
+        emoji = self.bot.get_emoji(emoji_id)
 
-        self.bot.log.info(f"rename on {emoji} - {emojis[0][3]}")
+        self.bot.log.info(f"rename on {emoji} - {emoji_id}")
 
         await emoji.edit(name, reason=f"requested by {ctx.author} / {ctx.author.id}")
         await ctx.send(f"{ctx.author.mention}: Successfully renamed - {emoji}")
