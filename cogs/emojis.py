@@ -88,7 +88,7 @@ class Emoji:
         result_bytes = None
 
         # TODO: Find a better way to check this
-        if url[:-3].lower() == "gif":
+        if url[:-3].lower() == "gif" or url[:-7].lower() == "gif?v=1":
             result_bytes = await self.resize_emoji_gif(emoji_bytes)
         else:
             result_bytes = await self.resize_emoji_png(emoji_bytes)
@@ -130,7 +130,7 @@ class Emoji:
         for emoji in emojis:
             emoji_format = "gif" if emoji[1] == "a" else "png"
             emoji_name = emoji[2]
-            emoji_url = construct_emoji_url(emoji[3], emoji_format)
+            emoji_url = self.construct_emoji_url(emoji[3], emoji_format)
 
             added_emoji = await self.download_and_add_emoji(self.emoji_guild_id, emoji_name, emoji_url)
             result_str = f"Added {str(added_emoji)}" if added_emoji else "This emoji is too big."
@@ -150,7 +150,7 @@ class Emoji:
         emoji_text = f"{ctx.message.author.mention}: "
         for emoji in emojis:
             emoji_format = "gif" if emoji[1] == "a" else "png"
-            emoji_url = construct_emoji_url(emoji[3], emoji_format)
+            emoji_url = self.construct_emoji_url(emoji[3], emoji_format)
             emoji_text += f"\n{emoji_url}"
         await ctx.send(emoji_text)
     
