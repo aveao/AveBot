@@ -193,6 +193,8 @@ class Emoji:
         initial_emoji_name = emojis[0][2]
         emoji = self.bot.get_emoji(emojis[0][3])
 
+        self.bot.log.info(f"rename on {emoji} - {emojis[0][3]}")
+
         await emoji.edit(name, reason=f"requested by {ctx.author} / {ctx.author.id}")
         await ctx.send(f"{ctx.author.mention}: Successfully renamed - {emoji}")
 
