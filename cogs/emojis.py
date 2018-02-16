@@ -177,7 +177,7 @@ class Emoji:
 
 
     @commands.command(hidden=True)
-    async def deleteavemoji(self, ctx, emoji_string: str)
+    async def deleteavemoji(self, ctx, emoji_string: str):
         """Deletes one or more avemoji(s), mod+ only"""
 
         author_level = await self.bot.get_permission(ctx.author.id)
