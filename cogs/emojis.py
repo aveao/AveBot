@@ -192,15 +192,15 @@ class Emoji:
             return
         initial_emoji_name = emojis[0][2]
         emoji_id = int(emojis[0][3])
-        emoji = await self.bot.get_emoji(emoji_id)
+        the_emoji = self.bot.get_emoji(emoji_id)
 
-        self.bot.log.info(f"rename on {emoji} - {emoji_id}")
+        self.bot.log.info(f"rename on {the_emoji} - {emoji_id}")
 
-        await emoji.edit(name, reason=f"requested by {ctx.author} / {ctx.author.id}")
+        await the_emoji.edit(name, reason=f"requested by {ctx.author} / {ctx.author.id}")
         await ctx.send(f"{ctx.author.mention}: Successfully renamed - {emoji}")
 
         announcements_channel = self.bot.get_channel(int(self.bot.config['base']['emoji-announcements-channel']))
-        await announcements_channel.send(f"Emoji `:{initial_emoji_name}:` {emoji} renamed to `:{name}:` by {ctx.author.mention} ({ctx.author})")
+        await announcements_channel.send(f"Emoji `:{initial_emoji_name}:` {the_emoji} renamed to `:{name}:` by {ctx.author.mention} ({ctx.author})")
 
 
     @commands.is_owner()
