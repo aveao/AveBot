@@ -196,7 +196,7 @@ class Emoji:
 
         self.bot.log.info(f"rename on {the_emoji} - {emoji_id}")
 
-        await the_emoji.edit(new_name, reason=f"requested by {ctx.author} / {ctx.author.id}")
+        await the_emoji.edit(name=new_name, reason=f"rename requested by {ctx.author} / {ctx.author.id}")
         await ctx.send(f"{ctx.author.mention}: Successfully renamed - {emoji}")
 
         announcements_channel = self.bot.get_channel(int(self.bot.config['base']['emoji-announcements-channel']))
