@@ -132,7 +132,7 @@ class Emoji:
         await ctx.send(f"{ctx.message.author.mention}: {result_str}")
 
         announcements_channel = self.bot.get_channel(int(self.bot.config['base']['emoji-announcements-channel']))
-        await announcements_channel.send(f"New emoji! {str(added_emoji)}, added by {ctx.author.mention} ({ctx.author})".)
+        await announcements_channel.send(f"New emoji! {str(added_emoji)}, added by {ctx.author.mention} ({ctx.author}).")
         await announcements_channel.send(str(added_emoji))
 
 
