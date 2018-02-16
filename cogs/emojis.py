@@ -177,7 +177,7 @@ class Emoji:
 
 
     @commands.command(hidden=True)
-    async def editavemoji(self, ctx, emoji_string: str, name: str):
+    async def editavemoji(self, ctx, emoji_string: str, new_name: str):
         """Renames an emoji, mod+ only.
         
         This only works if the emoji is added by avebot."""
@@ -196,11 +196,11 @@ class Emoji:
 
         self.bot.log.info(f"rename on {the_emoji} - {emoji_id}")
 
-        await the_emoji.edit(name, reason=f"requested by {ctx.author} / {ctx.author.id}")
+        await the_emoji.edit(new_name, reason=f"requested by {ctx.author} / {ctx.author.id}")
         await ctx.send(f"{ctx.author.mention}: Successfully renamed - {emoji}")
 
         announcements_channel = self.bot.get_channel(int(self.bot.config['base']['emoji-announcements-channel']))
-        await announcements_channel.send(f"Emoji `:{initial_emoji_name}:` {the_emoji} renamed to `:{name}:` by {ctx.author.mention} ({ctx.author})")
+        await announcements_channel.send(f"Emoji `:{initial_emoji_name}:` {the_emoji} renamed to `:{new_name}:` by {ctx.author.mention} ({ctx.author})")
 
 
     @commands.is_owner()
