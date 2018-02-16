@@ -111,7 +111,7 @@ class Emoji:
 
 
     @commands.command(hidden=True)
-    async def addemoji(self, ctx, url: str, emoji_name: str):
+    async def addavemoji(self, ctx, url: str, emoji_name: str):
         """Adds an emoji to avemojis. Mod only.
         
         Automatically resizes images down to discord limits."""
@@ -124,8 +124,8 @@ class Emoji:
 
 
     @commands.is_owner()
-    @commands.command(hidden=True, aliases=['stealmoji'])
-    async def stealemoji(self, ctx, *, emoji_string: str):
+    @commands.command(hidden=True)
+    async def stealavemoji(self, ctx, *, emoji_string: str):
         emojis = self.extract_emojis(emoji_string, True)
         for emoji in emojis:
             emoji_format = "gif" if emoji[1] == "a" else "png"
