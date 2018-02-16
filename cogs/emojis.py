@@ -111,15 +111,24 @@ class Emoji:
 
 
     @commands.command(hidden=True)
-    async def addavemoji(self, ctx, url: str, emoji_name: str):
+    async def addavemoji(self, ctx, emoji_name: str, url: str = ""):
         """Adds an emoji to avemojis. Mod only.
         
-        Automatically resizes images down to discord limits."""
+        Automatically resizes images down to discord limits.
+
+        You can use embeds, but only first image will be used."""
+
+        # Permission checks
         author_level = await self.bot.get_permission(ctx.author.id)
         if author_level < 8:
             return
+
+        # If there's no URL, then pick the first attachment and use its url.
+        if not url and ctx.message.attachments:
+            url = ctx.message.attachments[0].url
+
         added_emoji = await self.download_and_add_emoji(self.emoji_guild_id, emoji_name, url)
-        result_str = f"Added {str(added_emoji)}" if added_emoji else "This emoji is too big."
+        result_str = f"Added {str(added_emoji)}" if added_emoji else "This emoji is too big or there aren't emoji slots left."
         await ctx.send(f"{ctx.message.author.mention}: {result_str}")
 
 
