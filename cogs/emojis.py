@@ -113,7 +113,7 @@ class Emoji:
 
 
     @commands.command(hidden=True)
-    async def addavemoji(self, ctx, url: str = "", emoji_name: str = ""):
+    async def addavemoji(self, ctx, emoji_name: str = "", url: str = ""):
         """Adds an emoji to avemojis. Mod only.
         
         Automatically resizes images down to discord limits.
