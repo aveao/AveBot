@@ -146,9 +146,7 @@ class AdminCog:
         self.bot.log.info(shell_output)
         sliced_message = await self.bot.slice_message(shell_output, prefix="```", suffix="```")
         if len(sliced_message) == 1:
-            first_part = sliced_message[0]
-            self.bot.log.info(f"fucking hell {first_part}")
-            await tmp.edit(first_part)
+            await tmp.edit(content=sliced_message[0])
             return
         await tmp.delete()
         for msg in sliced_message:
