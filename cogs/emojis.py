@@ -131,7 +131,7 @@ class Emoji:
                 messages.append(current_message)
                 current_message = text_to_add
             else:
-                current_message = text_to_add + "\n"
+                current_message += text_to_add + "\n"
         messages.append(current_message)
 
         for message in messages:
