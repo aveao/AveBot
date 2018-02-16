@@ -192,7 +192,7 @@ class Emoji:
             return
         initial_emoji_name = emojis[0][2]
         emoji_id = int(emojis[0][3])
-        emoji = self.bot.get_emoji(emoji_id)
+        emoji = await self.bot.get_emoji(emoji_id)
 
         self.bot.log.info(f"rename on {emoji} - {emoji_id}")
 
