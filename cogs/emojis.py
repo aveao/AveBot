@@ -113,6 +113,32 @@ class Emoji:
 
 
     @commands.command(hidden=True)
+    async def emojilist(self, ctx):
+        """Gives out the emoji list for the current server. Priv or up only."""
+
+        # Permission checks
+        author_level = await self.bot.get_permission(ctx.author.id)
+        if author_level < 2:
+            return
+
+        messages = []
+        current_message = ""
+        for emoji in ctx.guild.emojis:
+            text_to_add = f"{str(emoji)} `:{emoji.name}:`"
+
+            # Try to split messages as cleanly as possible. One extra character for \n.
+            if (len(text_to_add) + len(current_message) + 1) > 2000:
+                messages.append(current_message)
+                current_message = text_to_add
+            else:
+                current_message = text_to_add + "\n"
+        messages.append(current_message)
+
+        for message in messages:
+            await ctx.send(message)
+
+
+    @commands.command(hidden=True)
     async def addavemoji(self, ctx, emoji_name: str = "", url: str = ""):
         """Adds an emoji to avemojis. Mod only.
         
