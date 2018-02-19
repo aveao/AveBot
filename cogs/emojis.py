@@ -83,8 +83,8 @@ class Emoji:
     async def url_get_extension(self, url, include_dot=False):
         filename = await self.bot.url_get_filename(url)
         file_ext = await self.bot.filename_get_ext(filename)
-        with_dot = "." + file_ext if file_ext else file_ext
-        return file_ext if include_dot else with_dot
+        with_dot = ("." + file_ext) if file_ext else file_ext
+        return with_dot if include_dot else file_ext
 
     async def download_and_resize_emoji(self, url):
         emoji_bytes = await self.bot.aiogetbytes(url)
