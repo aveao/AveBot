@@ -27,7 +27,7 @@ class Emoji:
         return emojis
 
     async def resize_emoji_png(self, image_bytes, no_none=False, check_size=True):
-        """Resizes a given emoji to the hardcoded max emoji dimensions of discord. 
+        """Resizes a given emoji to the hardcoded max emoji dimensions of discord.
 
         If no_none (default: False) is set to True, function return old image data if it fails to resize and stay under size limitations. If it is set to false, function return None.
 
@@ -80,8 +80,7 @@ class Emoji:
         bigger_than_max = len(image_bytes) > self.max_emoji_size
         return None if bigger_than_max else image_bytes
 
-    async def download_and_add_emoji(self, guild_id: int, emoji_name: str, url: str):
-        emoji_guild = self.bot.get_guild(guild_id)
+    async def download_and_resize_emoji(self, url):
         emoji_bytes = await self.bot.aiogetbytes(url)
         result_bytes = None
 
@@ -92,6 +91,11 @@ class Emoji:
             result_bytes = await self.resize_emoji_gif(emoji_bytes)
         else:
             result_bytes = await self.resize_emoji_png(emoji_bytes)
+        return result_bytes
+
+    async def download_and_add_emoji(self, guild_id: int, emoji_name: str, url: str):
+        emoji_guild = self.bot.get_guild(guild_id)
+        result_bytes = await self.download_and_resize_emoji(url)
 
         # Check if result is None or not, returns None if it is
         # If it is not, adds emoji and returns that
@@ -103,6 +107,28 @@ class Emoji:
 
     def construct_emoji_url(self, emoji_id, emoji_format):
         return f"https://cdn.discordapp.com/emojis/{emoji_id}.{emoji_format}?v=1"
+
+    @commands.command(aliases=['fuckdiscordemojirequirements', 'fuckdiscord'])
+    async def resizeemoji(self, ctx, url: str = ""):
+        """Resizes an emoji to fit in discord limits.
+
+        This command is intended to help with adding emojis.
+
+        If no URL is supplied, then the first attachment will be used."""
+        if not url and not ctx.message.attachments:
+            await ctx.send(f"{ctx.author.mention}: No url or attachment supplied")
+            return
+        elif not url and ctx.message.attachments:
+            url = ctx.message.attachments[0].url
+
+        result_emoji = await self.download_and_resize_emoji(url)
+
+        if not result_emoji:
+            await ctx.send(f"{ctx.author.mention}: emoji resize result was over 256kb, "\
+                            "please use a proper tool to resize and reduce size of image.")
+            return
+        await ctx.send(f"{ctx.author.mention}: here you go!\nSize is {len(result_emoji)}b.",
+                       file=discord.File(io.BytesIO(result_emoji)))
 
     @commands.command(aliases=['avemoji', 'avemojiinvite', 'avemojisinvite', 'ainvite'])
     async def avemojis(self, ctx):
@@ -163,12 +189,14 @@ class Emoji:
             url = ctx.message.attachments[0].url
 
         added_emoji = await self.download_and_add_emoji(self.emoji_guild_id, emoji_name, url)
-        result_str = f"Added {str(added_emoji)}" if added_emoji else "This emoji is too big or there aren't emoji slots left."
+        result_str = f"Added {str(added_emoji)}" if added_emoji else "This emoji is too big or "\
+                                                                     "there aren't emoji slots left"
         await ctx.send(f"{ctx.message.author.mention}: {result_str}")
 
         announcements_channel = self.bot.get_channel(
             int(self.bot.config['base']['emoji-announcements-channel']))
-        await announcements_channel.send(f"New emoji! {str(added_emoji)}, added by {ctx.author.mention} ({ctx.author}).")
+        await announcements_channel.send(f"New emoji! {str(added_emoji)}, added by "\
+                                         f"{ctx.author.mention} ({ctx.author}).")
         await announcements_channel.send(str(added_emoji))
 
     @commands.command(hidden=True)
@@ -190,7 +218,8 @@ class Emoji:
 
             announcements_channel = self.bot.get_channel(
                 int(self.bot.config['base']['emoji-announcements-channel']))
-            await announcements_channel.send(f"Emoji deletion: `:{emoji_name}:` got removed by {ctx.author.mention} ({ctx.author})")
+            await announcements_channel.send(f"Emoji deletion: `:{emoji_name}:` got removed "\
+                                             f"by {ctx.author.mention} ({ctx.author})")
 
     @commands.command(hidden=True)
     async def editavemoji(self, ctx, emoji_string: str, new_name: str):
@@ -212,12 +241,15 @@ class Emoji:
 
         self.bot.log.info(f"rename on {the_emoji} - {emoji_id}")
 
-        await the_emoji.edit(name=new_name, reason=f"rename requested by {ctx.author} / {ctx.author.id}")
+        await the_emoji.edit(name=new_name,
+                             reason=f"rename requested by {ctx.author} / {ctx.author.id}")
         await ctx.send(f"{ctx.author.mention}: Successfully renamed - {the_emoji}")
 
         announcements_channel = self.bot.get_channel(
             int(self.bot.config['base']['emoji-announcements-channel']))
-        await announcements_channel.send(f"Emoji `:{initial_emoji_name}:` {the_emoji} renamed to `:{new_name}:` by {ctx.author.mention} ({ctx.author})")
+        await announcements_channel.send(
+            f"Emoji `:{initial_emoji_name}:` {the_emoji} renamed to `:{new_name}:` by "\
+            f"{ctx.author.mention} ({ctx.author})")
 
     @commands.is_owner()
     @commands.command(hidden=True)
@@ -228,7 +260,10 @@ class Emoji:
             emoji_name = emoji[2]
             emoji_url = self.construct_emoji_url(emoji[3], emoji_format)
 
-            added_emoji = await self.download_and_add_emoji(self.emoji_guild_id, emoji_name, emoji_url)
+            added_emoji = await self.download_and_add_emoji(
+                self.emoji_guild_id,
+                emoji_name,
+                emoji_url)
             result_str = f"Added {str(added_emoji)}" if added_emoji else "This emoji is too big."
             await ctx.send(f"{ctx.author.mention}: {result_str}")
 
@@ -237,9 +272,10 @@ class Emoji:
         """Jumboifies an emoji."""
         emojis = self.extract_emojis(emoji_string, True)
         if len(emojis) > self.max_jumbo:
-            await ctx.send(f"{ctx.message.author.mention}: that's a little too many emojis. Max is {self.max_jumbo}.")
+            await ctx.send(f"{ctx.message.author.mention}: that's a little too many emojis. "\
+                           f"Max is {self.max_jumbo}.")
             return
-        elif len(emojis) == 0:
+        elif not emojis:
             await ctx.send(f"{ctx.message.author.mention}: you didn't send any emojis.")
             return
         emoji_text = f"{ctx.message.author.mention}: "
