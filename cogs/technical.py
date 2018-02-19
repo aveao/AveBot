@@ -100,7 +100,7 @@ class Technical:
             return
         mention = ctx.message.author.mention
         url_filename = self.bot.url_get_filename(link)
-        filename = ("files/" + url_filename) if filename == None else f"files/{filename}"
+        filename = "files/" + (filename if filename else url_filename)
         await self.bot.download_file(link, filename)
         file_size = Path(filename).stat().st_size
         if file_size < 1024 * 1024 * 8:  # Limit of discord is 8MiB
