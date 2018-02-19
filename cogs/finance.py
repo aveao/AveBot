@@ -43,6 +43,7 @@ class Finance:
 
 
     def format_currency(self, amount, locale_to_use: str = "en_US.UTF-8"):
+        """Formats a currency for the given locale (default: en_US.UTF-8)"""
         try:
             locale.setlocale(locale.LC_ALL, locale_to_use)
             amount = Decimal(amount)
@@ -60,8 +61,8 @@ class Finance:
         symbols_results = symbols["results"][0]
 
         current_price = (symbols_results["last_trade_price"] if
-            "last_extended_hours_trade_price" in symbols_results
-            else symbols_results["last_extended_hours_trade_price"])
+                         "last_extended_hours_trade_price" in symbols_results
+                         else symbols_results["last_extended_hours_trade_price"])
 
         diff = str(Decimal(current_price) -
                    Decimal(symbols_results["previous_close"]))
