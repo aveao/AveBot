@@ -77,7 +77,7 @@ class Common:
 
     def hex_to_int(self, color_hex: str):
         """Turns a given hex color into an integer"""
-        return int("0x" + color_hex[1:], 16)
+        return int("0x" + color_hex.strip('#'), 16)
 
     # This function is based on https://stackoverflow.com/a/35435419/3286892 by link2110 (https://stackoverflow.com/users/5890923/link2110), modified by Ave (https://github.com/aveao), licensed CC-BY-SA 3.0
     async def download_file(self, url, local_filename):

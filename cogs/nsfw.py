@@ -2,6 +2,8 @@ import re
 import math
 import discord
 from discord.ext import commands
+import datetime
+import secrets
 
 
 class NSFW:
@@ -30,6 +32,30 @@ class NSFW:
                                    " as it has `no_nsfw` on channel topic.")
                 return False
         return True
+
+    @commands.command()
+    async def gelbooru(self, ctx, *, tags: str = ""):
+        """Returns a random image from gelbooru from given tags"""
+        nsfw_result = await self.nsfw_check(ctx)
+        if not nsfw_result:
+            return
+        api_url = "https://gelbooru.com/index.php?page=dapi&s=post&q=index&limit=100&json=1"
+        api_url = f"{api_url}&tags={tags}" if tags else api_url
+        gel_json = await self.bot.aiojson(api_url)
+
+        chosen_post = secrets.choice(gel_json)
+        gel_desc = f"Tags: `{chosen_post['tags']}`\n"\
+                   f"Owner: `{chosen_post['owner']}`\n"\
+                   f"Score: `{chosen_post['score']}`"
+        gel_url = f"https://gelbooru.com/index.php?page=post&s=view&id={chosen_post['id']}"
+        embed = discord.Embed(title="Gelbooru results",
+                              color=self.bot.hex_to_int(chosen_post["hash"][0:6]),
+                              url=gel_url,
+                              description=gel_desc,
+                              timestamp=datetime.datetime.utcfromtimestamp(chosen_post["change"]))
+
+        embed.set_image(url=chosen_post["file_url"])
+        await ctx.send(embed=embed)
 
     @commands.command(aliases=['fucksafemode'])
     async def tumblrgrab(self, ctx, *, link: str):
