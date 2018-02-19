@@ -60,7 +60,7 @@ class NSFW:
             for image in tumblr_json_images:
                 split_count += 1
                 tumblr_text += "\n" + image["original_size"]["url"]
-                if split_count % 5:
+                if not split_count % 5:
                     await ctx.send(tumblr_text
                                    + f"\n({split_count / 5}/{total_pages})")
                     tumblr_text = ""
