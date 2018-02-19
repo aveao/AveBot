@@ -26,6 +26,7 @@ class Common:
         self.bot.filename_get_woext = self.filename_get_woext
         self.bot.url_get_filename = self.url_get_filename
         self.bot.filename_get_ext = self.filename_get_ext
+        self.bot.hex_to_int = self.hex_to_int
         self.max_split_length = int(bot.config["advanced"]["max-slice"])
 
     async def async_call_shell(self, shell_command: str, inc_stdout=True, inc_stderr=True):
@@ -73,6 +74,10 @@ class Common:
             filename = filename.split('.')[0]
 
         return filename
+
+    def hex_to_int(self, color_hex: str):
+        """Turns a given hex color into an integer"""
+        return int("0x" + color_hex[1:], 16)
 
     # This function is based on https://stackoverflow.com/a/35435419/3286892 by link2110 (https://stackoverflow.com/users/5890923/link2110), modified by Ave (https://github.com/aveao), licensed CC-BY-SA 3.0
     async def download_file(self, url, local_filename):
