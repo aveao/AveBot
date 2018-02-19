@@ -15,7 +15,7 @@ class Finance:
         self.legal_notice = "Data is not guaranteed to be accurate, "\
                             "I am not responsible for your losses."
 
-    def get_change_color(self, change_percentage, color_range: int = 10):
+    def get_change_color(self, change_percentage, color_range: int = 5):
         """Gets a change color between red-white-green for the given change percentage"""
         change_percentage = str(change_percentage).split('.')[0]  # before the dot
         red = colour.Color("#D50000")
@@ -32,11 +32,11 @@ class Finance:
             int_perc = color_range - int_perc
             int_perc = int_perc if int_perc > 0 else 0 # limit
             return self.bot.hex_to_int(colors[int_perc].hex_l)
-        else:
-            int_perc -= 1
-            colors = list(white.range_to(green, color_range))
-            int_perc = int_perc if int_perc < (color_range - 1) else (color_range - 1) # limit
-            return self.bot.hex_to_int(colors[int_perc].hex_l)
+        
+        int_perc -= 1
+        colors = list(white.range_to(green, color_range))
+        int_perc = int_perc if int_perc < (color_range - 1) else (color_range - 1) # limit
+        return self.bot.hex_to_int(colors[int_perc].hex_l)
 
     def format_currency(self, amount, locale_to_use: str = "en_US.UTF-8"):
         """Formats a currency for the given locale (default: en_US.UTF-8)"""
@@ -63,7 +63,7 @@ class Finance:
         diff = str(Decimal(current_price) -
                    Decimal(symbols_results["previous_close"]))
         percentage = (100 * Decimal(diff) / Decimal(current_price))
-        return self.get_change_color(percentage, 10)
+        return self.get_change_color(percentage, 5)
 
     async def get_crypto_name(self, ticker: str, include_ticker=True):
         """Fetches the name of the given cryptocurrency from Cryptopia API"""
@@ -209,7 +209,7 @@ class Finance:
                 100 * Decimal(btc_diff) / Decimal(btc_currentprice_rate))
             btc_change_percentage_string = f"{str(btc_change_percentage)[:6]}%"
 
-            btc_change_color = self.get_change_color(btc_change_percentage, 20)
+            btc_change_color = self.get_change_color(btc_change_percentage, 10)
 
             btc_data_timestamp = datetime.datetime.utcfromtimestamp(
                 int(btc_bitstamp_json["timestamp"]))
@@ -256,7 +256,7 @@ class Finance:
         raw_data = api_json["RAW"][ticker]["USD"]
         stylized_data = api_json["DISPLAY"][ticker]["USD"]
 
-        change_color = self.get_change_color(raw_data["CHANGEPCTDAY"], 20)
+        change_color = self.get_change_color(raw_data["CHANGEPCTDAY"], 10)
 
         data_timestamp = datetime.datetime.utcfromtimestamp(
             raw_data["LASTUPDATE"])
