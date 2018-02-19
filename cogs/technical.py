@@ -64,7 +64,7 @@ class Technical:
     @commands.command()
     async def render(self, ctx, page_link: str):
         """Returns an image of the site."""
-        if ctx.guild and not ctx.channel.is_nsfw() and not (ctx.message.author == self.bot.bot_info.owner):
+        if (ctx.guild and not ctx.channel.is_nsfw()) and not (ctx.message.author == self.bot.bot_info.owner):
             await ctx.send("This command can only be ran on nsfw channels "
                            "(because I don't want people to render nsfw sites and get the bot kicked)")
             return

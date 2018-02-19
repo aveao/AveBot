@@ -170,6 +170,25 @@ class Basic:
 
         await ctx.send(embed=embed)
 
+    @commands.command(aliases=['getavatar'])
+    async def avatar(self, ctx, *, user: discord.User = None):
+        """Gets your or a user's avatar.
+
+        avatar <mention/name>: returns avatar of the mentioned user"""
+        
+        if user is None:
+            user = ctx.author
+
+        if ctx.guild:
+            maybe_member = ctx.guild.get_member(user.id)
+            if maybe_member:
+                user = maybe_member
+
+        if user.avatar:
+            await ctx.send(f"{ctx.author.mention}: {user.avatar_url}")
+        else:
+            await ctx.send(f"{ctx.author.mention}: No user or avatar")
+
 
 def setup(bot):
     bot.add_cog(Basic(bot))
