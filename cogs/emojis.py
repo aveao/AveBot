@@ -81,8 +81,10 @@ class Emoji:
         return None if bigger_than_max else image_bytes
 
     async def url_get_extension(self, url):
+        self.bot.log.info(f"Getting extension of {url}")
         filename = await self.bot.url_get_filename(url)
         file_ext = await self.bot.filename_get_ext(filename)
+        self.bot.log.info(f"Extension of {url} is {file_ext}")
         return file_ext
 
     async def download_and_resize_emoji(self, url):
