@@ -37,7 +37,7 @@ class NSFW:
         regex_result = re.search(self.tumblr_post_regex, link)
         if regex_result:
             tumblrapicall_link = f"https://api.tumblr.com/v2/blog/{regex_result.group(1)}"\
-                                 f"/posts/photo?id={regex_result.group(2)}"\
+                                 f"/posts?id={regex_result.group(2)}"\
                                  f"&api_key={self.tumblr_api_key}"
 
             tumblr_json = await self.bot.aiojson(tumblrapicall_link)
