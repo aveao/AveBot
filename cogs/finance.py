@@ -123,7 +123,7 @@ class Finance:
             await ctx.send("One of the symbols is not recognized.")
 
     @commands.command(aliases=['currencyconvert', 'currencyconversion'])
-    async def money(self, ctx, amount: float, from_symbol: str, to_symbol: str):
+    async def money(self, ctx, amount, from_symbol: str, to_symbol: str):
         """Gives a currency conversion for given amount of money.
 
         Usage example: ab!money 100 BRL TRY"""
@@ -131,7 +131,7 @@ class Finance:
         if rate:
             result_amount = rate * amount
             await ctx.send(f"{ctx.author.mention}: "\
-                           f"{amount:.1f}{from_symbol.upper()} = {result_amount}{to_symbol.upper()}."\
+                           f"{amount}{from_symbol.upper()} = {result_amount}{to_symbol.upper()}."\
                            "\n(Powered by fixer.io, data is renewed daily. "\
                            f"{self.legal_notice})")
         else:
