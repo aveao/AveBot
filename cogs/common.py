@@ -13,7 +13,7 @@ import os
 class Common:
     def __init__(self, bot):
         self.bot = bot
-        self.bot.aiosession = aiohttp.ClientSession()
+        self.bot.aiosession = aiohttp.ClientSession(headers={"User-Agent": "AveBot/3.0'"})
         self.bot.aiojson = self.aiojson
         self.bot.aioget = self.aioget
         self.bot.slice_message = self.slice_message

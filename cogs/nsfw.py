@@ -48,13 +48,40 @@ class NSFW:
                    f"Owner: `{chosen_post['owner']}`\n"\
                    f"Score: `{chosen_post['score']}`"
         gel_url = f"https://gelbooru.com/index.php?page=post&s=view&id={chosen_post['id']}"
-        embed = discord.Embed(title="Gelbooru results",
+        embed = discord.Embed(title="Gelbooru result",
                               color=self.bot.hex_to_int(chosen_post["hash"][0:6]),
                               url=gel_url,
                               description=gel_desc,
                               timestamp=datetime.datetime.utcfromtimestamp(chosen_post["change"]))
 
         embed.set_image(url=chosen_post["file_url"])
+        await ctx.send(embed=embed)
+
+    @commands.command(aliases=['e6'])
+    async def e621(self, ctx, *, tags: str = ""):
+        """Returns a random image from e621 from given tags"""
+        nsfw_result = await self.nsfw_check(ctx)
+        if not nsfw_result:
+            return
+        api_url = f"https://e621.net/post/index.json?limit=1&tags=order:random {tags}"
+        e6_json = await self.bot.aiojson(api_url)
+
+        if not e6_json:
+            await ctx.send(f"{ctx.author.mention}: No result found")
+            return
+
+        e6_desc = f"Tags: `{e6_json[0]['tags']}`\n"\
+                   f"Author: `{e6_json[0]['author']}`\n"\
+                   f"Score: `{e6_json[0]['score']}`"
+        e6_url = f"https://e621.net/post/show/{e6_json[0]['id']}"
+        e6_timestamp = datetime.datetime.utcfromtimestamp(e6_json[0]["created_at"]["s"])
+        embed = discord.Embed(title="e621 result",
+                              color=self.bot.hex_to_int(e6_json[0]["md5"][0:6]),
+                              url=e6_url,
+                              description=e6_desc,
+                              timestamp=e6_timestamp)
+
+        embed.set_image(url=e6_json[0]["sample_url"])
         await ctx.send(embed=embed)
 
     @commands.command(aliases=['fucksafemode'])
