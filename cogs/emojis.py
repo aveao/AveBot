@@ -80,12 +80,16 @@ class Emoji:
         bigger_than_max = len(image_bytes) > self.max_emoji_size
         return None if bigger_than_max else image_bytes
 
+    async def url_get_extension(self, url, include_dot=False):
+        filename = await self.bot.url_get_filename(url)
+        file_ext = await self.bot.filename_get_ext(filename)
+        with_dot = "." + file_ext if file_ext else file_ext
+        return file_ext if include_dot else with_dot
+
     async def download_and_resize_emoji(self, url):
         emoji_bytes = await self.bot.aiogetbytes(url)
         result_bytes = None
-
-        filename = await self.bot.url_get_filename(url)
-        file_ext = await self.bot.filename_get_ext(filename)
+        file_ext = await self.url_get_extension(url)
 
         if file_ext.lower() == "gif":
             result_bytes = await self.resize_emoji_gif(emoji_bytes)
@@ -122,13 +126,15 @@ class Emoji:
             url = ctx.message.attachments[0].url
 
         result_emoji = await self.download_and_resize_emoji(url)
+        file_ext = await self.url_get_extension(url, True)
+        result_filename = f"{ctx.message.id}-emojisize{file_ext}"
 
         if not result_emoji:
             await ctx.send(f"{ctx.author.mention}: emoji resize result was over 256kb, "\
                             "please use a proper tool to resize and reduce size of image.")
             return
         await ctx.send(f"{ctx.author.mention}: here you go!\nSize is {len(result_emoji)}b.",
-                       file=discord.File(io.BytesIO(result_emoji)))
+                       file=discord.File(io.BytesIO(result_emoji), filename=result_filename))
 
     @commands.command(aliases=['avemoji', 'avemojiinvite', 'avemojisinvite', 'ainvite'])
     async def avemojis(self, ctx):
