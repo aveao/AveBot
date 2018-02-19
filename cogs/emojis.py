@@ -125,7 +125,7 @@ class Emoji:
             url = ctx.message.attachments[0].url
 
         result_emoji = await self.download_and_resize_emoji(url)
-        file_ext = await self.url_get_extension(url, True)
+        file_ext = await self.url_get_extension(url)
         result_filename = f"{ctx.message.id}-emojisize.{file_ext}"
 
         if not result_emoji:
