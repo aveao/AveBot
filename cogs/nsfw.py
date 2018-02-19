@@ -51,8 +51,8 @@ class NSFW:
             self.bot.log.info(f"tumblr json images: {repr(tumblr_json_images)}")
             tumblr_text = f"{ctx.message.author.mention}, here are your requested image(s):"
             if not tumblr_is_nsfw:
-                tumblr_text += f"\n**Post is marked as SAFE FOR WORK, which is why this image"\
-                               "is being posted on a non-nsfw channel. If this is a NSFW post,"\
+                tumblr_text += f"\n**Post is marked as SAFE FOR WORK, which is why these images"\
+                               " are being posted on a non-nsfw channel. If this is a NSFW post,"\
                                " please report to tumblr for unmarked NSFW content.**"
 
             split_count = 0
