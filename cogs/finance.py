@@ -130,6 +130,7 @@ class Finance:
         rate = await self.get_conversion_rate(from_symbol, to_symbol)
         if rate:
             result_amount = Decimal(rate) * Decimal(amount)
+            result_amount = round(result_amount, 2)
             await ctx.send(f"{ctx.author.mention}: "\
                            f"{amount}{from_symbol.upper()} = {result_amount}{to_symbol.upper()}."\
                            "\n(Powered by fixer.io, data is renewed daily. "\
