@@ -32,7 +32,7 @@ class Finance:
             int_perc = color_range - int_perc
             int_perc = int_perc if int_perc > 0 else 0 # limit
             return self.bot.hex_to_int(colors[int_perc].hex_l)
-        
+
         int_perc -= 1
         colors = list(white.range_to(green, color_range))
         int_perc = int_perc if int_perc < (color_range - 1) else (color_range - 1) # limit
