@@ -62,7 +62,7 @@ class NSFW:
                 tumblr_text += "\n" + image["original_size"]["url"]
                 if not split_count % 5:
                     await ctx.send(tumblr_text
-                                   + f"\n({split_count / 5}/{total_pages})")
+                                   + f"\n({int(split_count / 5)}/{total_pages})")
                     tumblr_text = ""
             if tumblr_is_nsfw and ctx.guild:
                 tumblr_text += "\nDon't want NSFW posts on this channel? Add `no_nsfw` on any part"\
