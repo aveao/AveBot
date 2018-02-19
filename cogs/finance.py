@@ -40,6 +40,8 @@ def get_change_color(change_percentage, color_range: int = 10):
 class Finance:
     def __init__(self, bot):
         self.bot = bot
+        self.legal_notice = "Data is not guaranteed to be accurate, "\
+                            "I am not responsible for your losses."
 
 
     def format_currency(self, amount, locale_to_use: str = "en_US.UTF-8"):
@@ -81,6 +83,14 @@ class Finance:
             return ticker if include_ticker else None
         return f"{name_list[0]} ({ticker})" if include_ticker else name_list[0]
 
+    async def get_conversion_rate(self, from_symbol: str, to_symbol: str):
+        json_res = await self.bot.aiojson("https://api.fixer.io/latest"\
+                                          f"?base={from_symbol.upper()}"\
+                                          f"&symbols={to_symbol.upper()}")
+        if "rates" in json_res and json_res["rates"]:
+            return json_res["rates"][to_symbol.upper()]
+        return None
+
     @commands.command(aliases=['stockchart', 'c'])
     async def chart(self, ctx, ticker: str):
         """Returns stock chart of the given ticker.
@@ -96,6 +106,37 @@ class Finance:
         embed.set_image(url=image_link)
         embed.set_footer(text='Powered by finviz.com')
         await ctx.send(embed=embed)
+
+    # TODO: Find a way to reduce code repetition in following messages
+    @commands.command(aliases=['howmuch', 'convert', 'conversion', 'conversionrate'])
+    async def currency(self, ctx, from_symbol: str, to_symbol: str):
+        """Gives the conversion rate for given symbols.
+
+        Usage example: ab!currency BRL TRY"""
+        rate = await self.get_conversion_rate(from_symbol, to_symbol)
+        if rate:
+            await ctx.send(f"{ctx.author.mention}: "\
+                           f"1{from_symbol.upper()} = {rate}{to_symbol.upper()}."\
+                           "\n(Powered by fixer.io, data is renewed daily. "\
+                           f"{self.legal_notice})")
+        else:
+            await ctx.send("One of the symbols is not recognized.")
+
+    @commands.command(aliases=['currencyconvert', 'currencyconversion'])
+    async def money(self, ctx, amount: float, from_symbol: str, to_symbol: str):
+        """Gives a currency conversion for given amount of money.
+
+        Usage example: ab!money 100 BRL TRY"""
+        rate = await self.get_conversion_rate(from_symbol, to_symbol)
+        if rate:
+            result_amount = rate * amount
+            await ctx.send(f"{ctx.author.mention}: "\
+                           f"{amount}{from_symbol.upper()} = {result_amount}{to_symbol.upper()}."\
+                           "\n(Powered by fixer.io, data is renewed daily. "\
+                           f"{self.legal_notice})")
+        else:
+            await ctx.send("One of the symbols is not recognized.")
+
 
     @commands.command(aliases=['s'])
     async def stock(self, ctx, ticker: str):
@@ -187,8 +228,7 @@ class Finance:
                              icon_url="https://bitcoin.org/img/icons/opengraph.png")
             embed.set_image(url=link)
             embed.set_footer(text="Chart supplied by bitcoincharts.com under CC-BY-SA 3.0, "\
-                                  "price info supplied by BitStamp. Data is not guaranteed "\
-                                  "to be accurate, I am not responsible for your losses.")
+                                  "price info supplied by BitStamp. " + self.legal_notice)
 
             embed.add_field(name="Current Price", value=btc_currentprice_string)
             embed.add_field(name="Opening Price", value=btc_lastopen_string)
@@ -231,9 +271,7 @@ class Finance:
         embed = discord.Embed(color=change_color, timestamp=data_timestamp)
 
         embed.set_author(name=f"Price info for {coin_name} from {stylized_data['MARKET']}")
-        embed.set_footer(text="Price info supplied by CryptoCompare. "\
-                              "Data is not guaranteed to be accurate, "\
-                              "I am not responsible for your losses.")
+        embed.set_footer(text="Price info supplied by CryptoCompare. " + self.legal_notice)
 
         embed.add_field(name="Current Price", value=stylized_data["PRICE"])
         embed.add_field(name="Opening Price", value=stylized_data["OPENDAY"])
