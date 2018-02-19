@@ -80,13 +80,12 @@ class Emoji:
         bigger_than_max = len(image_bytes) > self.max_emoji_size
         return None if bigger_than_max else image_bytes
 
-    async def url_get_extension(self, url):
-        self.bot.log.info(f"Getting extension of {url}")
+    async def url_get_extension(self, url, include_dot: bool = False):
         filename = await self.bot.url_get_filename(url)
-        self.bot.log.info(f"Filename of {url} is {filename}")
         file_ext = await self.bot.filename_get_ext(filename)
-        self.bot.log.info(f"Extension of {filename} is {file_ext}")
-        return file_ext
+        self.bot.log.info(f"Filename of {url} is {filename}, ext is {file_ext}")
+        dotted_ext = ("." + file_ext) if file_ext else file_ext
+        return dotted_ext if include_dot else file_ext
 
     async def download_and_resize_emoji(self, url):
         emoji_bytes = await self.bot.aiogetbytes(url)
@@ -128,8 +127,8 @@ class Emoji:
             url = ctx.message.attachments[0].url
 
         result_emoji = await self.download_and_resize_emoji(url)
-        file_ext = await self.url_get_extension(url)
-        result_filename = f"{ctx.message.id}-emojisize.{file_ext}"
+        file_ext = await self.url_get_extension(url, True)
+        result_filename = f"{ctx.message.id}-emojisize{file_ext}"
 
         if not result_emoji:
             await ctx.send(f"{ctx.author.mention}: emoji resize result was over 256kb, "\
