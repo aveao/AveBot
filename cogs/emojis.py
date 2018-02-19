@@ -96,6 +96,7 @@ class Emoji:
         # Check if result is None or not, returns None if it is
         # If it is not, adds emoji and returns that
         if result_bytes:
+            self.bot.log.info(f"Emoji resize process complete, byte size: {len(image_bytes)}")
             added_emoji = await emoji_guild.create_custom_emoji(name=emoji_name, image=emoji_bytes)
             return added_emoji
         return None
