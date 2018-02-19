@@ -6,38 +6,51 @@ import traceback
 from decimal import *
 import locale
 from dateutil import parser
+import colour
 
 
-def format_currency(amount, locale_to_use):
-    try:
-        locale.setlocale(locale.LC_ALL, locale_to_use)
-        amount = Decimal(amount)
-        return locale.currency(amount, grouping=True)
-    except:
-        self.bot.log.error(f"Error while converting {amount} on format_currency: {traceback.format_exc()}")
+def hex_to_int(hex: str):
+    return int("0x" + hex[1:], 16)
 
-
-def get_change_color(change_percentage):  # todo: switch this to a parabola or smth
+def get_change_color(change_percentage, range: int = 10):
     change_percentage = str(change_percentage).split('.')[0]  # before the dot
-    if change_percentage.startswith('-'):
-        int_perc = int(change_percentage) * -1  # make it positive
-        colors = [0xFFEBEE, 0xFFCDD2, 0xEF9A9A, 0xE57373, 0xEF5350,
-                  0xF44336, 0xE53935, 0xD32F2F, 0xC62828, 0xB71C1C, 0xD50000]
-        return colors[10 if int_perc > 10 else int_perc]
+    red = colour.Color("#D50000")
+    white = colour.Color("#FFFFFF")
+    green = colour.Color("#1B5E20")
+
+    int_perc = int(change_percentage)
+
+    if int_perc is 0:
+        return hex_to_int("#ffffff")
+    elif change_percentage.startswith('-'):
+        colors = list(red.range_to(white, range))
+        int_perc = int_perc * -1  # make it positive
+        int_perc = range - int_perc
+        int_perc = int_perc if int_perc > 0 else 0 # limit
+        return hex_to_int(colors[int_perc].hex_l)
     else:
-        int_perc = int(change_percentage) + 1
-        colors = [0xF1F8E9, 0xDCEDC8, 0xC5E1A5, 0xAED581, 0x9CCC65,
-                  0x8BC34A, 0x7CB342, 0x689F38, 0x558B2F, 0x33691E, 0x1B5E20]
-        return colors[10 if int_perc > 10 else int_perc]
+        int_perc -= 1
+        colors = list(white.range_to(green, range))
+        int_perc = int_perc if int_perc < (range - 1) else (range - 1) # limit
+        return hex_to_int(colors[int_perc].hex_l)
 
 
 class Finance:
     def __init__(self, bot):
         self.bot = bot
 
+
+    def format_currency(self, amount, locale_to_use):
+        try:
+            locale.setlocale(locale.LC_ALL, locale_to_use)
+            amount = Decimal(amount)
+            return locale.currency(amount, grouping=True)
+        except:
+            self.bot.log.error(f"Error while converting {amount} on format_currency: {traceback.format_exc()}")
+
     async def get_stock_change_color(self, ticker: str):
         symbols = await self.bot.aiojson(f"https://api.robinhood.com/quotes/?symbols={ticker.upper()}")
-        if symbols == None:
+        if not symbols:
             return 0x000000  # black
 
         symbols_results = symbols["results"][0]
@@ -48,7 +61,7 @@ class Finance:
         diff = str(Decimal(current_price) -
                    Decimal(symbols_results["previous_close"]))
         percentage = (100 * Decimal(diff) / Decimal(current_price))
-        return get_change_color(percentage)
+        return get_change_color(percentage, 10)
 
     async def get_crypto_name(self, ticker: str, include_ticker=True):
         ticker = ticker.upper()
@@ -101,11 +114,11 @@ class Finance:
         if not percentage.startswith("-"):
             percentage = "+" + percentage
 
-        current_price_string = format_currency(current_price, currency_locale)
-        diff_string = format_currency(diff, currency_locale)
-        bid_price_string = format_currency(
+        current_price_string = self.format_currency(current_price, currency_locale)
+        diff_string = self.format_currency(diff, currency_locale)
+        bid_price_string = self.format_currency(
             Decimal(symbols_result["bid_price"]), currency_locale)
-        ask_price_string = format_currency(
+        ask_price_string = self.format_currency(
             Decimal(symbols_result["ask_price"]), currency_locale)
         tradeable_string = (
             ":white_check_mark:" if instrument["tradeable"] else ":x:")
@@ -140,20 +153,20 @@ class Finance:
             btc_bitstamp_json = await self.bot.aiojson("https://www.bitstamp.net/api/ticker")
 
             btc_currentprice_rate = Decimal(btc_bitstamp_json["last"])
-            btc_currentprice_string = format_currency(
+            btc_currentprice_string = self.format_currency(
                 btc_currentprice_rate, currency_locale)
 
             btc_lastopen_rate = Decimal(btc_bitstamp_json["open"])
-            btc_lastopen_string = format_currency(
+            btc_lastopen_string = self.format_currency(
                 btc_lastopen_rate, currency_locale)
 
-            btc_high_string = format_currency(
+            btc_high_string = self.format_currency(
                 btc_bitstamp_json["high"], currency_locale)
-            btc_low_string = format_currency(
+            btc_low_string = self.format_currency(
                 btc_bitstamp_json["low"], currency_locale)
-            btc_bid_string = format_currency(
+            btc_bid_string = self.format_currency(
                 btc_bitstamp_json["bid"], currency_locale)
-            btc_ask_string = format_currency(
+            btc_ask_string = self.format_currency(
                 btc_bitstamp_json["ask"], currency_locale)
             btc_volume_string = str(btc_bitstamp_json["volume"]) + " BTC"
 
@@ -162,7 +175,7 @@ class Finance:
                 100 * Decimal(btc_diff) / Decimal(btc_currentprice_rate))
             btc_change_percentage_string = f"{str(btc_change_percentage)[:6]}%"
 
-            btc_change_color = get_change_color(btc_change_percentage)
+            btc_change_color = get_change_color(btc_change_percentage, 20)
 
             btc_data_timestamp = datetime.datetime.utcfromtimestamp(
                 int(btc_bitstamp_json["timestamp"]))
@@ -206,7 +219,7 @@ class Finance:
         raw_data = api_json["RAW"][ticker]["USD"]
         stylized_data = api_json["DISPLAY"][ticker]["USD"]
 
-        change_color = get_change_color(raw_data["CHANGEPCTDAY"])
+        change_color = get_change_color(raw_data["CHANGEPCTDAY"], 20)
 
         data_timestamp = datetime.datetime.utcfromtimestamp(
             raw_data["LASTUPDATE"])
