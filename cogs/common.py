@@ -60,14 +60,13 @@ class Common:
 
     async def filename_get_ext(self, filename):
         # if no ext, return empty
-        modded_filename = ""
         if "?" in filename:
-            modded_filename = filename.split('?')[0]
+            filename = filename.split('?')[0]
 
-        if "." in modded_filename:
-            modded_filename = modded_filename.split('.')[-1]
+        if "." in filename:
+            filename = filename.split('.')[-1]
 
-        return modded_filename
+        return filename
 
     async def filename_get_woext(self, filename):
         if "." in filename:
