@@ -7,6 +7,7 @@ import socket
 import os
 import psutil
 
+
 class Basic:
     def __init__(self, bot):
         self.bot = bot
@@ -25,12 +26,15 @@ class Basic:
         mem_mb = round(mem_bytes / 1024 / 1024, 2)
         cpu_usage = round(self.process.cpu_percent() / psutil.cpu_count(), 2)
 
-        uptime = self.bot.get_relative_timestamp(time_from=datetime.datetime.utcfromtimestamp(self.bot.start_time))
+        uptime = self.bot.get_relative_timestamp(
+            time_from=datetime.datetime.utcfromtimestamp(self.bot.start_time))
 
         em = discord.Embed(color=0xDAB420)
 
-        em.add_field(name="Git Hash", value=self.bot.get_git_revision_short_hash())
-        em.add_field(name="Last git message", value=self.bot.get_git_commit_text())
+        em.add_field(name="Git Hash",
+                     value=self.bot.get_git_revision_short_hash())
+        em.add_field(name="Last git message",
+                     value=self.bot.get_git_commit_text())
         em.add_field(name="Hostname", value=socket.gethostname())
         em.add_field(name="Guild count", value=total_guild_count)
         em.add_field(name="Unique users", value=total_unique_user_count)
@@ -44,26 +48,22 @@ class Basic:
         em.set_author(name='AveBot v3', icon_url='https://s.ave.zone/c7d.png')
         await ctx.send(embed=em)
 
-
     @commands.command(aliases=['addavebot'])
     async def invite(self, ctx):
         """Gives a link that can be used to add AveBot."""
         inviteurl = discord.utils.oauth_url(self.bot.user.id)
         await ctx.send(f"You can use the following link to add AveBot to your server:\n<{inviteurl}>")
 
-
     @commands.command()
     async def hello(self, ctx):
         """Says hello. Duh."""
         await ctx.send(f"Hello {ctx.message.author.mention}!")
-
 
     @commands.command()
     async def ginvite(self, ctx, discordid: int):
         """Generates a discord invite link."""
         inviteurl = discord.utils.oauth_url(discordid)
         await ctx.send(f"<{inviteurl}>")
-
 
     @commands.command()
     async def servercount(self, ctx):
@@ -72,7 +72,6 @@ class Basic:
         total_user_count = len(list(self.bot.get_all_members()))
         total_unique_user_count = len(list(set(self.bot.get_all_members())))
         await ctx.send(f"AveBot is in {total_guild_count} servers with {total_user_count} total users ({total_unique_user_count} unique).")
-
 
     @commands.command(aliases=['p'])
     async def ping(self, ctx):
@@ -87,7 +86,6 @@ class Basic:
         self.bot.log.info(message_text)
         await tmp.edit(content=message_text)
 
-
     @commands.guild_only()
     @commands.command(aliases=['serverinfo'])
     async def sinfo(self, ctx):
@@ -96,14 +94,14 @@ class Basic:
         em = discord.Embed(title=f"Server info of {current_guild.name} ({current_guild.id})")
 
         region_replace = {"us-west": ":flag_us: US West", "us-east": ":flag_us: US East",
-        "us-south": ":flag_us: US South", "us-central": ":flag_us: US Central", 
-        "eu-west": ":flag_eu: EU West", "eu-central": ":flag_eu: EU Central",
-        "singapore": ":flag_si: Singapore", "london": ":flag_uk: London, UK",
-        "sydney": ":flag_au: Sydney, AU", "amsterdam": ":flag_nl: Amsterdam, NL",
-        "frankfurt": ":flag_de: Frankfurt, DE", "brazil": "<:lunadab:406845118105124864> Brazil",
-        "hongkong": ":flag_hk: Hong Kong", "russia": ":flag_ru: Russia",
-        "vip-us-east": ":flag_us: VIP US East", "vip-us-west": ":flag_us: VIP US West",
-        "vip-amsterdam": ":flag_nl: VIP Amsterdam, NL"} # All this effort for :lunahahayes:
+                          "us-south": ":flag_us: US South", "us-central": ":flag_us: US Central",
+                          "eu-west": ":flag_eu: EU West", "eu-central": ":flag_eu: EU Central",
+                          "singapore": ":flag_si: Singapore", "london": ":flag_uk: London, UK",
+                          "sydney": ":flag_au: Sydney, AU", "amsterdam": ":flag_nl: Amsterdam, NL",
+                          "frankfurt": ":flag_de: Frankfurt, DE", "brazil": "<:lunadab:406845118105124864> Brazil",
+                          "hongkong": ":flag_hk: Hong Kong", "russia": ":flag_ru: Russia",
+                          "vip-us-east": ":flag_us: VIP US East", "vip-us-west": ":flag_us: VIP US West",
+                          "vip-amsterdam": ":flag_nl: VIP Amsterdam, NL"}  # All this effort for :lunahahayes:
 
         region_text = str(current_guild.region)
         region_text = region_replace[region_text] if region_text in region_replace else region_text
@@ -111,13 +109,14 @@ class Basic:
         em.add_field(name="User Count", value=current_guild.member_count)
         em.add_field(name="Region", value=region_text)
         em.add_field(name="Owner", value=current_guild.owner)
-        em.add_field(name="Verification Level", value=current_guild.verification_level)
-        humanized_created = self.bot.get_relative_timestamp(time_from=current_guild.created_at, humanized=True, include_from=True)
+        em.add_field(name="Verification Level",
+                     value=current_guild.verification_level)
+        humanized_created = self.bot.get_relative_timestamp(
+            time_from=current_guild.created_at, humanized=True, include_from=True)
         em.add_field(name="Created at", value=humanized_created)
 
         em.set_thumbnail(url=current_guild.icon_url)
         await ctx.send(embed=em)
-
 
     @commands.command(aliases=['contact'])
     async def feedback(self, ctx, *, contact_text: str):
@@ -134,7 +133,6 @@ class Basic:
         em = discord.Embed(title='Feedback sent!',
                            description='Your message has been delivered to the developers.')
         await ctx.send(embed=em)
-
 
     @commands.command(aliases=['userinfo', 'whoami', 'profile'])
     async def uinfo(self, ctx, *, user: discord.User = None):
@@ -157,10 +155,12 @@ class Basic:
             embed.set_thumbnail(url=user.avatar_url)
         embed.set_footer(text=f"UserID: {user.id}")
 
-        humanized_discord = self.bot.get_relative_timestamp(time_from=user.created_at, humanized=True, include_from=True)
+        humanized_discord = self.bot.get_relative_timestamp(
+            time_from=user.created_at, humanized=True, include_from=True)
         embed.add_field(name="Joined Discord", value=humanized_discord)
         if ctx.guild and maybe_member:
-            humanized_guild = self.bot.get_relative_timestamp(time_from=user.joined_at, humanized=True, include_from=True)
+            humanized_guild = self.bot.get_relative_timestamp(
+                time_from=user.joined_at, humanized=True, include_from=True)
             embed.add_field(name="Joined Guild", value=humanized_guild)
             embed.add_field(name="Status", value=str(user.status))
         if user.game:
@@ -169,6 +169,7 @@ class Basic:
         embed.add_field(name="Is bot", value=is_bot_display)
 
         await ctx.send(embed=embed)
+
 
 def setup(bot):
     bot.add_cog(Basic(bot))

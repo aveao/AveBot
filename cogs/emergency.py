@@ -4,13 +4,12 @@ import traceback
 import inspect
 import re
 
+
 class EmergencyCog:
     def __init__(self, bot):
         self.bot = bot
         self.last_eval_result = None
         self.previous_eval_code = None
-
-
 
     @commands.is_owner()
     @commands.command(name='eexit', hidden=True)
@@ -18,7 +17,6 @@ class EmergencyCog:
         """Shuts down AveBot, owner only."""
         await ctx.send(":wave: Exiting AveBot, goodbye!")
         await self.bot.logout()
-
 
     @commands.is_owner()
     @commands.command(hidden=True)
@@ -31,7 +29,6 @@ class EmergencyCog:
             return
         self.bot.log.info(f'Loaded ext {ext}')
         await ctx.send(f':white_check_mark: `{ext}` successfully loaded.')
-
 
     @commands.is_owner()
     @commands.command(name='eeval', hidden=True)
@@ -57,7 +54,7 @@ class EmergencyCog:
                 '_get': discord.utils.get,
                 '_find': discord.utils.find,
 
-                 # last result
+                # last result
                 '_': self.last_eval_result,
                 '_p': self.previous_eval_code,
             }
@@ -81,7 +78,6 @@ class EmergencyCog:
             for msg in sliced_message:
                 await ctx.send(msg)
 
-
     @commands.is_owner()
     @commands.command(hidden=True)
     async def esh(self, ctx, *, command: str):
@@ -99,7 +95,6 @@ class EmergencyCog:
         await tmp.delete()
         for msg in sliced_message:
             await ctx.send(msg)
-
 
     @commands.is_owner()
     @commands.command(hidden=True)
@@ -121,7 +116,6 @@ class EmergencyCog:
                     await ctx.send(f':x: Cog reloading failed, traceback: ```\n{traceback.format_exc()}\n```')
                     return
 
-
     @commands.is_owner()
     @commands.command(hidden=True)
     async def eunload(self, ctx, ext: str):
@@ -129,7 +123,6 @@ class EmergencyCog:
         self.bot.unload_extension("cogs." + ext)
         self.bot.log.info(f'Unloaded ext {ext}')
         await ctx.send(f':white_check_mark: `{ext}` successfully unloaded.')
-
 
     @commands.is_owner()
     @commands.command(hidden=True)

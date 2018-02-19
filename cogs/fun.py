@@ -4,7 +4,8 @@ import time
 import datetime
 import traceback
 import re
-import random 
+import random
+
 
 class Fun:
     def __init__(self, bot):
@@ -24,7 +25,6 @@ class Fun:
         message_text = f"{ctx.message.author.mention}: You have sent {counter} messages out of the last {allcounter} in this channel (%{percentage_of_messages})."
         await tmp.edit(content=message_text)
 
-
     @commands.command()
     async def bigly(self, ctx, *, text_to_bigly: str):
         """Makes a piece of text as big as the hands of the god emperor."""
@@ -33,7 +33,7 @@ class Fun:
         ri = 'regional_indicator_'
 
         numbers_to_replace = {"0": "zero", "1": "one", "2": "two", "3": "three", "4": "four",
-        "5": "five", "6": "six", "7": "seven", "8": "eight", "9": "nine"}
+                              "5": "five", "6": "six", "7": "seven", "8": "eight", "9": "nine"}
 
         for letter in letters:
             biglytext += f":{ri}{letter}:"
@@ -74,7 +74,8 @@ class Fun:
             await ctx.send('Exception during modifier parsing!')
             return
 
-        result = ', '.join(str(random.randint(1, limit)+modification) for r in range(rolls))
+        result = ', '.join(str(random.randint(1, limit)+modification)
+                           for r in range(rolls))
         await ctx.send(f"{result} (Modifier: {modifier if modifier else '0'})")
 
     @commands.command(aliases=['xkcdlatest'])

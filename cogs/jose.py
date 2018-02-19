@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 
+
 class Jose:
     def __init__(self, bot):
         self.bot = bot
@@ -9,7 +10,6 @@ class Jose:
     async def joseprob(self, ctx, jccount: float, amount: float):
         prob = (1 + (jccount / amount)) * 0.42
         await ctx.send(f"Probability: `{prob:.1f}`")
-
 
     @commands.command(hidden=True)
     async def josemax(self, ctx, jccount: float):

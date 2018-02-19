@@ -14,6 +14,7 @@ import PIL.ImageOps
 import PIL.ImageFont
 import PIL.ImageDraw
 
+
 class ImageManipulation:
     def __init__(self, bot):
         self.bot = bot
@@ -22,7 +23,8 @@ class ImageManipulation:
         images_to_process = []
         for attach in ctx.message.attachments:
             extension = os.path.splitext(attach['filename'])[1]
-            filename = "files/powered-by-avebot-bot.ave.zone-{}att{}".format(ctx.message.id, extension).split('?')[0]
+            filename = "files/powered-by-avebot-bot.ave.zone-{}att{}".format(
+                ctx.message.id, extension).split('?')[0]
             await self.bot.download_file(attach['proxy_url'], filename)
             if extension != ".jpg" or extension != ".jpeg":
                 im = PIL.Image.open(filename)
@@ -31,10 +33,12 @@ class ImageManipulation:
                 im.save(new_name, "JPEG")
                 filename = new_name
             images_to_process.append(filename)
-        stuff_after = ctx.message.content.split(caller_command)[1].replace(" ", "")
+        stuff_after = ctx.message.content.split(
+            caller_command)[1].replace(" ", "")
         if stuff_after != "" and stuff_after.startswith("http"):
             extension = str(os.path.splitext(stuff_after)[1].split('?')[0])
-            filename = "files/powered-by-avebot-bot.ave.zone-{}txt{}".format(ctx.message.id, extension)
+            filename = "files/powered-by-avebot-bot.ave.zone-{}txt{}".format(
+                ctx.message.id, extension)
             await self.bot.download_file(stuff_after, filename)
             if extension != ".jpg" or extension != ".jpeg":
                 im = PIL.Image.open(filename)
@@ -45,16 +49,15 @@ class ImageManipulation:
             images_to_process.append(filename)
         return images_to_process
 
-
     async def get_image_links(self, ctx, caller_command):
         image_links = []
         for attach in ctx.message.attachments:
             image_links.append(attach['proxy_url'])
-        stuff_after = ctx.message.content.split(caller_command)[1].replace(" ", "")
+        stuff_after = ctx.message.content.split(
+            caller_command)[1].replace(" ", "")
         if stuff_after != "" and stuff_after.startswith("http"):
             image_links.append(stuff_after)
         return image_links
-
 
     @commands.command()
     async def sbahjify(self, ctx):
@@ -74,8 +77,10 @@ class ImageManipulation:
             im = PIL.Image.open(imgtp)
 
             for _ in range(2):
-                im = PIL.ImageOps.equalize(im)  # Drab-ify, but embellish otherwise hidden artifacts
-                im = PIL.ImageOps.solarize(im, 250)  # Create weird blotchy artifacts, but inverts huge swaths
+                # Drab-ify, but embellish otherwise hidden artifacts
+                im = PIL.ImageOps.equalize(im)
+                # Create weird blotchy artifacts, but inverts huge swaths
+                im = PIL.ImageOps.solarize(im, 250)
                 im = PIL.ImageOps.posterize(im, 2)  # Flatten colors
                 for _ in range(2):
                     im = im.filter(PIL.ImageFilter.SHARPEN)
@@ -83,7 +88,8 @@ class ImageManipulation:
                     im = im.filter(PIL.ImageFilter.SHARPEN)
             w, h = im.size
             im = im.resize((w, int(h * 0.7)))
-            im = PIL.ImageOps.equalize(im)  # Drab-ify, but embellish otherwise hidden artifacts
+            # Drab-ify, but embellish otherwise hidden artifacts
+            im = PIL.ImageOps.equalize(im)
             im = im.filter(PIL.ImageFilter.SHARPEN)
             im = im.filter(PIL.ImageFilter.SHARPEN)
             out_filename = f"files/sbahjify-{imgtp.replace('files/', '')}"
@@ -132,11 +138,13 @@ class ImageManipulation:
             w, h = im.size
             for x in range(0, 25):
                 im = im.resize((int(w * 0.9), int(h * 1.1)))
-                im.save(out_filename, quality=0, optimize=False, progressive=False)
+                im.save(out_filename, quality=0,
+                        optimize=False, progressive=False)
                 im = PIL.Image.open(out_filename)
 
                 im = im.resize((int(w * 1.1), int(h * 0.9)))
-                im.save(out_filename, quality=0, optimize=False, progressive=False)
+                im.save(out_filename, quality=0,
+                        optimize=False, progressive=False)
                 im = PIL.Image.open(out_filename)
             im = im.resize((w, h))
             im.save(out_filename, quality=0, optimize=False, progressive=False)
@@ -161,12 +169,12 @@ class ImageManipulation:
 
             for x in range(0, 7):
                 im = im.filter(PIL.ImageFilter.SHARPEN)
-                im.save(out_filename, quality=0, optimize=False, progressive=False)
+                im.save(out_filename, quality=0,
+                        optimize=False, progressive=False)
                 im = PIL.Image.open(out_filename)
             await ctx.send(content=f"{mention}: Here's your image, mazeified: (also try `ultramazeify`)", file=discord.File(out_filename))
         await asyncio.sleep(5)
         await tmp.delete()
-
 
     @commands.command()
     async def ultramazeify(self, ctx):
@@ -181,17 +189,18 @@ class ImageManipulation:
         for imgtp in images_to_process:
             self.bot.log.info(f"Processing {imgtp} for new ultramazeify")
             im = PIL.Image.open(imgtp)
-            out_filename = "files/ultramazeify-{}".format(imgtp.replace("files/", ""))
+            out_filename = "files/ultramazeify-{}".format(
+                imgtp.replace("files/", ""))
 
             for x in range(0, 10):
                 for y in range(0, 10):
                     im = im.filter(PIL.ImageFilter.SHARPEN)
-                im.save(out_filename, quality=0, optimize=False, progressive=False)
+                im.save(out_filename, quality=0,
+                        optimize=False, progressive=False)
                 im = PIL.Image.open(out_filename)
             await ctx.send(content=f"{mention}: Here's your image, ULTRA mazeified:", file=discord.File(out_filename))
         await asyncio.sleep(5)
         await tmp.delete()
-
 
     @commands.command()
     async def joelify(self, ctx):
@@ -212,12 +221,13 @@ class ImageManipulation:
                 im = im.resize((int(w * w_val), int(h * h_val)))
                 im = im.resize((w, h))
 
-            out_filename = "files/joelify-{}".format(imgtp.replace("files/", ""))
-            im.save(out_filename, quality=50, optimize=False, progressive=False)
+            out_filename = "files/joelify-{}".format(
+                imgtp.replace("files/", ""))
+            im.save(out_filename, quality=50,
+                    optimize=False, progressive=False)
             await ctx.send(content=f"{mention}: Here's your image, joelified: (also try `ultrajoelify`)", file=discord.File(out_filename))
         await asyncio.sleep(5)
         await tmp.delete()
-
 
     @commands.command()
     async def ultrajoelify(self, ctx):
@@ -239,11 +249,11 @@ class ImageManipulation:
                 im = im.resize((w, h))
 
             out_filename = "files/joel{}".format(imgtp.replace("files/", ""))
-            im.save(out_filename, quality=50, optimize=False, progressive=False)
+            im.save(out_filename, quality=50,
+                    optimize=False, progressive=False)
             await ctx.send(content=f"{mention}: Here's your image, ULTRA joelified:", file=discord.File(out_filename))
         await asyncio.sleep(5)
         await tmp.delete()
-
 
     @commands.command(aliases=['giffy', 'gif', 'gifit', 'owo'])
     async def gifify(self, ctx, *the_text: str):
@@ -272,22 +282,22 @@ class ImageManipulation:
                 fsize = int(fsize/(f.getsize(word)[0] / imgsize))
             f = PIL.ImageFont.truetype(fontname, fsize)
 
-            txt=PIL.Image.new('L', f.getsize(word))
+            txt = PIL.Image.new('L', f.getsize(word))
             d = PIL.ImageDraw.Draw(txt)
             d.text((0, 0), word, font=f, fill=255)
-            w=txt.rotate(0, expand=1)
+            w = txt.rotate(0, expand=1)
 
             horipos = int((imgsize-f.getsize(word)[0])/2)
             vertpos = int(64-((f.getsize(word)[1]/1.5)))
 
-            im.paste(PIL.ImageOps.colorize(w, (0,0,0), (255,255,255)), (horipos, vertpos), w)
+            im.paste(PIL.ImageOps.colorize(w, (0, 0, 0),
+                                           (255, 255, 255)), (horipos, vertpos), w)
             out_filename = f"gifify/{ctx.message.id}-{tcurrent}.jpg"
             filenames += f"{out_filename} "
             im.save(out_filename, quality=100, optimize=True)
         gif_filename = f"gifify/{ctx.message.id}.gif"
         self.bot.call_shell(f"convert -delay 15 {filenames}gifify/empty.jpg {gif_filename}")
         await ctx.send(content=f"{mention}: here you go", file=discord.File(gif_filename))
-
 
     @commands.command()
     async def howold(self, ctx):
@@ -314,10 +324,12 @@ class ImageManipulation:
                 age = parsed[0]["faceAttributes"]["age"]
                 gender = parsed[0]["faceAttributes"]["gender"]
                 await ctx.send(f"Age: **{age}**\nGender: **{gender}**\n"
-                    "(it's hella inaccurate I know blame microsoft not me)")
+                               "(it's hella inaccurate I know blame microsoft not me)")
             except:
-                self.bot.log.warning("howold failed: {}".format(traceback.format_exc()))
+                self.bot.log.warning(
+                    "howold failed: {}".format(traceback.format_exc()))
                 await ctx.send("No face detected.")
+
 
 def setup(bot):
     bot.add_cog(ImageManipulation(bot))

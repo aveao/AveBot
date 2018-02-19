@@ -7,6 +7,7 @@ from decimal import *
 import locale
 from dateutil import parser
 
+
 def format_currency(amount, locale_to_use):
     try:
         locale.setlocale(locale.LC_ALL, locale_to_use)
@@ -15,18 +16,20 @@ def format_currency(amount, locale_to_use):
     except:
         self.bot.log.error(f"Error while converting {amount} on format_currency: {traceback.format_exc()}")
 
-def get_change_color(change_percentage): # todo: switch this to a parabola or smth
-    change_percentage = str(change_percentage).split('.')[0] # before the dot
+
+def get_change_color(change_percentage):  # todo: switch this to a parabola or smth
+    change_percentage = str(change_percentage).split('.')[0]  # before the dot
     if change_percentage.startswith('-'):
         int_perc = int(change_percentage) * -1  # make it positive
         colors = [0xFFEBEE, 0xFFCDD2, 0xEF9A9A, 0xE57373, 0xEF5350,
-        0xF44336, 0xE53935, 0xD32F2F, 0xC62828, 0xB71C1C, 0xD50000]
+                  0xF44336, 0xE53935, 0xD32F2F, 0xC62828, 0xB71C1C, 0xD50000]
         return colors[10 if int_perc > 10 else int_perc]
     else:
         int_perc = int(change_percentage) + 1
         colors = [0xF1F8E9, 0xDCEDC8, 0xC5E1A5, 0xAED581, 0x9CCC65,
-        0x8BC34A, 0x7CB342, 0x689F38, 0x558B2F, 0x33691E, 0x1B5E20]
+                  0x8BC34A, 0x7CB342, 0x689F38, 0x558B2F, 0x33691E, 0x1B5E20]
         return colors[10 if int_perc > 10 else int_perc]
+
 
 class Finance:
     def __init__(self, bot):
@@ -35,14 +38,15 @@ class Finance:
     async def get_stock_change_color(self, ticker: str):
         symbols = await self.bot.aiojson(f"https://api.robinhood.com/quotes/?symbols={ticker.upper()}")
         if symbols == None:
-            return 0x000000 # black
+            return 0x000000  # black
 
         symbols_results = symbols["results"][0]
 
         current_price = (
             symbols_results["last_trade_price"] if "last_extended_hours_trade_price" in symbols_results else symbols_results[
                 "last_extended_hours_trade_price"])
-        diff = str(Decimal(current_price) - Decimal(symbols_results["previous_close"]))
+        diff = str(Decimal(current_price) -
+                   Decimal(symbols_results["previous_close"]))
         percentage = (100 * Decimal(diff) / Decimal(current_price))
         return get_change_color(percentage)
 
@@ -51,7 +55,8 @@ class Finance:
         json_data = await self.bot.aiojson("https://www.cryptopia.co.nz/api/GetCurrencies")
         if not ("Success" in json_data and json_data["Success"] == True):
             return ticker if include_ticker else None
-        name_list = [data["Name"] for data in json_data["Data"] if data["Symbol"] == ticker]
+        name_list = [data["Name"]
+                     for data in json_data["Data"] if data["Symbol"] == ticker]
         if len(name_list) == 0:
             return ticker if include_ticker else None
         return f"{name_list[0]} ({ticker})" if include_ticker else name_list[0]
@@ -89,7 +94,8 @@ class Finance:
         current_price = Decimal(
             symbols_result["last_trade_price"] if "last_extended_hours_trade_price" in symbols_result else symbols_result[
                 "last_extended_hours_trade_price"])
-        diff = Decimal(Decimal(current_price) - Decimal(symbols_result["previous_close"]))
+        diff = Decimal(Decimal(current_price) -
+                       Decimal(symbols_result["previous_close"]))
         percentage = str(100 * diff / current_price)[:6]
 
         if not percentage.startswith("-"):
@@ -97,9 +103,12 @@ class Finance:
 
         current_price_string = format_currency(current_price, currency_locale)
         diff_string = format_currency(diff, currency_locale)
-        bid_price_string = format_currency(Decimal(symbols_result["bid_price"]), currency_locale)
-        ask_price_string = format_currency(Decimal(symbols_result["ask_price"]), currency_locale)
-        tradeable_string = (":white_check_mark:" if instrument["tradeable"] else ":x:")
+        bid_price_string = format_currency(
+            Decimal(symbols_result["bid_price"]), currency_locale)
+        ask_price_string = format_currency(
+            Decimal(symbols_result["ask_price"]), currency_locale)
+        tradeable_string = (
+            ":white_check_mark:" if instrument["tradeable"] else ":x:")
 
         update_timestamp = parser.parse(symbols_result["updated_at"])
 
@@ -113,13 +122,15 @@ class Finance:
         em.add_field(name="Change from yesterday", value=f"{diff_string} ({percentage}%)")
         em.add_field(name="Bid size", value=f"{symbols_result['bid_size']} ({bid_price_string})", inline=True)
         em.add_field(name="Ask size", value=f"{symbols_result['ask_size']} ({ask_price_string})", inline=True)
-        em.add_field(name="Current Volume", value=fundamentals["volume"], inline=True)
-        em.add_field(name="Average Volume", value=fundamentals["average_volume"], inline=True)
-        em.add_field(name="Tradeable on Robinhood", value=tradeable_string, inline=True)
+        em.add_field(name="Current Volume",
+                     value=fundamentals["volume"], inline=True)
+        em.add_field(name="Average Volume",
+                     value=fundamentals["average_volume"], inline=True)
+        em.add_field(name="Tradeable on Robinhood",
+                     value=tradeable_string, inline=True)
         em.add_field(name="Country", value=f":flag_{instrument['country'].lower()}:", inline=True)
 
         await ctx.send(embed=em)
-
 
     @commands.command()
     async def btc(self, ctx):
@@ -129,49 +140,58 @@ class Finance:
             btc_bitstamp_json = await self.bot.aiojson("https://www.bitstamp.net/api/ticker")
 
             btc_currentprice_rate = Decimal(btc_bitstamp_json["last"])
-            btc_currentprice_string = format_currency(btc_currentprice_rate, currency_locale)
+            btc_currentprice_string = format_currency(
+                btc_currentprice_rate, currency_locale)
 
             btc_lastopen_rate = Decimal(btc_bitstamp_json["open"])
-            btc_lastopen_string = format_currency(btc_lastopen_rate, currency_locale)
+            btc_lastopen_string = format_currency(
+                btc_lastopen_rate, currency_locale)
 
-            btc_high_string = format_currency(btc_bitstamp_json["high"], currency_locale)
-            btc_low_string = format_currency(btc_bitstamp_json["low"], currency_locale)
-            btc_bid_string = format_currency(btc_bitstamp_json["bid"], currency_locale)
-            btc_ask_string = format_currency(btc_bitstamp_json["ask"], currency_locale)
+            btc_high_string = format_currency(
+                btc_bitstamp_json["high"], currency_locale)
+            btc_low_string = format_currency(
+                btc_bitstamp_json["low"], currency_locale)
+            btc_bid_string = format_currency(
+                btc_bitstamp_json["bid"], currency_locale)
+            btc_ask_string = format_currency(
+                btc_bitstamp_json["ask"], currency_locale)
             btc_volume_string = str(btc_bitstamp_json["volume"]) + " BTC"
 
             btc_diff = btc_currentprice_rate - btc_lastopen_rate
-            btc_change_percentage = (100 * Decimal(btc_diff) / Decimal(btc_currentprice_rate))
+            btc_change_percentage = (
+                100 * Decimal(btc_diff) / Decimal(btc_currentprice_rate))
             btc_change_percentage_string = f"{str(btc_change_percentage)[:6]}%"
 
             btc_change_color = get_change_color(btc_change_percentage)
-            
-            btc_data_timestamp = datetime.datetime.utcfromtimestamp(int(btc_bitstamp_json["timestamp"]))
+
+            btc_data_timestamp = datetime.datetime.utcfromtimestamp(
+                int(btc_bitstamp_json["timestamp"]))
 
             link = f"https://bitcoincharts.com/charts/chart.png?width=600&m=bitstampUSD&r=30&t=S&v=1&cacheinval={int(time.time())}"
-            em = discord.Embed(color=btc_change_color, timestamp=btc_data_timestamp)
+            em = discord.Embed(color=btc_change_color,
+                               timestamp=btc_data_timestamp)
 
-            em.set_author(name="30 Day BTC Chart and Info", icon_url="https://bitcoin.org/img/icons/opengraph.png")
+            em.set_author(name="30 Day BTC Chart and Info",
+                          icon_url="https://bitcoin.org/img/icons/opengraph.png")
             em.set_image(url=link)
             em.set_footer(text="Chart supplied by bitcoincharts.com under CC-BY-SA 3.0, price info supplied by BitStamp. Data is not guaranteed to be accurate, I am not responsible for your losses.")
-            
+
             em.add_field(name="Current Price", value=btc_currentprice_string)
             em.add_field(name="Opening Price", value=btc_lastopen_string)
-            
+
             em.add_field(name="Change", value=btc_change_percentage_string)
             em.add_field(name="Volume", value=btc_volume_string)
-            
+
             em.add_field(name="High", value=btc_high_string)
             em.add_field(name="Low", value=btc_low_string)
-            
+
             em.add_field(name="Bid", value=btc_bid_string)
             em.add_field(name="Ask", value=btc_ask_string)
-            
+
             await ctx.send(embed=em)
         except:
             await ctx.send("Error while fetching BTC data.")
             self.bot.log.error(traceback.format_exc())
-
 
     @commands.command(aliases=["cryptocoin", "cryptoprice", "cc"])
     async def crypto(self, ctx, ticker: str):
@@ -187,25 +207,27 @@ class Finance:
         stylized_data = api_json["DISPLAY"][ticker]["USD"]
 
         change_color = get_change_color(raw_data["CHANGEPCTDAY"])
-        
-        data_timestamp = datetime.datetime.utcfromtimestamp(raw_data["LASTUPDATE"])
+
+        data_timestamp = datetime.datetime.utcfromtimestamp(
+            raw_data["LASTUPDATE"])
 
         coin_name = await self.get_crypto_name(ticker)
 
         em = discord.Embed(color=change_color, timestamp=data_timestamp)
 
         em.set_author(name=f"Price info for {coin_name} from {stylized_data['MARKET']}")
-        em.set_footer(text="Price info supplied by CryptoCompare. Data is not guaranteed to be accurate, I am not responsible for your losses.")
-        
+        em.set_footer(
+            text="Price info supplied by CryptoCompare. Data is not guaranteed to be accurate, I am not responsible for your losses.")
+
         em.add_field(name="Current Price", value=stylized_data["PRICE"])
         em.add_field(name="Opening Price", value=stylized_data["OPENDAY"])
-        
+
         em.add_field(name="Change", value=f"{stylized_data['CHANGEDAY']} ({stylized_data['CHANGEPCTDAY']}%)")
         em.add_field(name="Volume", value=stylized_data["VOLUMEDAY"])
-        
+
         em.add_field(name="High", value=stylized_data["HIGHDAY"])
         em.add_field(name="Low", value=stylized_data["LOWDAY"])
-        
+
         await ctx.send(embed=em)
 
 

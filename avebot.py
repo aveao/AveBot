@@ -21,12 +21,15 @@ from pathlib import Path
 
 log_file_name = "avebot.log"
 
-max_file_size = 1000 * 1000 * 8 # Limit of discord (non-nitro) is 8MB (not MiB)
-backup_count = 10000 # random big number
-file_handler = logging.handlers.RotatingFileHandler(filename=log_file_name, maxBytes=max_file_size, backupCount=backup_count)
+# Limit of discord (non-nitro) is 8MB (not MiB)
+max_file_size = 1000 * 1000 * 8
+backup_count = 10000  # random big number
+file_handler = logging.handlers.RotatingFileHandler(
+    filename=log_file_name, maxBytes=max_file_size, backupCount=backup_count)
 stdout_handler = logging.StreamHandler(sys.stdout)
 
-log_format = logging.Formatter('[%(asctime)s] {%(filename)s:%(lineno)d} %(levelname)s - %(message)s')
+log_format = logging.Formatter(
+    '[%(asctime)s] {%(filename)s:%(lineno)d} %(levelname)s - %(message)s')
 file_handler.setFormatter(log_format)
 stdout_handler.setFormatter(log_format)
 
@@ -38,26 +41,34 @@ log.addHandler(stdout_handler)
 config = configparser.ConfigParser()
 config.read("avebot.ini")
 
-postgres_connection = psycopg2.connect(config['base']['postgres-connection-string'])
+postgres_connection = psycopg2.connect(
+    config['base']['postgres-connection-string'])
+
 
 def get_prefix(bot, message):
     prefixes = [config['base']['prefix']]
 
     return commands.when_mentioned_or(*prefixes)(bot, message)
 
-initial_extensions = ['cogs.common', 'cogs.permissionmanage', 'cogs.emergency', 'cogs.basic', 'cogs.admin', 'cogs.nsfw', 'cogs.technical',
-'cogs.finance', 'cogs.imagemanip', 'cogs.fun', 'cogs.emojis', 'cogs.linguistics', 'cogs.stockstream', 'cogs.jose']
 
-bot = commands.Bot(command_prefix=get_prefix, description=config['base']['description'], pm_help=None)
+initial_extensions = ['cogs.common', 'cogs.permissionmanage', 'cogs.emergency', 'cogs.basic', 'cogs.admin', 'cogs.nsfw', 'cogs.technical',
+                      'cogs.finance', 'cogs.imagemanip', 'cogs.fun', 'cogs.emojis', 'cogs.linguistics', 'cogs.stockstream', 'cogs.jose']
+
+bot = commands.Bot(command_prefix=get_prefix,
+                   description=config['base']['description'], pm_help=None)
+
 
 def get_git_commit_text():
     return call_shell("git log -1 --pretty=%B")
 
+
 def call_shell(command):
     return bytes.decode(subprocess.check_output(command, stderr=subprocess.STDOUT, shell=True)).strip()
 
+
 def get_git_revision_short_hash():
     return call_shell("git log -1 --pretty=%h")
+
 
 bot.log = log
 bot.config = config
@@ -98,16 +109,18 @@ async def on_ready():
     bot.bot_info = await bot.application_info()
     bot.start_time = int(time.time())
     bot.main_channel = bot.get_channel(int(config['base']['main-channel']))
-    bot.support_channel = bot.get_channel(int(config['base']['support-channel']))
+    bot.support_channel = bot.get_channel(
+        int(config['base']['support-channel']))
 
     await bot.main_channel.send(embed=em, file=discord.File(log_file_name))
+
 
 @bot.event
 async def on_command(ctx):
     log_text = f"{ctx.message.author} ({ctx.message.author.id}): \"{ctx.message.content}\" "
-    if ctx.guild: # was too long for tertiary if
-        log_text += f"on \"{ctx.channel.name}\" ({ctx.channel.id}) at \"{ctx.guild.name}\" ({ctx.guild.id})" 
-    else: 
+    if ctx.guild:  # was too long for tertiary if
+        log_text += f"on \"{ctx.channel.name}\" ({ctx.channel.id}) at \"{ctx.guild.name}\" ({ctx.guild.id})"
+    else:
         log_text += f"on DMs ({ctx.channel.id})"
     log.info(log_text)
 
@@ -136,12 +149,12 @@ async def on_guild_join(guild):
 
     await bot.main_channel.send(embed=em)
     await guild.owner.send("Hello and welcome to AveBot!\n"
-        "If you don't know why you're getting this message, it's because someone added AveBot to your server\n"
-        "Due to Discord API ToS, I am required to inform you that **I log command usages and errors**.\n"
-        "**I don't log *anything* else**.\nLogging code can be found at <https://github.com/aveao/AveBot/blob/"
-        "fea15e7973fb55fc0b2471254182a591370491d2/avebot.py#L99-L119>, please feel free to check it out "
-        "if you have any concerns.\n\nIf you do not agree to be logged, stop using AveBot and remove it from your "
-        "server as soon as possible.")
+                           "If you don't know why you're getting this message, it's because someone added AveBot to your server\n"
+                           "Due to Discord API ToS, I am required to inform you that **I log command usages and errors**.\n"
+                           "**I don't log *anything* else**.\nLogging code can be found at <https://github.com/aveao/AveBot/blob/"
+                           "fea15e7973fb55fc0b2471254182a591370491d2/avebot.py#L99-L119>, please feel free to check it out "
+                           "if you have any concerns.\n\nIf you do not agree to be logged, stop using AveBot and remove it from your "
+                           "server as soon as possible.")
 
 
 @bot.event
@@ -157,7 +170,8 @@ async def on_message(message):
     await bot.invoke(ctx)
 
 if not Path("avebot.ini").is_file():
-    log.warning("No config file (avebot.ini) found, please create one from avebot.ini.example file.")
+    log.warning(
+        "No config file (avebot.ini) found, please create one from avebot.ini.example file.")
     exit(3)
 
 bot.run(config['base']['token'], bot=True, reconnect=True)

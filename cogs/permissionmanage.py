@@ -3,14 +3,15 @@ from discord.ext import commands
 import traceback
 import psycopg2
 
+
 class PermManage:
     def __init__(self, bot):
         self.bot = bot
         self.bot.get_permission = self.get_permission
         self.bot.set_permission = self.set_permission
 
-
-    async def dummy_pgsql(self): # Based on https://stackoverflow.com/a/18708605/3286892 by Jaymon (https://stackoverflow.com/users/5006/jaymon)
+    # Based on https://stackoverflow.com/a/18708605/3286892 by Jaymon (https://stackoverflow.com/users/5006/jaymon)
+    async def dummy_pgsql(self):
         try:
             cur = self.bot.postgres_connection.cursor()
             cur.execute('SELECT 1')
@@ -18,8 +19,8 @@ class PermManage:
         except psycopg2.OperationalError:
             pass
 
-
-    async def ensure_pgsql(self): # Based on https://stackoverflow.com/a/18708605/3286892 by Jaymon (https://stackoverflow.com/users/5006/jaymon)
+    # Based on https://stackoverflow.com/a/18708605/3286892 by Jaymon (https://stackoverflow.com/users/5006/jaymon)
+    async def ensure_pgsql(self):
         # TODO: improve code repetition here
         # I'm doing this because I want to reduce db calls
         # as much as possible if they're not needed.
@@ -27,11 +28,10 @@ class PermManage:
         await self.dummy_pgsql()
         await self.reconnect_pgsql(True)
 
-
     async def reconnect_pgsql(self, only_if_closed=False):
         if (only_if_closed and (self.bot.postgres_connection.closed != 0)) or not only_if_closed:
-            self.bot.postgres_connection = psycopg2.connect(self.bot.config['base']['postgres-connection-string'])
-
+            self.bot.postgres_connection = psycopg2.connect(
+                self.bot.config['base']['postgres-connection-string'])
 
     async def get_permission(self, id):
         if id == self.bot.bot_info.owner.id:
@@ -49,20 +49,18 @@ class PermManage:
             cursor.close()
             return 1
 
-
     async def set_permission(self, id, permlevel):
         cursor = self.bot.postgres_connection.cursor()
         try:
             await self.ensure_pgsql()
             cursor.execute(f"DELETE FROM permissions WHERE discord_id = {id}")
-            if permlevel != 1:  # Just remove regular users from database 
+            if permlevel != 1:  # Just remove regular users from database
                 cursor.execute("INSERT INTO permissions (discord_id, permlevel) VALUES (%s, %s)",
-                          (id, permlevel))
+                               (id, permlevel))
             self.bot.postgres_connection.commit()
         except:
             self.bot.log.error(f"Error on set_permission: {traceback.format_exc()}")
         cursor.close()
-
 
     @commands.is_owner()
     @commands.command(hidden=True)
@@ -79,7 +77,6 @@ class PermManage:
         else:
             await ctx.send(f"{return_message} (blind)")
 
-
     @commands.is_owner()
     @commands.command(hidden=True, aliases=['addmod'])
     async def setmod(self, ctx, user: discord.User, check: bool = True):
@@ -94,7 +91,6 @@ class PermManage:
                 await ctx.send(f"{return_message} (verification failed, value is {actual_level}!)")
         else:
             await ctx.send(f"{return_message} (blind)")
-
 
     @commands.command(hidden=True, aliases=['addpriv'])
     async def setpriv(self, ctx, user: discord.User, check: bool = True):
@@ -114,7 +110,6 @@ class PermManage:
         else:
             await ctx.send(f"{return_message} (blind)")
 
-
     @commands.command(hidden=True, aliases=['unban', 'rmmod', 'unmod', 'rmpriv', 'unpriv'])
     async def setregular(self, ctx, user: discord.User, check: bool = True):
         author_level = await self.get_permission(ctx.author.id)
@@ -132,7 +127,6 @@ class PermManage:
                 await ctx.send(f"{return_message} (verification failed, value is {actual_level}!)")
         else:
             await ctx.send(f"{return_message} (blind)")
-
 
     @commands.command(hidden=True)
     async def ban(self, ctx, user: discord.User, check: bool = True):

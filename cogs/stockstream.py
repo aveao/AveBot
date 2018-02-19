@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import secrets
 
+
 class Stockstream:
     def __init__(self, bot):
         self.bot = bot
@@ -17,7 +18,6 @@ class Stockstream:
         to_post = f"Copypasta ready: `{secrets.choice(copypasta_list).format(ticker.upper())}`"
         await ctx.send(to_post)
 
-
     @commands.command()
     async def copypastasell(self, ctx, ticker: str):
         """Generates a copypasta for StockStream using the given ticker."""
@@ -29,6 +29,7 @@ class Stockstream:
                           "SELLING PogChamp {} PogChamp IS PogChamp OUR PogChamp LAST PogChamp HOPE PogChamp"]
         to_post = f"Copypasta ready: `{secrets.choice(copypasta_list).format(ticker.upper())}`"
         await ctx.send(to_post)
+
 
 def setup(bot):
     bot.add_cog(Stockstream(bot))

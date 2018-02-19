@@ -4,12 +4,12 @@ import traceback
 import inspect
 import re
 
+
 class AdminCog:
     def __init__(self, bot):
         self.bot = bot
         self.last_eval_result = None
         self.previous_eval_code = None
-
 
     @commands.is_owner()
     @commands.command(aliases=['echo'], hidden=True)
@@ -17,14 +17,12 @@ class AdminCog:
         """Repeats a given text."""
         await ctx.send(the_text)
 
-
     @commands.is_owner()
     @commands.command(name='exit', hidden=True)
     async def _exit(self, ctx):
         """Shuts down AveBot, owner only."""
         await ctx.send(":wave: Exiting AveBot, goodbye!")
         await self.bot.logout()
-
 
     @commands.is_owner()
     @commands.command(hidden=True)
@@ -38,7 +36,6 @@ class AdminCog:
         self.bot.log.info(f'Loaded ext {ext}')
         await ctx.send(f':white_check_mark: `{ext}` successfully loaded.')
 
-
     @commands.is_owner()
     @commands.command(hidden=True, aliases=['writeconfig'])
     async def saveconfig(self, ctx):
@@ -46,24 +43,21 @@ class AdminCog:
             self.bot.config.write(configfile)
         await ctx.send("Successfully wrote config file.")
 
-
     @commands.is_owner()
     @commands.command(hidden=True, aliases=['reloadconfig', 'readconfig'])
     async def loadconfig(self, ctx):
         self.bot.config.read("avebot.ini")
         await ctx.send("Successfully read config file.")
 
-
     @commands.is_owner()
     @commands.command(hidden=True)
     async def setconfig(self, ctx, section: str, key: str, value: str):
         botconfig = self.bot.config
         if not section in botconfig:
-            botconfig[section] = {} 
+            botconfig[section] = {}
         botconfig[section][key] = value
         self.bot.config = botconfig
         await ctx.send("Successfully set value, don't forget to `ab!saveconfig`.")
-
 
     @commands.is_owner()
     @commands.command(hidden=True)
@@ -77,13 +71,11 @@ class AdminCog:
         else:
             await ctx.send(f"Section \"{section}\" does not exist.")
 
-
     @commands.is_owner()
     @commands.command(hidden=True)
     async def fetchlog(self, ctx):
         """Returns log"""
         await ctx.send(file=discord.File("avebot.log"), content="Here's the current log file:")
-
 
     @commands.is_owner()
     @commands.command(name='eval', hidden=True)
@@ -109,7 +101,7 @@ class AdminCog:
                 '_get': discord.utils.get,
                 '_find': discord.utils.find,
 
-                 # last result
+                # last result
                 '_': self.last_eval_result,
                 '_p': self.previous_eval_code,
             }
@@ -133,7 +125,6 @@ class AdminCog:
             for msg in sliced_message:
                 await ctx.send(msg)
 
-
     @commands.is_owner()
     @commands.command(hidden=True)
     async def sh(self, ctx, *, command: str):
@@ -151,7 +142,6 @@ class AdminCog:
         await tmp.delete()
         for msg in sliced_message:
             await ctx.send(msg)
-
 
     @commands.is_owner()
     @commands.command(hidden=True)
@@ -173,7 +163,6 @@ class AdminCog:
                     await ctx.send(f':x: Cog reloading failed, traceback: ```\n{traceback.format_exc()}\n```')
                     return
 
-
     @commands.is_owner()
     @commands.command(hidden=True)
     async def unload(self, ctx, ext: str):
@@ -181,7 +170,6 @@ class AdminCog:
         self.bot.unload_extension("cogs." + ext)
         self.bot.log.info(f'Unloaded ext {ext}')
         await ctx.send(f':white_check_mark: `{ext}` successfully unloaded.')
-
 
     @commands.is_owner()
     @commands.command(hidden=True)
@@ -201,20 +189,21 @@ class AdminCog:
         self.bot.log.info(f'Reloaded ext {ext}')
         await ctx.send(f':white_check_mark: `{ext}` successfully reloaded.')
 
-
     @commands.is_owner()
     @commands.command(hidden=True)
     async def log(self, ctx, count: int):
         """Returns a file out of the last N messages submitted in this channel."""
         log_text = "===start of log, exported by avebot===\n"
         async for mlog in ctx.channel.history(limit=count):
-            log_text += "[{}]<{}>{}\n".format(str(mlog.created_at), str(mlog.author), mlog.clean_content)
+            log_text += "[{}]<{}>{}\n".format(str(mlog.created_at),
+                                              str(mlog.author), mlog.clean_content)
         mlog_file_name = "files/{}.log".format(ctx.channel.id)
         file = open(mlog_file_name, "w")
         file.write(log_text)
         file.write("===end of log, exported by avebot===")
         file.close()
         await ctx.send(file=discord.File(mlog_file_name), content=f"{ctx.message.author.mention}: Here's the log file you requested.")
+
 
 def setup(bot):
     bot.add_cog(AdminCog(bot))
