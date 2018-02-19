@@ -33,14 +33,14 @@ class NSFW:
                 return False
         return True
 
-    @commands.command()
+    @commands.command(aliases=['gel'])
     async def gelbooru(self, ctx, *, tags: str = ""):
         """Returns a random image from gelbooru from given tags"""
         nsfw_result = await self.nsfw_check(ctx)
         if not nsfw_result:
             return
-        api_url = "https://gelbooru.com/index.php?page=dapi&s=post&q=index&limit=100&json=1"
-        api_url = f"{api_url}&tags={tags}" if tags else api_url
+        api_url = "https://gelbooru.com/index.php?page=dapi&s=post&q=index&limit=100&json=1"\
+                  f"&tags=score:>=10 {tags}"
         gel_json = await self.bot.aiojson(api_url)
 
         chosen_post = secrets.choice(gel_json)
@@ -50,11 +50,35 @@ class NSFW:
         gel_url = f"https://gelbooru.com/index.php?page=post&s=view&id={chosen_post['id']}"
         embed = discord.Embed(title="Gelbooru result",
                               color=self.bot.hex_to_int(chosen_post["hash"][0:6]),
-                              url=gel_url,
                               description=gel_desc,
+                              url=gel_url,
                               timestamp=datetime.datetime.utcfromtimestamp(chosen_post["change"]))
 
         embed.set_image(url=chosen_post["file_url"])
+        await ctx.send(embed=embed)
+
+    @commands.command(aliases=['hh'])
+    async def hypnohub(self, ctx, *, tags: str = ""):
+        """Returns a random image from hypnohub from given tags"""
+        nsfw_result = await self.nsfw_check(ctx)
+        if not nsfw_result:
+            return
+        api_url = f"http://hypnohub.net/post/index.json?limit=100&tags=score:>10 {tags}"
+        hh_json = await self.bot.aiojson(api_url)
+
+        chosen_post = secrets.choice(hh_json)
+        hh_desc = f"Tags: `{chosen_post['tags']}`\n"\
+                   f"Author: `{chosen_post['author']}`\n"\
+                   f"Score: `{chosen_post['score']}`"
+        hh_url = f"http://hypnohub.net/post/show/{chosen_post['id']}"
+        hh_timestamp = datetime.datetime.utcfromtimestamp(chosen_post["created_at"])
+        embed = discord.Embed(title="Hypnohub result",
+                              color=self.bot.hex_to_int(chosen_post["md5"][0:6]),
+                              description=hh_desc,
+                              url=hh_url,
+                              timestamp=hh_timestamp)
+        image_url = "https:" + chosen_post["preview_url"].replace(".net//", ".net/") # fuck hh
+        embed.set_image(url=image_url)
         await ctx.send(embed=embed)
 
     @commands.command(aliases=['e6'])
@@ -63,7 +87,7 @@ class NSFW:
         nsfw_result = await self.nsfw_check(ctx)
         if not nsfw_result:
             return
-        api_url = f"https://e621.net/post/index.json?limit=1&tags=order:random {tags}"
+        api_url = f"https://e621.net/post/index.json?limit=1&tags=order:random score:>10 {tags}"
         e6_json = await self.bot.aiojson(api_url)
 
         if not e6_json:
@@ -77,8 +101,8 @@ class NSFW:
         e6_timestamp = datetime.datetime.utcfromtimestamp(e6_json[0]["created_at"]["s"])
         embed = discord.Embed(title="e621 result",
                               color=self.bot.hex_to_int(e6_json[0]["md5"][0:6]),
-                              url=e6_url,
                               description=e6_desc,
+                              url=e6_url,
                               timestamp=e6_timestamp)
 
         embed.set_image(url=e6_json[0]["sample_url"])
