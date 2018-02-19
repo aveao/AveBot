@@ -6,6 +6,8 @@ import re
 
 
 class EmergencyCog:
+    """This is the emergency cog. It's a lightweight version of admin cog, in case something goes wrong with admin cog (and I get locked out)."""
+
     def __init__(self, bot):
         self.bot = bot
         self.last_eval_result = None
@@ -105,7 +107,7 @@ class EmergencyCog:
         await tmp.edit(content=f"Pull complete. Output: ```{git_output}```")
         await self.bot.change_presence(game=discord.Game(name=f'ab!help | {self.bot.get_git_revision_short_hash()}'))
         if auto:
-            cogs_to_reload = re.findall('cogs/([a-z]*).py', git_output)
+            cogs_to_reload = re.findall('cogs/([a-z]*).py[ ]*\|', git_output)
             for cog in cogs_to_reload:
                 try:
                     self.bot.unload_extension("cogs." + cog)
