@@ -136,8 +136,42 @@ async def on_command_error(ctx, error):
 
 
 @bot.event
+async def on_guild_available(guild):
+    bot.log.info(f"Guild available: \"{guild.name}\" ({guild.id}).")
+    em = discord.Embed(title='Guild up', color=0xC0C111)
+    em.add_field(name="Name", value=guild.name)
+    em.add_field(name="ID", value=guild.id)
+    em.set_thumbnail(url=guild.icon_url)
+
+    await bot.main_channel.send(embed=em)
+
+
+@bot.event
+async def on_guild_unavailable(guild):
+    bot.log.info(f"Guild unavailable: \"{guild.name}\" ({guild.id}).")
+    em = discord.Embed(title='Guild down', color=0xFCD15C)
+    em.add_field(name="Name", value=guild.name)
+    em.add_field(name="ID", value=guild.id)
+    em.set_thumbnail(url=guild.icon_url)
+
+    await bot.main_channel.send(embed=em)
+
+
+@bot.event
+async def on_guild_remove(guild):
+    bot.log.info(f"Guild remove: \"{guild.name}\" ({guild.id}).")
+    em = discord.Embed(title='Guild got removed / kicked off guild', color=0xD50000)
+    em.add_field(name="Name", value=guild.name)
+    em.add_field(name="ID", value=guild.id)
+    em.set_thumbnail(url=guild.icon_url)
+
+    await bot.main_channel.send(embed=em)
+
+
+@bot.event
 async def on_guild_join(guild):
-    em = discord.Embed(title='Joined server')
+    bot.log.info(f"Joined guild \"{guild.name}\" ({guild.id}).")
+    em = discord.Embed(title='Joined guild', color=0x1B5E20)
     em.add_field(name="Name", value=guild.name)
     em.add_field(name="ID", value=guild.id)
     em.add_field(name="User Count", value=guild.member_count)
@@ -149,12 +183,14 @@ async def on_guild_join(guild):
 
     await bot.main_channel.send(embed=em)
     await guild.owner.send("Hello and welcome to AveBot!\n"
-                           "If you don't know why you're getting this message, it's because someone added AveBot to your server\n"
-                           "Due to Discord API ToS, I am required to inform you that **I log command usages and errors**.\n"
-                           "**I don't log *anything* else**.\nLogging code can be found at <https://github.com/aveao/AveBot/blob/"
-                           "fea15e7973fb55fc0b2471254182a591370491d2/avebot.py#L99-L119>, please feel free to check it out "
-                           "if you have any concerns.\n\nIf you do not agree to be logged, stop using AveBot and remove it from your "
-                           "server as soon as possible.")
+                           "If you don't know why you're getting this message, it's because someone"
+                           "added AveBot to your server\nDue to Discord API ToS, I am required to "
+                           "inform you that **I log command usages and errors**.\n**I don't log "
+                           "*anything* else**.\nLogging code can be found at  <https://github.com/"
+                           "aveao/AveBot/blob/fea15e7973fb55fc0b2471254182a591370491d2/avebot.py"
+                           "#L99-L119>, please feel free to check it out if you have any concerns."
+                           "\n\nIf you do not agree to be logged, stop using AveBot and remove it "
+                           "from your server as soon as possible.")
 
 
 @bot.event
