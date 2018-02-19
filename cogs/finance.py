@@ -117,7 +117,7 @@ class Finance:
         if rate:
             await ctx.send(f"{ctx.author.mention}: "\
                            f"1{from_symbol.upper()} = {rate}{to_symbol.upper()}."\
-                           "\n(Powered by fixer.io, data is renewed daily. "\
+                           "\n(Powered by fixer.io, data is refreshed daily. "\
                            f"{self.legal_notice})")
         else:
             await ctx.send("One of the symbols is not recognized.")
@@ -131,7 +131,7 @@ class Finance:
         if rate:
             result_amount = rate * amount
             await ctx.send(f"{ctx.author.mention}: "\
-                           f"{amount}{from_symbol.upper()} = {result_amount}{to_symbol.upper()}."\
+                           f"{amount:.1f}{from_symbol.upper()} = {result_amount}{to_symbol.upper()}."\
                            "\n(Powered by fixer.io, data is renewed daily. "\
                            f"{self.legal_notice})")
         else:
