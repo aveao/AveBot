@@ -98,10 +98,10 @@ class Basic:
                           "eu-west": ":flag_eu: EU West", "eu-central": ":flag_eu: EU Central",
                           "singapore": ":flag_si: Singapore", "london": ":flag_uk: London, UK",
                           "sydney": ":flag_au: Sydney, AU", "amsterdam": ":flag_nl: Amsterdam, NL",
-                          "frankfurt": ":flag_de: Frankfurt, DE", "brazil": "<:lunadab:406845118105124864> Brazil",
+                          "frankfurt": ":flag_de: Frankfurt, DE", "brazil": "<:lunacollardab:415413502023303169> Brazil",
                           "hongkong": ":flag_hk: Hong Kong", "russia": ":flag_ru: Russia",
                           "vip-us-east": ":flag_us: VIP US East", "vip-us-west": ":flag_us: VIP US West",
-                          "vip-amsterdam": ":flag_nl: VIP Amsterdam, NL"}  # All this effort for :lunahahayes:
+                          "vip-amsterdam": ":flag_nl: VIP Amsterdam, NL"}  # All this effort for luna memes
 
         region_text = str(current_guild.region)
         region_text = region_replace[region_text] if region_text in region_replace else region_text
