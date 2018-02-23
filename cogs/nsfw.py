@@ -40,7 +40,7 @@ class NSFW:
         if not nsfw_result:
             return
         api_url = "https://gelbooru.com/index.php?page=dapi&s=post&q=index&limit=100&json=1"\
-                  f"&tags=score:>=10 {tags}"
+                  f"&tags=score:>=10 -webm {tags}"
         gel_json = await self.bot.aiojson(api_url)
 
         chosen_post = secrets.choice(gel_json)
@@ -55,6 +55,30 @@ class NSFW:
                               timestamp=datetime.datetime.utcfromtimestamp(chosen_post["change"]))
 
         embed.set_image(url=chosen_post["file_url"])
+        await ctx.send(embed=embed)
+
+    @commands.command(aliases=['r34'])
+    async def rule34(self, ctx, *, tags: str = ""):
+        """Returns a random image from rule34 from given tags"""
+        nsfw_result = await self.nsfw_check(ctx)
+        if not nsfw_result:
+            return
+        api_url = "https://rule34.xxx/index.php?page=dapi&s=post&q=index&limit=100&json=1"\
+                  f"&tags=score:>=10 -webm {tags}"
+        r34_json = await self.bot.aiojson(api_url)
+
+        chosen_post = secrets.choice(r34_json)
+        r34_desc = f"Tags: `{chosen_post['tags']}`\n"\
+                   f"Owner: `{chosen_post['owner']}`\n"\
+                   f"Score: `{chosen_post['score']}`"
+        r34_url = f"https://rule34.xxx/index.php?page=post&s=view&id={chosen_post['id']}"
+        embed = discord.Embed(title="Rule34 result",
+                              color=self.bot.hex_to_int(chosen_post["hash"][0:6]),
+                              description=r34_desc,
+                              url=r34_url,
+                              timestamp=datetime.datetime.utcfromtimestamp(chosen_post["change"]))
+        r34_imageurl = f"https://rule34.xxx/images/{chosen_post['directory']}/{chosen_post['image']}"
+        embed.set_image(url=r34_imageurl)
         await ctx.send(embed=embed)
 
     @commands.command(aliases=['hh'])
@@ -87,7 +111,7 @@ class NSFW:
         nsfw_result = await self.nsfw_check(ctx)
         if not nsfw_result:
             return
-        api_url = f"https://e621.net/post/index.json?limit=1&tags=order:random score:>10 {tags}"
+        api_url = f"https://e621.net/post/index.json?limit=1&tags=order:random score:>10 -webm {tags}"
         e6_json = await self.bot.aiojson(api_url)
 
         if not e6_json:
