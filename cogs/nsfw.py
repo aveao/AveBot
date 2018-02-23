@@ -10,7 +10,6 @@ class BooruE621:
     name = "e621"
     domain = "e621.net"
     random_supported = True
-    gel_style = False
 
     def get_api_url(self, tags: str):
         return f"https://{self.domain}/post/index.json?limit=1&tags="\
@@ -22,18 +21,26 @@ class BooruE621:
     def get_post_hash(self, post_json):
         return post_json["md5"]
 
-    def get_post_timestamp(self, post_json):
-        return post_json["created_at"]["s"]
+    def get_post_timestr(self, post_json):
+        return datetime.datetime.utcfromtimestamp(post_json["created_at"]["s"])
 
     def get_image_url(self, post_json):
         return post_json["sample_url"]
+
+    def get_owner_name(self, post_json):
+        return post_json['author']
+
+    def get_post_tags(self, post_json):
+        return post_json['tag']
+
+    def get_post_score(self, post_json):
+        return post_json['score']
 
 class BooruHypnohub:
     """Booru class for Hypnohub"""
     name = "Hypnohub"
     domain = "hypnohub.net"
     random_supported = False
-    gel_style = False
 
     def get_api_url(self, tags: str):
         return f"https://{self.domain}/post/index.json?limit=100&tags=score:>10 {tags}"
@@ -44,18 +51,26 @@ class BooruHypnohub:
     def get_post_hash(self, post_json):
         return post_json["md5"]
 
-    def get_post_timestamp(self, post_json):
-        return post_json["created_at"]
+    def get_post_timestr(self, post_json):
+        return datetime.datetime.utcfromtimestamp(post_json["created_at"])
 
     def get_image_url(self, post_json):
         return "https:" + post_json["sample_url"].replace(".net//", ".net/") # fuck hh
+
+    def get_owner_name(self, post_json):
+        return post_json['author']
+
+    def get_post_tags(self, post_json):
+        return post_json['tag']
+
+    def get_post_score(self, post_json):
+        return post_json['score']
 
 class BooruGelbooru:
     """Booru class for Gelbooru"""
     name = "Gelbooru"
     domain = "gelbooru.com"
     random_supported = False
-    gel_style = True
 
     def get_api_url(self, tags: str):
         return f"https://{self.domain}/index.php?page=dapi&s=post&q=index&limit=100&json=1"\
@@ -67,18 +82,59 @@ class BooruGelbooru:
     def get_post_hash(self, post_json):
         return post_json["hash"]
 
-    def get_post_timestamp(self, post_json):
-        return post_json["change"]
+    def get_post_timestr(self, post_json):
+        return datetime.datetime.utcfromtimestamp(post_json["change"])
 
     def get_image_url(self, post_json):
         return post_json["file_url"]
+
+    def get_owner_name(self, post_json):
+        return post_json['owner']
+
+    def get_post_tags(self, post_json):
+        return post_json['tag']
+
+    def get_post_score(self, post_json):
+        return post_json['score']
+
+class BooruDanbooru:
+    """Booru class for Danbooru"""
+    name = "Danbooru"
+    domain = "danbooru.donmai.us"
+    random_supported = True
+
+    def get_api_url(self, tags: str):
+        return f"https://{self.domain}/posts.json?random=true&limit=1&tags=score:%3E10%20{tags}"
+
+    def get_post_url(self, post_id):
+        return f"https://{self.domain}/posts/{post_id}"
+
+    def get_post_hash(self, post_json):
+        return post_json["md5"]
+
+    def get_post_timestr(self, post_json): # fucking danbooru gives a dumb timestring
+        danb_timestr = post_json["created_at"]
+        tz_diff = danb_timestr[-5:]
+        danb_timestr = danb_timestr.replace(tz_diff, tz_diff.replace(":", "")) # Remove : from timezone
+        return datetime.datetime.strptime(danb_timestr, "%Y-%m-%dT%H:%M:%S.%f%z")
+
+    def get_image_url(self, post_json):
+        return f"https://{self.domain}{post_json['file_url']}"
+
+    def get_owner_name(self, post_json):
+        return post_json['uploader_name']
+
+    def get_post_tags(self, post_json):
+        return post_json['tag_string']
+
+    def get_post_score(self, post_json):
+        return post_json['up_score'] - post_json['down_score']
 
 class BooruRule34:
     """Booru class for Rule34"""
     name = "Rule34"
     domain = "rule34.xxx"
     random_supported = False
-    gel_style = True
 
     def get_api_url(self, tags: str):
         return f"https://{self.domain}/index.php?page=dapi&s=post&q=index&limit=100&json=1"\
@@ -90,12 +146,21 @@ class BooruRule34:
     def get_post_hash(self, post_json):
         return post_json["hash"]
 
-    def get_post_timestamp(self, post_json):
-        return post_json["change"]
+    def get_post_timestr(self, post_json):
+        return datetime.datetime.utcfromtimestamp(post_json["change"])
 
     def get_image_url(self, post_json):
         return "https://rule34.xxx/images/"\
                 f"{post_json['directory']}/{post_json['image']}"
+
+    def get_owner_name(self, post_json):
+        return post_json['owner']
+
+    def get_post_tags(self, post_json):
+        return post_json['tag']
+
+    def get_post_score(self, post_json):
+        return post_json['score']
 
 class NSFW:
     """NSFW commands for the lewd people."""
@@ -137,16 +202,14 @@ class NSFW:
             return
         chosen_post = booru_json[0] if service.random_supported else secrets.choice(booru_json)
 
-        res_desc = f"Tags: `{chosen_post['tags']}`\n"
-        res_desc += (f"Owner: `{chosen_post['owner']}`\n" if service.gel_style else
-                     f"Author: `{chosen_post['author']}`\n")
-        res_desc += f"Score: `{chosen_post['score']}`"
+        res_desc = f"Tags: `{service.get_post_tags(chosen_post)[:2000]}`\n"\
+                   f"Uploader: `{service.get_owner_name(chosen_post)}`\n"\
+                   f"Score: `{service.get_post_score(chosen_post)}`"
 
         post_url = service.get_post_url(chosen_post['id'])
         image_url = service.get_image_url(chosen_post)
         embed_color = self.bot.hex_to_int(service.get_post_hash(chosen_post)[0:6])
-        embed_timestamp = datetime.datetime.utcfromtimestamp(
-            service.get_post_timestamp(chosen_post))
+        embed_timestamp = service.get_post_timestr(chosen_post)
 
         embed = discord.Embed(title=f"{service.name} result",
                               color=embed_color,
@@ -162,6 +225,12 @@ class NSFW:
         """Returns a random image from gelbooru from given tags"""
         async with ctx.typing():
             await self.booru(ctx, BooruGelbooru(), tags)
+
+    @commands.command(aliases=['dan'])
+    async def danbooru(self, ctx, *, tags: str = ""):
+        """Returns a random image from danbooru from given tags"""
+        async with ctx.typing():
+            await self.booru(ctx, BooruDanbooru(), tags)
 
     @commands.command(aliases=['r34'])
     async def rule34(self, ctx, *, tags: str = ""):
