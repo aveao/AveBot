@@ -33,104 +33,94 @@ class NSFW:
                 return False
         return True
 
-    @commands.command(aliases=['gel'])
-    async def gelbooru(self, ctx, *, tags: str = ""):
-        """Returns a random image from gelbooru from given tags"""
+    async def booru(self, ctx, service: str, tags: str):
+        """Central function to handle booru interactions"""
+        random_supported = service in ["e621.net"]
+        gel_style = service in ["gelbooru.com", "rule34.xxx"]
+
         nsfw_result = await self.nsfw_check(ctx)
         if not nsfw_result:
             return
-        api_url = "https://gelbooru.com/index.php?page=dapi&s=post&q=index&limit=100&json=1"\
-                  f"&tags=score:>=10 -webm {tags}"
-        gel_json = await self.bot.aiojson(api_url)
 
-        chosen_post = secrets.choice(gel_json)
-        gel_desc = f"Tags: `{chosen_post['tags']}`\n"\
-                   f"Owner: `{chosen_post['owner']}`\n"\
-                   f"Score: `{chosen_post['score']}`"
-        gel_url = f"https://gelbooru.com/index.php?page=post&s=view&id={chosen_post['id']}"
-        embed = discord.Embed(title="Gelbooru result",
-                              color=self.bot.hex_to_int(chosen_post["hash"][0:6]),
-                              description=gel_desc,
-                              url=gel_url,
-                              timestamp=datetime.datetime.utcfromtimestamp(chosen_post["change"]))
+        api_url = ""
+        if gel_style:
+            api_url = f"https://{service}/index.php?page=dapi&s=post&q=index&limit=100&json=1"\
+                      f"&tags=score:>=10 -webm {tags}"
+        elif service == "hypnohub.net":
+            api_url = f"http://hypnohub.net/post/index.json?limit=100&tags=score:>10 {tags}"
+        elif service == "e621.net":
+            api_url = "https://e621.net/post/index.json?limit=1&tags="\
+                      f"order:random score:>10 -webm {tags}"
+        else:
+            return
+        booru_json = await self.bot.aiojson(api_url)
+        # TODO: check if empty
+        chosen_post = booru_json[0] if random_supported else secrets.choice(booru_json)
 
-        embed.set_image(url=chosen_post["file_url"])
+        res_desc = f"Tags: `{chosen_post['tags']}`\n"
+        res_desc += (f"Owner: `{chosen_post['owner']}`\n" if gel_style else
+                   f"Author: `{chosen_post['author']}`\n")
+        res_desc += f"Score: `{chosen_post['score']}`"
+
+        post_url = ""
+        if gel_style:
+            post_url = f"https://{service}/index.php?page=post&s=view&id={chosen_post['id']}"
+        elif service in ["hypnohub.net", "e621.net"]:
+            post_url = f"https://{service}/post/show/{chosen_post['id']}"
+
+        embed_color = ""
+        if gel_style:
+            embed_color = self.bot.hex_to_int(chosen_post["hash"][0:6])
+        elif service in ["hypnohub.net", "e621.net"]:
+            embed_color = self.bot.hex_to_int(chosen_post["md5"][0:6])
+
+        embed_timestamp = ""
+        if gel_style:
+            embed_timestamp = datetime.datetime.utcfromtimestamp(chosen_post["change"])
+        elif service == "hypnohub.net":
+            embed_timestamp = datetime.datetime.utcfromtimestamp(chosen_post["created_at"])
+        elif service == "e621.net":
+            embed_timestamp = datetime.datetime.utcfromtimestamp(chosen_post["created_at"]["s"])
+
+        embed = discord.Embed(title=f"{service} result",
+                              color=embed_color,
+                              description=res_desc,
+                              url=post_url,
+                              timestamp=embed_timestamp)
+
+        image_url = ""
+        if service == "gelbooru.com":
+            image_url = chosen_post["file_url"]
+        elif service == "rule34.xxx":
+            image_url = "https://rule34.xxx/images/"\
+                        f"{chosen_post['directory']}/{chosen_post['image']}"
+        elif service == "hypnohub.net":
+            image_url = "https:" + chosen_post["preview_url"].replace(".net//", ".net/") # fuck hh
+        elif service == "e621.net":
+            image_url = chosen_post["sample_url"]
+
+        embed.set_image(url=image_url)
         await ctx.send(embed=embed)
+
+    @commands.command(aliases=['gel'])
+    async def gelbooru(self, ctx, *, tags: str = ""):
+        """Returns a random image from gelbooru from given tags"""
+        await self.booru(ctx, "gelbooru.com", tags)
 
     @commands.command(aliases=['r34'])
     async def rule34(self, ctx, *, tags: str = ""):
         """Returns a random image from rule34 from given tags"""
-        nsfw_result = await self.nsfw_check(ctx)
-        if not nsfw_result:
-            return
-        api_url = "https://rule34.xxx/index.php?page=dapi&s=post&q=index&limit=100&json=1"\
-                  f"&tags=score:>=10 -webm {tags}"
-        r34_json = await self.bot.aiojson(api_url)
-
-        chosen_post = secrets.choice(r34_json)
-        r34_desc = f"Tags: `{chosen_post['tags']}`\n"\
-                   f"Owner: `{chosen_post['owner']}`\n"\
-                   f"Score: `{chosen_post['score']}`"
-        r34_url = f"https://rule34.xxx/index.php?page=post&s=view&id={chosen_post['id']}"
-        embed = discord.Embed(title="Rule34 result",
-                              color=self.bot.hex_to_int(chosen_post["hash"][0:6]),
-                              description=r34_desc,
-                              url=r34_url,
-                              timestamp=datetime.datetime.utcfromtimestamp(chosen_post["change"]))
-        r34_imageurl = f"https://rule34.xxx/images/{chosen_post['directory']}/{chosen_post['image']}"
-        embed.set_image(url=r34_imageurl)
-        await ctx.send(embed=embed)
+        await self.booru(ctx, "rule34.xxx", tags)
 
     @commands.command(aliases=['hh'])
     async def hypnohub(self, ctx, *, tags: str = ""):
         """Returns a random image from hypnohub from given tags"""
-        nsfw_result = await self.nsfw_check(ctx)
-        if not nsfw_result:
-            return
-        api_url = f"http://hypnohub.net/post/index.json?limit=100&tags=score:>10 {tags}"
-        hh_json = await self.bot.aiojson(api_url)
-
-        chosen_post = secrets.choice(hh_json)
-        hh_desc = f"Tags: `{chosen_post['tags']}`\n"\
-                   f"Author: `{chosen_post['author']}`\n"\
-                   f"Score: `{chosen_post['score']}`"
-        hh_url = f"http://hypnohub.net/post/show/{chosen_post['id']}"
-        hh_timestamp = datetime.datetime.utcfromtimestamp(chosen_post["created_at"])
-        embed = discord.Embed(title="Hypnohub result",
-                              color=self.bot.hex_to_int(chosen_post["md5"][0:6]),
-                              description=hh_desc,
-                              url=hh_url,
-                              timestamp=hh_timestamp)
-        image_url = "https:" + chosen_post["preview_url"].replace(".net//", ".net/") # fuck hh
-        embed.set_image(url=image_url)
-        await ctx.send(embed=embed)
+        await self.booru(ctx, "hypnohub.net", tags)
 
     @commands.command(aliases=['e6'])
     async def e621(self, ctx, *, tags: str = ""):
         """Returns a random image from e621 from given tags"""
-        nsfw_result = await self.nsfw_check(ctx)
-        if not nsfw_result:
-            return
-        api_url = f"https://e621.net/post/index.json?limit=1&tags=order:random score:>10 -webm {tags}"
-        e6_json = await self.bot.aiojson(api_url)
-
-        if not e6_json:
-            await ctx.send(f"{ctx.author.mention}: No result found")
-            return
-
-        e6_desc = f"Tags: `{e6_json[0]['tags']}`\n"\
-                   f"Author: `{e6_json[0]['author']}`\n"\
-                   f"Score: `{e6_json[0]['score']}`"
-        e6_url = f"https://e621.net/post/show/{e6_json[0]['id']}"
-        e6_timestamp = datetime.datetime.utcfromtimestamp(e6_json[0]["created_at"]["s"])
-        embed = discord.Embed(title="e621 result",
-                              color=self.bot.hex_to_int(e6_json[0]["md5"][0:6]),
-                              description=e6_desc,
-                              url=e6_url,
-                              timestamp=e6_timestamp)
-
-        embed.set_image(url=e6_json[0]["sample_url"])
-        await ctx.send(embed=embed)
+        await self.booru(ctx, "e621.net", tags)
 
     @commands.command(aliases=['fucksafemode'])
     async def tumblrgrab(self, ctx, *, link: str):
