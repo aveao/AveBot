@@ -1,10 +1,101 @@
 import re
 import math
-import discord
-from discord.ext import commands
 import datetime
 import secrets
+import discord
+from discord.ext import commands
 
+class BooruE621:
+    """Booru class for e621"""
+    name = "e621"
+    domain = "e621.net"
+    random_supported = True
+    gel_style = False
+
+    def get_api_url(self, tags: str):
+        return f"https://{self.domain}/post/index.json?limit=1&tags="\
+               f"order:random score:>10 -webm {tags}"
+
+    def get_post_url(self, post_id):
+        return f"https://{self.domain}/post/show/{post_id}"
+
+    def get_post_hash(self, post_json):
+        return post_json["md5"]
+
+    def get_post_timestamp(self, post_json):
+        return post_json["created_at"]["s"]
+
+    def get_image_url(self, post_json):
+        return post_json["sample_url"]
+
+class BooruHypnohub:
+    """Booru class for Hypnohub"""
+    name = "Hypnohub"
+    domain = "hypnohub.net"
+    random_supported = False
+    gel_style = False
+
+    def get_api_url(self, tags: str):
+        return f"https://{self.domain}/post/index.json?limit=100&tags=score:>10 {tags}"
+
+    def get_post_url(self, post_id):
+        return f"https://{self.domain}/post/show/{post_id}"
+
+    def get_post_hash(self, post_json):
+        return post_json["md5"]
+
+    def get_post_timestamp(self, post_json):
+        return post_json["created_at"]
+
+    def get_image_url(self, post_json):
+        return "https:" + post_json["sample_url"].replace(".net//", ".net/") # fuck hh
+
+class BooruGelbooru:
+    """Booru class for Gelbooru"""
+    name = "Gelbooru"
+    domain = "gelbooru.com"
+    random_supported = False
+    gel_style = True
+
+    def get_api_url(self, tags: str):
+        return f"https://{self.domain}/index.php?page=dapi&s=post&q=index&limit=100&json=1"\
+               f"&tags=score:>=10 -webm {tags}"
+
+    def get_post_url(self, post_id):
+        return f"https://{self.domain}/index.php?page=post&s=view&id={post_id}"
+
+    def get_post_hash(self, post_json):
+        return post_json["hash"]
+
+    def get_post_timestamp(self, post_json):
+        return post_json["change"]
+
+    def get_image_url(self, post_json):
+        return post_json["file_url"]
+
+class BooruRule34:
+    """Booru class for Rule34"""
+    name = "Rule34"
+    domain = "rule34.xxx"
+    random_supported = False
+    gel_style = True
+
+    def get_api_url(self, tags: str):
+        return f"https://{self.domain}/index.php?page=dapi&s=post&q=index&limit=100&json=1"\
+               f"&tags=score:>=10 -webm {tags}"
+
+    def get_post_url(self, post_id):
+        return f"https://{self.domain}/index.php?page=post&s=view&id={post_id}"
+
+    def get_post_hash(self, post_json):
+        return post_json["hash"]
+
+    def get_post_timestamp(self, post_json):
+        return post_json["change"]
+
+    def get_image_url(self, post_json):
+        return "https://rule34.xxx/images/"\
+                f"{post_json['directory']}/{post_json['image']}"
 
 class NSFW:
     """NSFW commands for the lewd people."""
@@ -33,71 +124,35 @@ class NSFW:
                 return False
         return True
 
-    async def booru(self, ctx, service: str, tags: str):
+    async def booru(self, ctx, service, tags: str):
         """Central function to handle booru interactions"""
-        random_supported = service in ["e621.net"]
-        gel_style = service in ["gelbooru.com", "rule34.xxx"]
-
         nsfw_result = await self.nsfw_check(ctx)
         if not nsfw_result:
             return
 
-        api_url = ""
-        if gel_style:
-            api_url = f"https://{service}/index.php?page=dapi&s=post&q=index&limit=100&json=1"\
-                      f"&tags=score:>=10 -webm {tags}"
-        elif service == "hypnohub.net":
-            api_url = f"http://hypnohub.net/post/index.json?limit=100&tags=score:>10 {tags}"
-        elif service == "e621.net":
-            api_url = "https://e621.net/post/index.json?limit=1&tags="\
-                      f"order:random score:>10 -webm {tags}"
-        else:
-            return
+        api_url = service.get_api_url(tags)
         booru_json = await self.bot.aiojson(api_url)
-        # TODO: check if empty
-        chosen_post = booru_json[0] if random_supported else secrets.choice(booru_json)
+        if not booru_json:
+            ctx.send(f"{ctx.author.mention}: no results found")
+            return
+        chosen_post = booru_json[0] if service.random_supported else secrets.choice(booru_json)
 
         res_desc = f"Tags: `{chosen_post['tags']}`\n"
-        res_desc += (f"Owner: `{chosen_post['owner']}`\n" if gel_style else
-                   f"Author: `{chosen_post['author']}`\n")
+        res_desc += (f"Owner: `{chosen_post['owner']}`\n" if service.gel_style else
+                     f"Author: `{chosen_post['author']}`\n")
         res_desc += f"Score: `{chosen_post['score']}`"
 
-        post_url = ""
-        if gel_style:
-            post_url = f"https://{service}/index.php?page=post&s=view&id={chosen_post['id']}"
-        elif service in ["hypnohub.net", "e621.net"]:
-            post_url = f"https://{service}/post/show/{chosen_post['id']}"
+        post_url = service.get_post_url(chosen_post['id'])
+        image_url = service.get_image_url(chosen_post)
+        embed_color = self.bot.hex_to_int(service.get_post_hash(chosen_post)[0:6])
+        embed_timestamp = datetime.datetime.utcfromtimestamp(
+            service.get_post_timestamp(chosen_post))
 
-        embed_color = ""
-        if gel_style:
-            embed_color = self.bot.hex_to_int(chosen_post["hash"][0:6])
-        elif service in ["hypnohub.net", "e621.net"]:
-            embed_color = self.bot.hex_to_int(chosen_post["md5"][0:6])
-
-        embed_timestamp = ""
-        if gel_style:
-            embed_timestamp = datetime.datetime.utcfromtimestamp(chosen_post["change"])
-        elif service == "hypnohub.net":
-            embed_timestamp = datetime.datetime.utcfromtimestamp(chosen_post["created_at"])
-        elif service == "e621.net":
-            embed_timestamp = datetime.datetime.utcfromtimestamp(chosen_post["created_at"]["s"])
-
-        embed = discord.Embed(title=f"{service} result",
+        embed = discord.Embed(title=f"{service.name} result",
                               color=embed_color,
                               description=res_desc,
                               url=post_url,
                               timestamp=embed_timestamp)
-
-        image_url = ""
-        if service == "gelbooru.com":
-            image_url = chosen_post["file_url"]
-        elif service == "rule34.xxx":
-            image_url = "https://rule34.xxx/images/"\
-                        f"{chosen_post['directory']}/{chosen_post['image']}"
-        elif service == "hypnohub.net":
-            image_url = "https:" + chosen_post["preview_url"].replace(".net//", ".net/") # fuck hh
-        elif service == "e621.net":
-            image_url = chosen_post["sample_url"]
 
         embed.set_image(url=image_url)
         await ctx.send(embed=embed)
@@ -105,22 +160,26 @@ class NSFW:
     @commands.command(aliases=['gel'])
     async def gelbooru(self, ctx, *, tags: str = ""):
         """Returns a random image from gelbooru from given tags"""
-        await self.booru(ctx, "gelbooru.com", tags)
+        async with ctx.typing():
+            await self.booru(ctx, BooruGelbooru(), tags)
 
     @commands.command(aliases=['r34'])
     async def rule34(self, ctx, *, tags: str = ""):
         """Returns a random image from rule34 from given tags"""
-        await self.booru(ctx, "rule34.xxx", tags)
+        async with ctx.typing():
+            await self.booru(ctx, BooruRule34(), tags)
 
     @commands.command(aliases=['hh'])
     async def hypnohub(self, ctx, *, tags: str = ""):
         """Returns a random image from hypnohub from given tags"""
-        await self.booru(ctx, "hypnohub.net", tags)
+        async with ctx.typing():
+            await self.booru(ctx, BooruHypnohub(), tags)
 
     @commands.command(aliases=['e6'])
     async def e621(self, ctx, *, tags: str = ""):
         """Returns a random image from e621 from given tags"""
-        await self.booru(ctx, "e621.net", tags)
+        async with ctx.typing():
+            await self.booru(ctx, BooruE621(), tags)
 
     @commands.command(aliases=['fucksafemode'])
     async def tumblrgrab(self, ctx, *, link: str):
