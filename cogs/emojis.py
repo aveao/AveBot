@@ -167,7 +167,7 @@ class Emoji:
         for message in messages:
             await ctx.send(message)
 
-    @commands.command(hidden=Truee)
+    @commands.command(hidden=True)
     async def addavemoji(self, ctx, emoji_name: str = "", url: str = ""):
         """Adds an emoji to avemojis. Mod only.
 
