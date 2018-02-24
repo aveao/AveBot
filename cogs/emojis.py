@@ -167,7 +167,7 @@ class Emoji:
         for message in messages:
             await ctx.send(message)
 
-    @commands.command(hidden=True)
+    @commands.command(hidden=Truee)
     async def addavemoji(self, ctx, emoji_name: str = "", url: str = ""):
         """Adds an emoji to avemojis. Mod only.
 
@@ -206,7 +206,7 @@ class Emoji:
                                          f"{ctx.author.mention} ({ctx.author}).")
         await announcements_channel.send(str(added_emoji))
 
-    @commands.command(hidden=True)
+    @commands.command(hidden=True, aliases=["removeaveemoji"])
     async def deleteavemoji(self, ctx, emoji_string: str):
         """Deletes one or more avemoji(s), mod+ only"""
 
