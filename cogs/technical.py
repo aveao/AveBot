@@ -35,31 +35,31 @@ class Technical:
         aveheat_data_timestamp = datetime.datetime.utcfromtimestamp(
             int(heat_json["timestamp"]))
 
-        em = discord.Embed(title="Heat Inside Ave's House",
-                           timestamp=aveheat_data_timestamp)
+        embed = discord.Embed(title="Heat Inside Ave's House",
+                              timestamp=aveheat_data_timestamp)
 
         charturl = f"{self.bot.config['homeheat']['charturl']}?t={int(time.time())}"
 
-        em.set_image(url=charturl)
-        em.set_footer(text="Chart data is UTC")
+        embed.set_image(url=charturl)
+        embed.set_footer(text="Chart data is UTC")
 
-        em.add_field(name="Inside", value=f"{heat_json['inside']}°C")
-        em.add_field(name="Outside", value=f"{heat_json['outside']}°C")
+        embed.add_field(name="Inside", value=f"{heat_json['inside']}°C")
+        embed.add_field(name="Outside", value=f"{heat_json['outside']}°C")
 
-        await ctx.send(embed=em)
+        await ctx.send(embed=embed)
 
     @commands.command(aliases=['codetime', 'programmingtime'])
     async def wakatime(self, ctx):
         """Shows wakatime stats of dev."""
         current_time = datetime.datetime.utcnow()
 
-        em = discord.Embed(
+        embed = discord.Embed(
             title="Coding Activity over Last 7 Days", timestamp=current_time)
 
         charturl = f"{self.bot.config['wakatime']['url']}?t={time.time()}"
-        em.set_image(url=charturl)
+        embed.set_image(url=charturl)
 
-        await ctx.send(embed=em)
+        await ctx.send(embed=embed)
 
     @commands.command()
     async def render(self, ctx, page_link: str):
@@ -99,7 +99,7 @@ class Technical:
         if author_level < 2:
             return
         mention = ctx.message.author.mention
-        url_filename = self.bot.url_get_filename(link)
+        url_filename = await self.bot.url_get_filename(link)
         filename = "files/" + (filename if filename else url_filename)
         await self.bot.download_file(link, filename)
         file_size = Path(filename).stat().st_size
