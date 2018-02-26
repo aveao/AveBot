@@ -83,14 +83,22 @@ class Fun:
         """Returns info about the specified xkcd comic.
 
         If no value is supplied, it gives the last one instead."""
-        xkcdcount = f"{xkcdcount}/" if xkcdcount != 0 else ""
-        j = await self.bot.aiojson(f"https://xkcd.com/{xkcdcount}info.0.json")
-        resolvedto = j["img"]
-        if resolvedto:
-            messagecont = "**XKCD {0}:** `{1}`, published on {2}-{3}-{4} (DMY)\n**Image:** {5}\n**Alt text:** `{6}`\n" \
-                          "Explain xkcd: <http://www.explainxkcd.com/wiki/index.php/{0}>" \
-                .format(str(j["num"]), j["safe_title"], j["day"], j["month"], j["year"], resolvedto, j["alt"])
-            await ctx.send(messagecont)
+        j = await self.bot.aiojson(f"https://xkcd.com/{xkcdcount}/info.0.json")
+        resolvedto = "img" in j
+        if not resolvedto:
+            return
+
+        post_timestamp = datetime.datetime.strptime(f"{j['year']}-{j['month']}-{j['day']}",
+                                                    "%Y-%m-%d")
+
+        embed = discord.Embed(title=f"xkcd {j['num']}: {j['safe_title']}",
+                              url=f"https://xkcd.com/{j['num']}",
+                              timestamp=post_timestamp)
+
+        embed.set_image(url=j["img"])
+        embed.set_footer(text=j["alt"])
+
+        await ctx.send(embed=embed)
 
 
 def setup(bot):
