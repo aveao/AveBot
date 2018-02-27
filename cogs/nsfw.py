@@ -31,7 +31,7 @@ class BooruE621:
         return post_json['author']
 
     def get_post_tags(self, post_json):
-        return post_json['tag']
+        return post_json['tags']
 
     def get_post_score(self, post_json):
         return post_json['score']
@@ -61,7 +61,7 @@ class BooruHypnohub:
         return post_json['author']
 
     def get_post_tags(self, post_json):
-        return post_json['tag']
+        return post_json['tags']
 
     def get_post_score(self, post_json):
         return post_json['score']
@@ -92,7 +92,7 @@ class BooruGelbooru:
         return post_json['owner']
 
     def get_post_tags(self, post_json):
-        return post_json['tag']
+        return post_json['tags']
 
     def get_post_score(self, post_json):
         return post_json['score']
@@ -157,7 +157,7 @@ class BooruRule34:
         return post_json['owner']
 
     def get_post_tags(self, post_json):
-        return post_json['tag']
+        return post_json['tags']
 
     def get_post_score(self, post_json):
         return post_json['score']
