@@ -150,8 +150,40 @@ class BooruRule34:
         return datetime.datetime.utcfromtimestamp(post_json["change"])
 
     def get_image_url(self, post_json):
-        return "https://rule34.xxx/images/"\
-                f"{post_json['directory']}/{post_json['image']}"
+        return f"https://{self.domain}/images/"\
+               f"{post_json['directory']}/{post_json['image']}"
+
+    def get_owner_name(self, post_json):
+        return post_json['owner']
+
+    def get_post_tags(self, post_json):
+        return post_json['tags']
+
+    def get_post_score(self, post_json):
+        return post_json['score']
+
+class BooruRealbooru:
+    """Booru class for Realbooru"""
+    name = "Realbooru"
+    domain = "realbooru.com"
+    random_supported = False
+
+    def get_api_url(self, tags: str):
+        return f"https://{self.domain}/index.php?page=dapi&s=post&q=index&limit=100&json=1"\
+               f"&tags=score:>=10 -webm {tags}"
+
+    def get_post_url(self, post_id):
+        return f"https://{self.domain}/index.php?page=post&s=view&id={post_id}"
+
+    def get_post_hash(self, post_json):
+        return post_json["hash"]
+
+    def get_post_timestr(self, post_json):
+        return datetime.datetime.utcfromtimestamp(post_json["change"])
+
+    def get_image_url(self, post_json):
+        return f"https://{self.domain}/images/"\
+               f"{post_json['directory']}/{post_json['image']}"
 
     def get_owner_name(self, post_json):
         return post_json['owner']
@@ -237,6 +269,12 @@ class NSFW:
         """Returns a random image from rule34 from given tags"""
         async with ctx.typing():
             await self.booru(ctx, BooruRule34(), tags)
+
+    @commands.command(aliases=['rb'])
+    async def realbooru(self, ctx, *, tags: str = ""):
+        """Returns a random image from realbooru from given tags"""
+        async with ctx.typing():
+            await self.booru(ctx, BooruRealbooru(), tags)
 
     @commands.command(aliases=['hh'])
     async def hypnohub(self, ctx, *, tags: str = ""):
