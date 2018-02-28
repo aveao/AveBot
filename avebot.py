@@ -182,6 +182,11 @@ async def on_guild_join(guild):
     em.set_thumbnail(url=guild.icon_url)
 
     await bot.main_channel.send(embed=em)
+    if guild.id == 295341979800436736 and guild.get_member(140527820500762624):
+        await guild.owner.send("Neither Ave nor AveBot will return ALA "\
+                               "Jamie is a member. Leaving now.")
+        await guild.leave()
+        return
     await guild.owner.send("Hello and welcome to AveBot!\n"
                            "If you don't know why you're getting this message, it's because someone"
                            "added AveBot to your server\nDue to Discord API ToS, I am required to "
