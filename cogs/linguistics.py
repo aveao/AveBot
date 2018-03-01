@@ -26,12 +26,18 @@ class Linguistics:
         rett = await ret.text()
         self.bot.log.info(f"oxford output: {rett}")
         retj = await ret.json(content_type=ret.headers['Content-Type'])
-        out_text = f"Definitions for word `{word}`:"
+        out_text = ""
         # dear god fuck this API
         for lexicial_entry in retj["results"][0]["lexicalEntries"]:
             out_text += f"\n- {lexicial_entry['entries'][0]['senses'][0]['definitions'][0]}"
-        out_text += "\n\nBased on Oxford Dictionaries API"
-        await ctx.send(out_text)
+
+        embed = discord.Embed(title=f"Definitions for `{word}`", 
+                              url=f"https://en.oxforddictionaries.com/definition/{word.lower()}", 
+                              description=out_text, 
+                              timestamp=datetime.datetime.utcnow())
+
+        embed.set_footer(text="Based on Oxford Dictionaries API")
+        await ctx.send(embed=embed)
 
     @commands.command()
     async def similar(self, ctx, *, word: str):
