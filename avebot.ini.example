@@ -12,6 +12,10 @@ emoji-announcements-channel = emoji announcements channel id goes here
 unfurl-depth = 5
 max-slice = 3
 
+[oxforddict]
+appid = oxford dict app id goes here
+appkey = oxford dict app key goes here
+
 [tumblr]
 apikey = tumblr api key goes here
 

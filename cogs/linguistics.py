@@ -10,6 +10,27 @@ class Linguistics:
         self.bot = bot
 
     @commands.command()
+    async def define(self, ctx, *, word: str):
+        """Defines the specified word"""
+        url = f"https://od-api.oxforddictionaries.com:443/api/v1/entries/en/{word.lower()}"
+        auth_headers = {'app_id': self.bot.config["oxforddict"]["appid"],
+                        'app_key': self.bot.config["oxforddict"]["appkey"]}
+        ret = await self.bot.aiosession.get(url, headers = auth_headers)
+        if ret.status == 404:
+            return await ctx.send(f"{ctx.author.mention}: Word"
+                                  f" `{word}` not found on oxford dictionary.")
+        elif ret.status == 500:
+            return await ctx.send(f"{ctx.author.mention}: Error on oxford's "
+                                  f"end while processing the word.")
+        retj = await ret.json()
+        out_text = f"Definitions for word `{word}`:"
+        for lexicalEntry in retj["results"]["lexicalEntries"]:
+            for definition in lexicalEntry["entries"]["senses"]["definitions"]:
+                out_text += f"\n- {definition}"
+        out_text += "\n\nBased on Oxford Dictionaries API"
+        await ctx.send(out_text)
+
+    @commands.command()
     async def similar(self, ctx, *, word: str):
         """Gets a word similar to the one specified."""
         output = await self.bot.aiojson(f"https://api.datamuse.com/words?ml={word.replace(' ', '+')}")
