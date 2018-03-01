@@ -29,7 +29,7 @@ class Linguistics:
         out_text = ""
         # dear god fuck this API
         for lexicial_entry in retj["results"][0]["lexicalEntries"]:
-            out_text += f"\n- {lexicial_entry['entries'][0]['senses'][0]['definitions'][0]}"
+            out_text += f"\n- {lexicial_entry['entries'][0]['senses'][0]['definitions'][0]} ({lexicial_entry['lexicalCategory']})"
 
         embed = discord.Embed(title=f"Definitions for `{word}`", 
                               url=f"https://en.oxforddictionaries.com/definition/{word.lower()}", 
