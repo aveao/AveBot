@@ -22,7 +22,7 @@ class Linguistics:
         elif ret.status == 500:
             return await ctx.send(f"{ctx.author.mention}: Error on oxford's "
                                   f"end while processing the word.")
-        retj = await ret.json()
+        retj = await ret.json(content_type=ret.headers['Content-Type'])
         out_text = f"Definitions for word `{word}`:"
         for lexicalEntry in retj["results"]["lexicalEntries"]:
             for definition in lexicalEntry["entries"]["senses"]["definitions"]:
