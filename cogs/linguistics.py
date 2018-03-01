@@ -27,9 +27,13 @@ class Linguistics:
         self.bot.log.info(f"oxford output: {rett}")
         retj = await ret.json(content_type=ret.headers['Content-Type'])
         out_text = f"Definitions for word `{word}`:"
+        # dear god fuck this API
         for result in retj["results"]:
-            for definition in result["lexicalEntries"]["entries"]["senses"]["definitions"]:
-                out_text += f"\n- {definition}"
+            for definition in result["lexicalEntries"]:
+                for lexical_entry in result["entries"]:
+                    for sense in lexical_entry["senses"]:
+                        for definition in sense["definitions"]:
+                            out_text += f"\n- {definition}"
         out_text += "\n\nBased on Oxford Dictionaries API"
         await ctx.send(out_text)
 
