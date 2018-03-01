@@ -28,14 +28,7 @@ class Linguistics:
         retj = await ret.json(content_type=ret.headers['Content-Type'])
         out_text = f"Definitions for word `{word}`:"
         # dear god fuck this API
-        for result in retj["results"]:
-            for lexical_entry in result["lexicalEntries"]:
-                for entry in lexical_entry["entries"]:
-                    sensething = (entry["senses"] if "senses" in entry
-                                  else entry["subsenses"])
-                    for sense in sensething:
-                        for definition in sense["definitions"]:
-                            out_text += f"\n- {definition}"
+        out_text += "\n- " + retj["results"][0]["lexicalEntries"][0]["entries"][0]["senses"][0]["definitions"][0]
         out_text += "\n\nBased on Oxford Dictionaries API"
         await ctx.send(out_text)
 
