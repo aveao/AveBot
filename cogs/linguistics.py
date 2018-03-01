@@ -13,7 +13,8 @@ class Linguistics:
     async def define(self, ctx, *, word: str):
         """Defines the specified word"""
         url = f"https://od-api.oxforddictionaries.com:443/api/v1/entries/en/{word.lower()}"
-        auth_headers = {'app_id': self.bot.config["oxforddict"]["appid"],
+        auth_headers = {'Accept': "application/json",
+                        'app_id': self.bot.config["oxforddict"]["appid"],
                         'app_key': self.bot.config["oxforddict"]["appkey"]}
         ret = await self.bot.aiosession.get(url, headers = auth_headers)
         if ret.status == 404:
