@@ -16,7 +16,7 @@ class Linguistics:
         auth_headers = {'Accept': "application/json",
                         'app_id': self.bot.config["oxforddict"]["appid"],
                         'app_key': self.bot.config["oxforddict"]["appkey"]}
-        ret = await self.bot.aiosession.get(url, headers = auth_headers)
+        ret = await self.bot.aiosession.get(url, headers=auth_headers)
         if ret.status == 404:
             return await ctx.send(f"{ctx.author.mention}: Word"
                                   f" `{word}` not found on oxford dictionary.")
