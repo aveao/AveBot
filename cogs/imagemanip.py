@@ -1,8 +1,5 @@
 import discord
 from discord.ext import commands
-import time
-import datetime
-import socket
 import os
 import asyncio
 import random
@@ -63,7 +60,8 @@ class ImageManipulation:
     async def sbahjify(self, ctx):
         """Makes images hella and sweet.
 
-        Usage: ab!sbahjify <link, if you're not uploading an image to discord>"""
+        Usage: ab!sbahjify <url, if you're not uploading an image to discord>
+        """
         mention = ctx.message.author.mention
 
         images_to_process = await self.get_images(ctx, "sbahjify")
@@ -94,7 +92,8 @@ class ImageManipulation:
             im = im.filter(PIL.ImageFilter.SHARPEN)
             out_filename = f"files/sbahjify-{imgtp.replace('files/', '')}"
             im.save(out_filename, quality=0, optimize=False, progressive=False)
-            await ctx.send(content=f"{mention}: Here's your image, hella and sweetened:", file=discord.File(out_filename))
+            await ctx.send(content=f"{mention}: Here's your image, hella and sweetened:", 
+                           file=discord.File(out_filename))
         await asyncio.sleep(5)
         await tmp.delete()
 

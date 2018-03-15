@@ -51,8 +51,20 @@ def get_prefix(bot, message):
     return commands.when_mentioned_or(*prefixes)(bot, message)
 
 
-initial_extensions = ['cogs.common', 'cogs.permissionmanage', 'cogs.emergency', 'cogs.basic', 'cogs.admin', 'cogs.nsfw', 'cogs.technical',
-                      'cogs.finance', 'cogs.imagemanip', 'cogs.fun', 'cogs.emojis', 'cogs.linguistics', 'cogs.stockstream', 'cogs.jose']
+initial_extensions = ['cogs.common',
+                      'cogs.permissionmanage',
+                      'cogs.emergency',
+                      'cogs.basic',
+                      'cogs.admin',
+                      'cogs.nsfw',
+                      'cogs.technical',
+                      'cogs.finance',
+                      'cogs.imagemanip',
+                      'cogs.fun',
+                      'cogs.emojis',
+                      'cogs.linguistics',
+                      'cogs.stockstream',
+                      'cogs.jose']
 
 bot = commands.Bot(command_prefix=get_prefix,
                    description=config['base']['description'], pm_help=None)
@@ -63,7 +75,9 @@ def get_git_commit_text():
 
 
 def call_shell(command):
-    return bytes.decode(subprocess.check_output(command, stderr=subprocess.STDOUT, shell=True)).strip()
+    return bytes.decode(subprocess.check_output(command,
+                                                stderr=subprocess.STDOUT,
+                                                shell=True)).strip()
 
 
 def get_git_revision_short_hash():
@@ -88,9 +102,12 @@ if __name__ == '__main__':
 
 @bot.event
 async def on_ready():
-    log.info(f'\nLogged in as: {bot.user.name} - {bot.user.id}\ndpy version: {discord.__version__}\n')
+    log.info(f"\nLogged in as: {bot.user.name} - {bot.user.id}\n"
+             f"dpy version: {discord.__version__}\n")
 
-    await bot.change_presence(game=discord.Game(name=f'ab!help | {get_git_revision_short_hash()}'))
+    bot_activity = discord.Game(name=f"{config['base']['prefix']}help | "
+                                     f"{get_git_revision_short_hash()}")
+    await bot.change_presence(activity=bot_activity)
 
     local_time = str(datetime.datetime.now()).split('.')[0]
     total_guild_count = len(bot.guilds)
@@ -117,9 +134,11 @@ async def on_ready():
 
 @bot.event
 async def on_command(ctx):
-    log_text = f"{ctx.message.author} ({ctx.message.author.id}): \"{ctx.message.content}\" "
+    log_text = f"{ctx.message.author} ({ctx.message.author.id}):"\
+               f" \"{ctx.message.content}\" "
     if ctx.guild:  # was too long for tertiary if
-        log_text += f"on \"{ctx.channel.name}\" ({ctx.channel.id}) at \"{ctx.guild.name}\" ({ctx.guild.id})"
+        log_text += f"on \"{ctx.channel.name}\" ({ctx.channel.id}) "\
+                    f"at \"{ctx.guild.name}\" ({ctx.guild.id})"
     else:
         log_text += f"on DMs ({ctx.channel.id})"
     log.info(log_text)
@@ -132,11 +151,14 @@ async def on_error(event_method, *args, **kwargs):
 
 @bot.event
 async def on_command_error(ctx, error):
-    log.error(f"Error with \"{ctx.message.content}\" from \"{ctx.message.author}\" ({ctx.message.author.id}): {error}")
+    log.error(f"Error with \"{ctx.message.content}\" from "
+              f"\"{ctx.message.author}\" ({ctx.message.author.id}): {error}")
 
 
 @bot.event
 async def on_guild_available(guild):
+    if not bot.is_ready():
+        return
     bot.log.info(f"Guild available: \"{guild.name}\" ({guild.id}).")
     em = discord.Embed(title='Guild up', color=0xC0C111)
     em.add_field(name="Name", value=guild.name)
@@ -160,7 +182,8 @@ async def on_guild_unavailable(guild):
 @bot.event
 async def on_guild_remove(guild):
     bot.log.info(f"Guild remove: \"{guild.name}\" ({guild.id}).")
-    em = discord.Embed(title='Guild got removed / kicked off guild', color=0xD50000)
+    em = discord.Embed(title='Guild got removed / kicked off guild',
+                       color=0xD50000)
     em.add_field(name="Name", value=guild.name)
     em.add_field(name="ID", value=guild.id)
     em.set_thumbnail(url=guild.icon_url)
@@ -182,7 +205,7 @@ async def on_guild_join(guild):
     em.set_thumbnail(url=guild.icon_url)
 
     await bot.main_channel.send(embed=em)
-    
+
     await guild.owner.send("Hello and welcome to AveBot!\n"
                            "If you don't know why you're getting this message, it's because someone"
                            "added AveBot to your server\nDue to Discord API ToS, I am required to "
@@ -208,7 +231,8 @@ async def on_message(message):
 
 if not Path("avebot.ini").is_file():
     log.warning(
-        "No config file (avebot.ini) found, please create one from avebot.ini.example file.")
+        "No config file (avebot.ini) found, "
+        "please create one from avebot.ini.example file.")
     exit(3)
 
 bot.run(config['base']['token'], bot=True, reconnect=True)

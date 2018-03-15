@@ -150,7 +150,7 @@ class AdminCog:
         tmp = await ctx.send('Pulling...')
         git_output = self.bot.call_shell("git pull")
         await tmp.edit(content=f"Pull complete. Output: ```{git_output}```")
-        await self.bot.change_presence(game=discord.Game(name=f'ab!help | {self.bot.get_git_revision_short_hash()}'))
+        await self.bot.change_presence(activity=discord.Game(name=f'ab!help | {self.bot.get_git_revision_short_hash()}'))
         if auto:
             cogs_to_reload = re.findall('cogs/([a-z]*).py[ ]*\|', git_output)
             for cog in cogs_to_reload:

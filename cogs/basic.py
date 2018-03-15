@@ -18,7 +18,6 @@ class Basic:
         """Returns bot's info."""
         local_time = str(datetime.datetime.now()).split('.')[0]
         total_guild_count = len(self.bot.guilds)
-        total_user_count = len(list(self.bot.get_all_members()))
         total_unique_user_count = len(list(set(self.bot.get_all_members())))
         owner = str(self.bot.bot_info.owner)
 
@@ -52,7 +51,8 @@ class Basic:
     async def invite(self, ctx):
         """Gives a link that can be used to add AveBot."""
         inviteurl = discord.utils.oauth_url(self.bot.user.id)
-        await ctx.send(f"You can use the following link to add AveBot to your server:\n<{inviteurl}>")
+        await ctx.send(f"You can use the following link to add AveBot "
+                       f"to your server:\n<{inviteurl}>")
 
     @commands.command()
     async def hello(self, ctx):
@@ -71,11 +71,16 @@ class Basic:
         total_guild_count = len(self.bot.guilds)
         total_user_count = len(list(self.bot.get_all_members()))
         total_unique_user_count = len(list(set(self.bot.get_all_members())))
-        await ctx.send(f"AveBot is in {total_guild_count} servers with {total_user_count} total users ({total_unique_user_count} unique).")
+        await ctx.send(f"AveBot is in {total_guild_count} servers with "
+                       f"{total_user_count} total users "
+                       f"({total_unique_user_count} unique).")
 
     @commands.command(aliases=['p'])
     async def ping(self, ctx):
-        """Shows ping values to discord."""
+        """Shows ping values to discord.
+
+        RTT = Round-trip time, time taken to send a message to discord
+        GW = Gateway Ping"""
         before = time.monotonic()
         tmp = await ctx.send('Calculating ping...')
         after = time.monotonic()
@@ -163,8 +168,8 @@ class Basic:
                 time_from=user.joined_at, humanized=True, include_from=True)
             embed.add_field(name="Joined Guild", value=humanized_guild)
             embed.add_field(name="Status", value=str(user.status))
-        if user.game:
-            embed.add_field(name="Game", value=user.game.name)
+        if user.activity:
+            embed.add_field(name=user.activity.state, value=user.activity.name)
         is_bot_display = ":white_check_mark:" if user.bot else ":x:"
         embed.add_field(name="Is bot", value=is_bot_display)
 
@@ -175,7 +180,7 @@ class Basic:
         """Gets your or a user's avatar.
 
         avatar <mention/name>: returns avatar of the mentioned user"""
-        
+
         if user is None:
             user = ctx.author
 

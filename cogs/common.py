@@ -54,32 +54,30 @@ class Common:
         else:
             return "No output."
 
-    # based on https://stackoverflow.com/a/18727481/3286892 by Ofir Israel (https://stackoverflow.com/users/2713087/ofir-israel)
+    # based on https://stackoverflow.com/a/18727481/3286892
+    # by Ofir Israel (https://stackoverflow.com/users/2713087/ofir-israel)
     async def url_get_filename(self, url):
         a = urlparse(url)
         return os.path.basename(a.path)
 
     async def filename_get_ext(self, filename):
-        # if no ext, return empty
+        filename = os.path.splitext(filename)[1]
         if "?" in filename:
             filename = filename.split('?')[0]
-
-        if "." in filename:
-            filename = filename.split('.')[-1]
 
         return filename
 
     async def filename_get_woext(self, filename):
-        if "." in filename:
-            filename = filename.split('.')[0]
-
+        filename = os.path.splitext(filename)[0]
         return filename
 
     def hex_to_int(self, color_hex: str):
         """Turns a given hex color into an integer"""
         return int("0x" + color_hex.strip('#'), 16)
 
-    # This function is based on https://stackoverflow.com/a/35435419/3286892 by link2110 (https://stackoverflow.com/users/5890923/link2110), modified by Ave (https://github.com/aveao), licensed CC-BY-SA 3.0
+    # This function is based on https://stackoverflow.com/a/35435419/3286892
+    # by link2110 (https://stackoverflow.com/users/5890923/link2110)
+    # modified by Ave (https://github.com/aveao), licensed CC-BY-SA 3.0
     async def download_file(self, url, local_filename):
         file_resp = await self.bot.aiosession.get(url)
         file = await file_resp.read()
