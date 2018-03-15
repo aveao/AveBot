@@ -1,6 +1,3 @@
-import discord
-from discord.ext import commands
-import re
 import asyncio
 import aiohttp
 import datetime
@@ -13,7 +10,8 @@ import os
 class Common:
     def __init__(self, bot):
         self.bot = bot
-        self.bot.aiosession = aiohttp.ClientSession(headers={"User-Agent": "AveBot/3.0'"})
+        self.bot.aiosession = aiohttp.ClientSession(
+            headers={"User-Agent": "AveBot/3.0'"})
         self.bot.aiojson = self.aiojson
         self.bot.aioget = self.aioget
         self.bot.slice_message = self.slice_message
@@ -29,8 +27,12 @@ class Common:
         self.bot.hex_to_int = self.hex_to_int
         self.max_split_length = int(bot.config["advanced"]["max-slice"])
 
-    async def async_call_shell(self, shell_command: str, inc_stdout=True, inc_stderr=True):
-        p = await asyncio.create_subprocess_shell(str(shell_command), stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
+    async def async_call_shell(self, shell_command: str,
+                               inc_stdout=True, inc_stderr=True):
+        sp_pipe = asyncio.subprocess.PIPE
+        p = await asyncio.create_subprocess_shell(str(shell_command),
+                                                  stdout=sp_pipe,
+                                                  stderr=sp_pipe)
         # await p.wait()
         # God I hate having to account for a fuckton of different shit
         if not (inc_stdout or inc_stderr):
@@ -46,7 +48,8 @@ class Common:
             return stderr_str
 
         if stdout_str and stderr_str:
-            return f"stdout:\n\n{stdout_str}\n\n======\n\nstderr:\n\n{stderr_str}"
+            return f"stdout:\n\n{stdout_str}\n\n"\
+                   f"======\n\nstderr:\n\n{stderr_str}"
         elif stdout_str:
             return f"stdout:\n\n{stdout_str}"
         elif stderr_str:
@@ -84,27 +87,37 @@ class Common:
         with open(local_filename, "wb") as f:
             f.write(file)
 
-    async def haste(self, text):
-        response = await self.bot.aiosession.post('https://hastebin.com/documents', data=text)
+    async def haste(self, text,
+                    haste_domain: str = 'https://hastebin.com/'):
+        response = await self.bot.aiosession.post(f"{haste_domain}documents",
+                                                  data=text)
         if response.status == 200:
             result_json = await response.json()
-            return f"https://hastebin.com/{result_json['key']}"
+            return f"{haste_domain}{result_json['key']}"
 
-    def get_relative_timestamp(self, time_from=None, time_to=None, humanized=False, include_from=False, include_to=False):
-        if time_from == None:  # Setting default value to utcnow() makes it show time from cog load, which is not what we want
+    def get_relative_timestamp(self, time_from=None, time_to=None,
+                               humanized=False, include_from=False,
+                               include_to=False):
+        # Setting default value to utcnow() makes it show time from cog load,
+        # which is not what we want
+        if not time_from:
             time_from = datetime.datetime.utcnow()
-        if time_to == None:
+        if not time_to:
             time_to = datetime.datetime.utcnow()
         if humanized:
             humanized_string = humanize.naturaltime(time_to - time_from)
             if include_from and include_to:
-                str_with_from_and_to = f"{humanized_string} ({str(time_from).split('.')[0]} - {str(time_to).split('.')[0]})"
+                str_with_from_and_to = f"{humanized_string} "\
+                                       f"({str(time_from).split('.')[0]} "\
+                                       f"- {str(time_to).split('.')[0]})"
                 return str_with_from_and_to
             elif include_from:
-                str_with_from = f"{humanized_string} ({str(time_from).split('.')[0]})"
+                str_with_from = f"{humanized_string} "\
+                                f"({str(time_from).split('.')[0]})"
                 return str_with_from
             elif include_to:
-                str_with_to = f"{humanized_string} ({str(time_to).split('.')[0]})"
+                str_with_to = f"{humanized_string} "\
+                              f"({str(time_to).split('.')[0]})"
                 return str_with_to
             return humanized_string
         else:
@@ -124,9 +137,10 @@ class Common:
                 self.bot.log.info(f"Data from {url}: {text_data}")
                 return text_data
             else:
-                self.bot.log.error(f"HTTP Error {data.status} while getting {url}")
+                self.bot.log.error(f"HTTP {data.status} while getting {url}")
         except:
-            self.bot.log.error(f"Error while getting {url} on aioget: {traceback.format_exc()}")
+            self.bot.log.error(f"Error while getting {url} on "
+                               f"aioget: {traceback.format_exc()}")
 
     async def aiogetbytes(self, url):
         try:
@@ -136,9 +150,10 @@ class Common:
                 self.bot.log.debug(f"Data from {url}: {byte_data}")
                 return byte_data
             else:
-                self.bot.log.error(f"HTTP Error {data.status} while getting {url}")
+                self.bot.log.error(f"HTTP {data.status} while getting {url}")
         except:
-            self.bot.log.error(f"Error while getting {url} on aiogetbytes: {traceback.format_exc()}")
+            self.bot.log.error(f"Error while getting {url} on "
+                               f"aiogetbytes: {traceback.format_exc()}")
 
     async def aiojson(self, url):
         try:
@@ -146,17 +161,21 @@ class Common:
             if data.status == 200:
                 text_data = await data.text()
                 self.bot.log.info(f"Data from {url}: {text_data}")
-                return await data.json(content_type=data.headers['Content-Type'])
+                ctype = data.headers['Content-Type']
+                return await data.json(content_type=ctype)
             else:
-                self.bot.log.error(f"HTTP Error {data.status} while getting {url}")
+                self.bot.log.error(f"HTTP {data.status} while getting {url}")
         except:
-            self.bot.log.error(f"Error while getting {url} on aiojson: {traceback.format_exc()}")
+            self.bot.log.error(f"Error while getting {url} on "
+                               f"aiojson: {traceback.format_exc()}")
 
     # 2000 is maximum limit of discord
     async def slice_message(self, text, size=2000, prefix="", suffix=""):
         if len(text) > size * self.max_split_length:
             haste_url = await self.haste(text)
-            return [f"Message is too long ({len(text)} > {size * self.max_split_length} ({size} * {self.max_split_length})), go to haste: <{haste_url}>"]
+            return [f"Message is too long ({len(text)} > "
+                    f"{size * self.max_split_length} ({size} * "
+                    f"{self.max_split_length})), go to haste: <{haste_url}>"]
         reply_list = []
         size_wo_fix = size - len(prefix) - len(suffix)
         while len(text) > size_wo_fix:

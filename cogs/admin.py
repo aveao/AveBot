@@ -31,7 +31,8 @@ class AdminCog:
         try:
             self.bot.load_extension("cogs." + ext)
         except:
-            await ctx.send(f':x: Cog loading failed, traceback: ```\n{traceback.format_exc()}\n```')
+            await ctx.send(f':x: Cog loading failed, traceback: '
+                           f'```\n{traceback.format_exc()}\n```')
             return
         self.bot.log.info(f'Loaded ext {ext}')
         await ctx.send(f':white_check_mark: `{ext}` successfully loaded.')
@@ -53,11 +54,12 @@ class AdminCog:
     @commands.command(hidden=True)
     async def setconfig(self, ctx, section: str, key: str, value: str):
         botconfig = self.bot.config
-        if not section in botconfig:
+        if section not in botconfig:
             botconfig[section] = {}
         botconfig[section][key] = value
         self.bot.config = botconfig
-        await ctx.send("Successfully set value, don't forget to `ab!saveconfig`.")
+        await ctx.send(f"Successfully set value, don't forget to "
+                       f"`{self.bot.config['base']['prefix']}saveconfig`.")
 
     @commands.is_owner()
     @commands.command(hidden=True)
@@ -65,9 +67,11 @@ class AdminCog:
         botconfig = self.bot.config
         if section in botconfig and key in botconfig[section]:
             value = botconfig[section][key]
-            await ctx.send(f"Config value for [{section}]->\"{key}\" is \"{value}\".")
+            await ctx.send(f"Config value for [{section}]->\"{key}\" "
+                           f"is \"{value}\".")
         elif section in botconfig:
-            await ctx.send(f"Section \"{section}\" does exist, but \"{key}\" doesn't.")
+            await ctx.send(f"Section \"{section}\" does exist, but "
+                           f"\"{key}\" doesn't.")
         else:
             await ctx.send(f"Section \"{section}\" does not exist.")
 
@@ -75,7 +79,8 @@ class AdminCog:
     @commands.command(hidden=True)
     async def fetchlog(self, ctx):
         """Returns log"""
-        await ctx.send(file=discord.File("avebot.log"), content="Here's the current log file:")
+        await ctx.send(file=discord.File("avebot.log"),
+                       content="Here's the current log file:")
 
     @commands.is_owner()
     @commands.command(name='eval', hidden=True)
@@ -117,11 +122,16 @@ class AdminCog:
 
             self.previous_eval_code = code
 
-            sliced_message = await self.bot.slice_message(repr(result), prefix="```", suffix="```")
+            sliced_message = await self.bot.slice_message(repr(result),
+                                                          prefix="```",
+                                                          suffix="```")
             for msg in sliced_message:
                 await ctx.send(msg)
         except:
-            sliced_message = await self.bot.slice_message(traceback.format_exc(), prefix="```", suffix="```")
+            trback = traceback.format_exc()
+            sliced_message = await self.bot.slice_message(trback,
+                                                          prefix="```",
+                                                          suffix="```")
             for msg in sliced_message:
                 await ctx.send(msg)
 
@@ -135,7 +145,9 @@ class AdminCog:
         shell_output = await self.bot.async_call_shell(command)
         shell_output = f"\"{command}\" output:\n\n{shell_output}"
         self.bot.log.info(shell_output)
-        sliced_message = await self.bot.slice_message(shell_output, prefix="```", suffix="```")
+        sliced_message = await self.bot.slice_message(shell_output,
+                                                      prefix="```",
+                                                      suffix="```")
         if len(sliced_message) == 1:
             await tmp.edit(content=sliced_message[0])
             return
@@ -150,7 +162,10 @@ class AdminCog:
         tmp = await ctx.send('Pulling...')
         git_output = self.bot.call_shell("git pull")
         await tmp.edit(content=f"Pull complete. Output: ```{git_output}```")
-        await self.bot.change_presence(activity=discord.Game(name=f'ab!help | {self.bot.get_git_revision_short_hash()}'))
+        bot_activity = discord.Game(
+            name=f"{self.bot.config['base']['prefix']}help | "
+                 f"{self.bot.get_git_revision_short_hash()}")
+        await self.bot.change_presence(activity=bot_activity)
         if auto:
             cogs_to_reload = re.findall('cogs/([a-z]*).py[ ]*\|', git_output)
             for cog in cogs_to_reload:
@@ -158,9 +173,11 @@ class AdminCog:
                     self.bot.unload_extension("cogs." + cog)
                     self.bot.load_extension("cogs." + cog)
                     self.bot.log.info(f'Reloaded ext {cog}')
-                    await ctx.send(f':white_check_mark: `{cog}` successfully reloaded.')
+                    await ctx.send(f':white_check_mark: `{cog}` '
+                                   'successfully reloaded.')
                 except:
-                    await ctx.send(f':x: Cog reloading failed, traceback: ```\n{traceback.format_exc()}\n```')
+                    await ctx.send(f':x: Cog reloading failed, traceback: '
+                                   f'```\n{traceback.format_exc()}\n```')
                     return
 
     @commands.is_owner()
@@ -184,7 +201,8 @@ class AdminCog:
             self.bot.unload_extension("cogs." + ext)
             self.bot.load_extension("cogs." + ext)
         except:
-            await ctx.send(f':x: Cog reloading failed, traceback: ```\n{traceback.format_exc()}\n```')
+            await ctx.send(':x: Cog reloading failed, traceback: '
+                           f'```\n{traceback.format_exc()}\n```')
             return
         self.bot.log.info(f'Reloaded ext {ext}')
         await ctx.send(f':white_check_mark: `{ext}` successfully reloaded.')
@@ -192,17 +210,20 @@ class AdminCog:
     @commands.is_owner()
     @commands.command(hidden=True)
     async def log(self, ctx, count: int):
-        """Returns a file out of the last N messages submitted in this channel."""
+        """Returns a file out of the last N messages submitted in this chan."""
         log_text = "===start of log, exported by avebot===\n"
         async for mlog in ctx.channel.history(limit=count):
             log_text += "[{}]<{}>{}\n".format(str(mlog.created_at),
-                                              str(mlog.author), mlog.clean_content)
+                                              str(mlog.author),
+                                              mlog.clean_content)
         mlog_file_name = "files/{}.log".format(ctx.channel.id)
         file = open(mlog_file_name, "w")
         file.write(log_text)
         file.write("===end of log, exported by avebot===")
         file.close()
-        await ctx.send(file=discord.File(mlog_file_name), content=f"{ctx.message.author.mention}: Here's the log file you requested.")
+        await ctx.send(file=discord.File(mlog_file_name),
+                       content=f"{ctx.message.author.mention}: "
+                               "Here's the log file you requested.")
 
 
 def setup(bot):

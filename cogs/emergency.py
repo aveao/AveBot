@@ -6,7 +6,9 @@ import re
 
 
 class EmergencyCog:
-    """This is the emergency cog. It's a lightweight version of admin cog, in case something goes wrong with admin cog (and I get locked out)."""
+    """This is the emergency cog.
+    It's a lightweight version of admin cog,
+    in case something goes wrong with admin cog (and I get locked out)."""
 
     def __init__(self, bot):
         self.bot = bot
@@ -105,7 +107,10 @@ class EmergencyCog:
         tmp = await ctx.send('Pulling...')
         git_output = self.bot.call_shell("git pull")
         await tmp.edit(content=f"Pull complete. Output: ```{git_output}```")
-        await self.bot.change_presence(activity=discord.Game(name=f'ab!help | {self.bot.get_git_revision_short_hash()}'))
+        bot_activity = discord.Game(
+            name=f"{self.bot.config['base']['prefix']}help | "
+                 f"{self.bot.get_git_revision_short_hash()}")
+        await self.bot.change_presence(activity=bot_activity)
         if auto:
             cogs_to_reload = re.findall('cogs/([a-z]*).py[ ]*\|', git_output)
             for cog in cogs_to_reload:

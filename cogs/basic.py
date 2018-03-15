@@ -92,24 +92,35 @@ class Basic:
         await tmp.edit(content=message_text)
 
     @commands.guild_only()
-    @commands.command(aliases=['serverinfo'])
+    @commands.command(aliases=['serverinfo', 'guildinfo', 'ginfo'])
     async def sinfo(self, ctx):
         """Shows info about the current server."""
         current_guild = ctx.guild
-        em = discord.Embed(title=f"Server info of {current_guild.name} ({current_guild.id})")
+        em = discord.Embed(
+            title=f"Server info of {current_guild.name} ({current_guild.id})")
 
-        region_replace = {"us-west": ":flag_us: US West", "us-east": ":flag_us: US East",
-                          "us-south": ":flag_us: US South", "us-central": ":flag_us: US Central",
-                          "eu-west": ":flag_eu: EU West", "eu-central": ":flag_eu: EU Central",
-                          "singapore": ":flag_si: Singapore", "london": ":flag_uk: London, UK",
-                          "sydney": ":flag_au: Sydney, AU", "amsterdam": ":flag_nl: Amsterdam, NL",
-                          "frankfurt": ":flag_de: Frankfurt, DE", "brazil": "<:lunacdab:419587460423614464> Brazil",
-                          "hongkong": ":flag_hk: Hong Kong", "russia": ":flag_ru: Russia",
-                          "vip-us-east": ":flag_us: VIP US East", "vip-us-west": ":flag_us: VIP US West",
-                          "vip-amsterdam": ":flag_nl: VIP Amsterdam, NL"}  # All this effort for luna memes
+        # All this effort for luna memes
+        region_replace = {"us-west": ":flag_us: US West",
+                          "us-east": ":flag_us: US East",
+                          "us-south": ":flag_us: US South",
+                          "us-central": ":flag_us: US Central",
+                          "eu-west": ":flag_eu: EU West",
+                          "eu-central": ":flag_eu: EU Central",
+                          "singapore": ":flag_si: Singapore",
+                          "london": ":flag_uk: London, UK",
+                          "sydney": ":flag_au: Sydney, AU",
+                          "amsterdam": ":flag_nl: Amsterdam, NL",
+                          "frankfurt": ":flag_de: Frankfurt, DE",
+                          "brazil": "<:lunacdab:419587460423614464> Brazil",
+                          "hongkong": ":flag_hk: Hong Kong",
+                          "russia": ":flag_ru: Russia",
+                          "vip-us-east": ":flag_us: VIP US East",
+                          "vip-us-west": ":flag_us: VIP US West",
+                          "vip-amsterdam": ":flag_nl: VIP Amsterdam, NL"}
 
         region_text = str(current_guild.region)
-        region_text = region_replace[region_text] if region_text in region_replace else region_text
+        region_text = (region_replace[region_text] if
+                       region_text in region_replace else region_text)
 
         em.add_field(name="User Count", value=current_guild.member_count)
         em.add_field(name="Region", value=region_text)
@@ -117,7 +128,9 @@ class Basic:
         em.add_field(name="Verification Level",
                      value=current_guild.verification_level)
         humanized_created = self.bot.get_relative_timestamp(
-            time_from=current_guild.created_at, humanized=True, include_from=True)
+            time_from=current_guild.created_at,
+            humanized=True,
+            include_from=True)
         em.add_field(name="Created at", value=humanized_created)
 
         em.set_thumbnail(url=current_guild.icon_url)
@@ -129,14 +142,15 @@ class Basic:
         em = discord.Embed(description=contact_text)
 
         author_name = f"{ctx.message.author} ({ctx.message.author.id}) "
-        author_name += f"on \"{ctx.channel.name}\" at \"{ctx.guild.name}\"" if ctx.guild else "through DMs"
+        author_name += (f"on \"{ctx.channel.name}\" at \"{ctx.guild.name}\""
+                        if ctx.guild else "through DMs")
 
         em.set_author(name=author_name, icon_url=ctx.message.author.avatar_url)
 
         await self.bot.support_channel.send(embed=em)
 
         em = discord.Embed(title='Feedback sent!',
-                           description='Your message has been delivered to the developers.')
+                           description='Your message has been delivered.')
         await ctx.send(embed=em)
 
     @commands.command(aliases=['userinfo', 'whoami', 'profile'])
