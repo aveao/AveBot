@@ -153,7 +153,7 @@ class Finance:
                          else symbols_result["last_extended_hours_trade_price"])
         diff = Decimal(Decimal(current_price) -
                        Decimal(symbols_result["previous_close"]))
-        percentage = str(100 * diff / current_price)[:6]
+        percentage = str(100 * diff / Decimal(current_price))[:6]
 
         if not percentage.startswith("-"):
             percentage = "+" + percentage
