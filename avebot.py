@@ -207,7 +207,7 @@ async def on_guild_join(guild):
     await bot.main_channel.send(embed=em)
 
     await guild.owner.send("Hello and welcome to AveBot!\n"
-                           "If you don't know why you're getting this message, it's because someone"
+                           "If you don't know why you're getting this message, it's because someone "
                            "added AveBot to your server\nDue to Discord API ToS, I am required to "
                            "inform you that **I log command usages and errors**.\n**I don't log "
                            "*anything* else**.\nLogging code can be found at  <https://github.com/"
