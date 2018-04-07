@@ -27,7 +27,7 @@ class Jose:
     async def josehmax(self, ctx, jccount: float, amountofpeople: float = 1):
         """Gives the maximum JCs that'll give 50% chance on a heist"""
         incr = decimal.Decimal('0.3') * amountofpeople
-        maxfifty = ((4 / Decimal('0.32')) - incr) * samnt
+        maxfifty = ((4 / Decimal('0.32')) - incr) * jccount
         maxfifty = round(maxfifty, 2)
         await ctx.send("Maximum amount that gives 5 probability for "
                        f"the heist: `{maxfifty}`")
