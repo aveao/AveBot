@@ -4,6 +4,8 @@ from discord.ext import commands
 
 
 class Jose:
+    """These are a set of commands for the bot Jose."""
+
     def __init__(self, bot):
         self.bot = bot
 
@@ -20,6 +22,15 @@ class Jose:
         maxfifty = (Decimal(jccount) / Decimal(4.58)) * Decimal(0.42)
         maxfifty = round(maxfifty, 2)
         await ctx.send(f"Maximum amount that gives 5 probability: `{maxfifty}`")
+
+    @commands.command()
+    async def josehmax(self, ctx, jccount: float, amountofpeople: float = 1):
+        """Gives the maximum JCs that'll give 50% chance on a heist"""
+        incr = decimal.Decimal('0.3') * amountofpeople
+        maxfifty = ((4 / Decimal('0.32')) - incr) * samnt
+        maxfifty = round(maxfifty, 2)
+        await ctx.send("Maximum amount that gives 5 probability for "
+                       f"the heist: `{maxfifty}`")
 
 
 def setup(bot):
