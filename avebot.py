@@ -45,12 +45,13 @@ config.read("avebot.ini")
 postgres_connection = psycopg2.connect(
     config['base']['postgres-connection-string'])
 
-gitcomp_regex = r"(?:\s|^)(gh|gl|a3|owo|sg|teknik|bb)/([a-zA-Z0-9-_.#/]*)"
+gitcomp_regex = r"(?:\s|^)(gh|gl|a3|owo|sg|teknik|bb|yt)/([a-zA-Z0-9-_.#/]*)"
 gitcomp_long = {"gl": "https://gitlab.com/", "gh": "https://github.com/",
                 "a3": "https://git.a3.pm/", "owo": "https://owo.codes/",
                 "sg": "https://git.supernets.org/",
                 "teknik": "https://git.teknik.io/",
-                "bb": "https://bitbucket.org/"}
+                "bb": "https://bitbucket.org/",
+                "yt": "https://youtu.be/"}
 
 
 def get_prefix(bot, message):
@@ -247,6 +248,9 @@ async def on_message(message):
         if greg_completed:
             await message.channel.send(' '.join(greg_completed))
             return
+
+        if "now where could my pipe be" in message.content.lower():
+            await message.channel.send("garfielf!!")
 
     ctx = await bot.get_context(message)
     await bot.invoke(ctx)
