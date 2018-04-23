@@ -45,7 +45,7 @@ config.read("avebot.ini")
 postgres_connection = psycopg2.connect(
     config['base']['postgres-connection-string'])
 
-gitcomp_regex = r"(?:\s|^)(gh|gl|a3|owo)/([a-zA-Z0-9-_/]*)"
+gitcomp_regex = r"(?:\s|^)(gh|gl|a3|owo)/([a-zA-Z0-9-_.#/]*)"
 gitcomp_long = {"gl": "https://gitlab.com/", "gh": "https://github.com/",
                 "a3": "https://git.a3.pm/", "owo": "https://owo.codes/"}
 
