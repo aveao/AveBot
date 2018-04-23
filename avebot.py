@@ -45,13 +45,20 @@ config.read("avebot.ini")
 postgres_connection = psycopg2.connect(
     config['base']['postgres-connection-string'])
 
-gitcomp_regex = r"(?:\s|^)(gh|gl|a3|owo|sg|teknik|bb|yt)/([a-zA-Z0-9-_.#/]*)"
-gitcomp_long = {"gl": "https://gitlab.com/", "gh": "https://github.com/",
-                "a3": "https://git.a3.pm/", "owo": "https://owo.codes/",
-                "sg": "https://git.supernets.org/",
-                "teknik": "https://git.teknik.io/",
-                "bb": "https://bitbucket.org/",
-                "yt": "https://youtu.be/"}
+gitcomp_regex = r"(?:\s|^)"\
+                r"(gh|gl|a3|owo|sg|teknik|bb|yt|bc|bcu|sc)"\
+                r"/([a-zA-Z0-9-_.#/]*)"
+gitcomp_long = {"gl": "https://gitlab.com/$link$",
+                "gh": "https://github.com/$link$",
+                "a3": "https://git.a3.pm/$link$",
+                "owo": "https://owo.codes/$link$",
+                "sg": "https://git.supernets.org/$link$",
+                "teknik": "https://git.teknik.io/$link$",
+                "bb": "https://bitbucket.org/$link$",
+                "yt": "https://youtu.be/$link$",
+                "bc": "https://$link$.bandcamp.com/",
+                "bcu": "https://bandcamp.com/$link$",
+                "sc": "https://soundcloud.com/$link$"}
 
 
 def get_prefix(bot, message):
@@ -242,7 +249,7 @@ async def on_message(message):
         greg = re.findall(gitcomp_regex, message.content, re.MULTILINE)
         greg_completed = []
         for gitf in greg:
-            url = f"{gitcomp_long[gitf[0]]}{gitf[1]}"
+            url = gitcomp_long[gitf[0]].replace("$link$", gitf[1])
             greg_completed.append(url)
 
         if greg_completed:
