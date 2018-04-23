@@ -249,7 +249,7 @@ async def on_message(message):
             await message.channel.send(' '.join(greg_completed))
             return
 
-        if "now where could my pipe be" in message.content.lower():
+        if message.content.lower().strip() is "now where could my pipe be":
             await message.channel.send("garfielf!!")
 
     ctx = await bot.get_context(message)
