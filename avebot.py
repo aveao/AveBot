@@ -15,6 +15,7 @@ import datetime
 import socket
 
 import psycopg2
+import re
 from pathlib import Path
 
 """AveBot is a bot that does some neat and some dumb stuff."""
@@ -43,6 +44,10 @@ config.read("avebot.ini")
 
 postgres_connection = psycopg2.connect(
     config['base']['postgres-connection-string'])
+
+gitcomp_regex = r"(?:\s|^)(gh|gl|a3|owo)/([a-zA-Z0-9-_/]*)"
+gitcomp_long = {"gl": "https://gitlab.com/", "gh": "https://github.com/",
+                "a3": "https://git.a3.pm/", "owo": "https://owo.codes/"}
 
 
 def get_prefix(bot, message):
@@ -225,6 +230,20 @@ async def on_message(message):
     user_perm = await bot.get_permission(message.author.id)
     if user_perm == 0:
         return
+
+    if str(message.guild.id) in bot.config["shortgit"]\
+            and bot.config["shortgit"][str(message.guild.id)]:
+        # Taken from guitar source code, which is based on wbot.
+        # Both are proprietary testing bots by me.
+        greg = re.findall(gitcomp_regex, message.content, re.MULTILINE)
+        greg_completed = []
+        for gitf in greg:
+            url = f"{gitcomp_long[gitf[0]]}{gitf[1]}"
+            greg_completed.append(url)
+
+        if greg_completed:
+            await message.channel.send(' '.join(greg_completed))
+            return
 
     ctx = await bot.get_context(message)
     await bot.invoke(ctx)

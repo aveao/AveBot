@@ -38,3 +38,6 @@ font = MuktaMalar-Medium.ttf
 
 [emojis]
 emojiinvite = emoji server invite goes here
+
+[shortgit]
+guildid = True
