@@ -59,6 +59,11 @@ class Basic:
         """Says hello. Duh."""
         await ctx.send(f"Hello {ctx.message.author.mention}!")
 
+    @commands.command(hidden=True)
+    async def dab(self, ctx):
+        """Fuck nev"""
+        await ctx.send("<:lunacdab:419587460423614464>")
+
     @commands.command()
     async def ginvite(self, ctx, discordid: int):
         """Generates a discord invite link."""
