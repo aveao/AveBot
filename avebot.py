@@ -46,7 +46,7 @@ postgres_connection = psycopg2.connect(
     config['base']['postgres-connection-string'])
 
 gitcomp_regex = r"(?:\s|^)"\
-                r"(gh|gl|a3|owo|sg|teknik|bb|yt|bc|bcu|sc)"\
+                r"(gh|gl|a3|owo|sg|teknik|bb|yt|bc|bcu|sc|aur)"\
                 r"/([a-zA-Z0-9-_.#/]*)"
 gitcomp_long = {"gl": "https://gitlab.com/$link$",
                 "gh": "https://github.com/$link$",
@@ -58,7 +58,8 @@ gitcomp_long = {"gl": "https://gitlab.com/$link$",
                 "yt": "https://youtu.be/$link$",
                 "bc": "https://$link$.bandcamp.com/",
                 "bcu": "https://bandcamp.com/$link$",
-                "sc": "https://soundcloud.com/$link$"}
+                "sc": "https://soundcloud.com/$link$",
+                "aur": "https://aur.archlinux.org/packages/$link$"}
 
 
 def get_prefix(bot, message):
