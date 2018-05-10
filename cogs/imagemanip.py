@@ -16,33 +16,33 @@ class ImageManipulation:
     def __init__(self, bot):
         self.bot = bot
 
+    def tojpeg(self, filename, extension):
+        im = PIL.Image.open(filename)
+        im = im.convert("RGB")
+        new_name = filename.replace(extension, ".jpg")
+        im.save(new_name, "JPEG")
+        return new_name
+
     async def get_images(self, ctx, caller_command):
         images_to_process = []
         for attach in ctx.message.attachments:
-            extension = os.path.splitext(attach['filename'])[1]
+            extension = os.path.splitext(attach.filename)[1]
             filename = "files/powered-by-avebot-bot.ave.zone-{}att{}".format(
                 ctx.message.id, extension).split('?')[0]
-            await self.bot.download_file(attach['proxy_url'], filename)
-            if extension != ".jpg" or extension != ".jpeg":
-                im = PIL.Image.open(filename)
-                im = im.convert("RGB")
-                new_name = filename.replace(extension, ".jpg")
-                im.save(new_name, "JPEG")
-                filename = new_name
+            await self.bot.download_file(attach.proxy_url, filename)
+            if extension not in [".jpg", ".jpeg"]:
+                filename = self.tojpeg(filename, extension)
             images_to_process.append(filename)
         stuff_after = ctx.message.content.split(
             caller_command)[1].replace(" ", "")
-        if stuff_after != "" and stuff_after.startswith("http"):
+
+        if stuff_after and stuff_after.startswith("http"):
             extension = str(os.path.splitext(stuff_after)[1].split('?')[0])
             filename = "files/powered-by-avebot-bot.ave.zone-{}txt{}".format(
                 ctx.message.id, extension)
             await self.bot.download_file(stuff_after, filename)
-            if extension != ".jpg" or extension != ".jpeg":
-                im = PIL.Image.open(filename)
-                im = im.convert("RGB")
-                new_name = filename.replace(extension, ".jpg")
-                im.save(new_name, "JPEG")
-                filename = new_name
+            if extension not in [".jpg", ".jpeg"]:
+                filename = self.tojpeg(filename, extension)
             images_to_process.append(filename)
         return images_to_process
 
