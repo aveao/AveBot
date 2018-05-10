@@ -5,6 +5,7 @@ import secrets
 import discord
 from discord.ext import commands
 
+
 class BooruE621:
     """Booru class for e621"""
     name = "e621"
@@ -36,6 +37,7 @@ class BooruE621:
     def get_post_score(self, post_json):
         return post_json['score']
 
+
 class BooruHypnohub:
     """Booru class for Hypnohub"""
     name = "Hypnohub"
@@ -55,7 +57,7 @@ class BooruHypnohub:
         return datetime.datetime.utcfromtimestamp(post_json["created_at"])
 
     def get_image_url(self, post_json):
-        return "https:" + post_json["sample_url"].replace(".net//", ".net/") # fuck hh
+        return "https:" + post_json["sample_url"].replace(".net//", ".net/")  # fuck hh
 
     def get_owner_name(self, post_json):
         return post_json['author']
@@ -65,6 +67,7 @@ class BooruHypnohub:
 
     def get_post_score(self, post_json):
         return post_json['score']
+
 
 class BooruGelbooru:
     """Booru class for Gelbooru"""
@@ -97,6 +100,7 @@ class BooruGelbooru:
     def get_post_score(self, post_json):
         return post_json['score']
 
+
 class BooruDanbooru:
     """Booru class for Danbooru"""
     name = "Danbooru"
@@ -112,10 +116,10 @@ class BooruDanbooru:
     def get_post_hash(self, post_json):
         return post_json["md5"]
 
-    def get_post_timestr(self, post_json): # fucking danbooru gives a dumb timestring
+    def get_post_timestr(self, post_json):  # fucking danbooru gives a dumb timestring
         danb_timestr = post_json["created_at"]
         tz_diff = danb_timestr[-5:]
-        danb_timestr = danb_timestr.replace(tz_diff, tz_diff.replace(":", "")) # Remove : from timezone
+        danb_timestr = danb_timestr.replace(tz_diff, tz_diff.replace(":", ""))  # Remove : from timezone
         return datetime.datetime.strptime(danb_timestr, "%Y-%m-%dT%H:%M:%S.%f%z")
 
     def get_image_url(self, post_json):
@@ -129,6 +133,7 @@ class BooruDanbooru:
 
     def get_post_score(self, post_json):
         return post_json['up_score'] - post_json['down_score']
+
 
 class BooruRule34:
     """Booru class for Rule34"""
@@ -162,6 +167,7 @@ class BooruRule34:
     def get_post_score(self, post_json):
         return post_json['score']
 
+
 class BooruRealbooru:
     """Booru class for Realbooru"""
     name = "Realbooru"
@@ -193,6 +199,7 @@ class BooruRealbooru:
 
     def get_post_score(self, post_json):
         return post_json['score']
+
 
 class NSFW:
     """NSFW commands for the lewd people."""
@@ -230,7 +237,8 @@ class NSFW:
         api_url = service.get_api_url(tags)
         booru_json = await self.bot.aiojson(api_url)
         if not booru_json:
-            ctx.send(f"{ctx.author.mention}: no results found")
+            await ctx.send("No results found on "
+                           f"`{service.name}` with tag `{tags}`")
             return
         chosen_post = booru_json[0] if service.random_supported else secrets.choice(booru_json)
 
@@ -243,7 +251,7 @@ class NSFW:
         embed_color = self.bot.hex_to_int(service.get_post_hash(chosen_post)[0:6])
         embed_timestamp = service.get_post_timestr(chosen_post)
 
-        embed = discord.Embed(title=f"{service.name} result",
+        embed = discord.Embed(title=f"{service.name} result for {tags}",
                               color=embed_color,
                               description=res_desc,
                               url=post_url,
