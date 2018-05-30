@@ -44,7 +44,6 @@ class Technical:
         embed.set_footer(text="Chart data is UTC")
 
         embed.add_field(name="Inside", value=f"{heat_json['inside']}°C")
-        embed.add_field(name="Outside", value=f"{heat_json['outside']}°C")
 
         await ctx.send(embed=embed)
 
